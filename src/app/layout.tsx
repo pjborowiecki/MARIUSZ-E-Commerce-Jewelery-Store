@@ -6,7 +6,7 @@ import type { Metadata, Viewport } from "next"
 import { env } from "@/env.mjs"
 import { Analytics } from "@vercel/analytics/react"
 
-import { fontHeading, fontInter, fontUrbanist } from "@/config/fonts"
+import { fontHeading, fontInter } from "@/config/fonts"
 import { siteConfig } from "@/config/site"
 import { SmoothScrollProvider } from "@/providers/smooth-scroll-provider"
 import { ThemeProvider } from "@/providers/theme-provider"
@@ -75,17 +75,15 @@ export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
     <html lang="en" className="overflow-x-hidden overflow-y-scroll">
       <body
         className={cn(
-          "w-full bg-background bg-gradient-to-r from-background to-pink-400/10 font-sans antialiased",
+          "size-full bg-background font-sans text-foreground antialiased",
           fontInter.variable,
-          fontUrbanist.variable,
           fontHeading.variable
         )}
       >
         <SmoothScrollProvider>
           <ThemeProvider
             attribute="class"
-            defaultTheme="dark"
-            enableSystem
+            defaultTheme="light"
             disableTransitionOnChange
           >
             {children}

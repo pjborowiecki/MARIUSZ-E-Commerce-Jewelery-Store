@@ -15,9 +15,8 @@ export const {
 } = NextAuth({
   debug: env.NODE_ENV === "development",
   pages: {
-    signIn: "/signin",
+    signIn: "/logowanie",
     signOut: "/signout",
-    verifyRequest: "/signin/magic-link-signin",
   },
   secret: env.AUTH_SECRET,
   session: {

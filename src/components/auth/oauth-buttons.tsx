@@ -20,13 +20,13 @@ export function OAuthButtons(): JSX.Element {
       })
 
       toast({
-        title: "Success!",
-        description: "You are now signed in",
+        title: "Witaj!",
+        description: "Jesteś zalogowany",
       })
     } catch (error) {
       toast({
-        title: "Something went wrong",
-        description: "Please try again",
+        title: "Coś poszło nie tak",
+        description: "Spróbuj ponownie",
         variant: "destructive",
       })
 

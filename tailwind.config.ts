@@ -16,7 +16,6 @@ module.exports = {
     extend: {
       fontFamily: {
         inter: ["var(--font-inter)"],
-        urbanist: ["var(--font-urbanist)"],
         heading: ["var(--font-heading)"],
       },
       colors: {

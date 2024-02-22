@@ -1,14 +1,16 @@
 "use client"
 
 import * as React from "react"
-import { subscribeToNewsletter } from "@/actions/newsletter"
+import { useRouter } from "next/navigation"
+import { resetPassword } from "@/actions/auth"
 import {
-  newsletterSignUpSchema,
-  type NewsletterSignUpFormInput,
-} from "@/validations/newsletter"
+  passwordResetSchema,
+  type PasswordResetFormInput,
+} from "@/validations/auth"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
+import { DEFAULT_UNAUTHENTICATED_REDIRECT } from "@/config/defaults"
 import { useToast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
 import {
@@ -22,43 +24,45 @@ import {
 import { Input } from "@/components/ui/input"
 import { Icons } from "@/components/icons"
 
-export function NewsletterSignUpForm(): JSX.Element {
+export function PasswordResetForm(): JSX.Element {
+  const router = useRouter()
   const { toast } = useToast()
   const [isPending, startTransition] = React.useTransition()
 
-  const form = useForm<NewsletterSignUpFormInput>({
-    resolver: zodResolver(newsletterSignUpSchema),
+  const form = useForm<PasswordResetFormInput>({
+    resolver: zodResolver(passwordResetSchema),
     defaultValues: {
       email: "",
     },
   })
 
-  function onSubmit(formData: NewsletterSignUpFormInput): void {
+  function onSubmit(formData: PasswordResetFormInput): void {
     startTransition(async () => {
       try {
-        const message = await subscribeToNewsletter({ email: formData.email })
+        const message = await resetPassword({ email: formData.email })
 
         switch (message) {
-          case "exists":
+          case "not-found":
             toast({
-              title: "Jesteś już subskrybentem newslettera",
+              title: "Użytkownik o tym adresie email nie istnieje",
               variant: "destructive",
             })
             form.reset()
             break
           case "success":
             toast({
-              title: "Dziękujemy!",
-              description: "Zostałeś dopisany do listy naszych subskrybentów",
+              title: "Link został wysłany",
+              description: "Sprawdź maila aby dokończyć resetowanie hasła",
             })
-            form.reset()
+            router.push(DEFAULT_UNAUTHENTICATED_REDIRECT)
             break
           default:
             toast({
-              title: "Coś poszło nie tak",
+              title: "Błąd przy resetowaniu hasła",
               description: "Spróbuj ponownie",
               variant: "destructive",
             })
+            router.push(DEFAULT_UNAUTHENTICATED_REDIRECT)
         }
       } catch (error) {
         toast({
@@ -66,6 +70,7 @@ export function NewsletterSignUpForm(): JSX.Element {
           description: "Spróbuj ponownie",
           variant: "destructive",
         })
+        console.error(error)
       }
     })
   }
@@ -73,38 +78,36 @@ export function NewsletterSignUpForm(): JSX.Element {
   return (
     <Form {...form}>
       <form
-        className="flex h-10 w-full  items-center justify-center md:h-12"
+        className="grid gap-4"
         onSubmit={(...args) => void form.handleSubmit(onSubmit)(...args)}
       >
         <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
-            <FormItem className="relative h-10 w-full space-y-0 md:h-12">
-              <FormLabel className="sr-only">Email</FormLabel>
-              <FormControl className="rounded-r-none">
-                <Input
-                  type="email"
-                  placeholder="johnsmith@gmail.com"
-                  className="h-10 placeholder:text-xs md:h-12 md:placeholder:text-sm"
-                  {...field}
-                />
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input placeholder="johnsmith@gmail.com" {...field} />
               </FormControl>
               <FormMessage className="pt-2 sm:text-sm" />
             </FormItem>
           )}
         />
 
-        <Button
-          className="size-10 rounded-l-none md:size-12"
-          disabled={isPending}
-        >
+        <Button disabled={isPending}>
           {isPending ? (
-            <Icons.spinner className="size-4 animate-spin" aria-hidden="true" />
+            <>
+              <Icons.spinner
+                className="mr-2 size-4 animate-spin"
+                aria-hidden="true"
+              />
+              <span>Pending...</span>
+            </>
           ) : (
-            <Icons.paperPlane className="size-4" aria-hidden="true" />
+            <span>Continue</span>
           )}
-          <span className="sr-only">Join newsletter</span>
+          <span className="sr-only">Continue resetting password</span>
         </Button>
       </form>
     </Form>

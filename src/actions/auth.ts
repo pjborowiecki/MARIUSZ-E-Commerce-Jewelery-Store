@@ -54,7 +54,7 @@ export async function signUpWithPassword(
     const emailSent = await resend.emails.send({
       from: env.RESEND_EMAIL_FROM,
       to: [validatedInput.data.email],
-      subject: "Verify your email address",
+      subject: "Weryfikacja adresu email",
       react: EmailVerificationEmail({
         email: validatedInput.data.email,
         emailVerificationToken,
@@ -142,7 +142,7 @@ export async function resetPassword(
     const emailSent = await resend.emails.send({
       from: env.RESEND_EMAIL_FROM,
       to: [validatedInput.data.email],
-      subject: "Reset your password",
+      subject: "Resetowanie hasła",
       react: ResetPasswordEmail({
         email: validatedInput.data.email,
         resetPasswordToken,

@@ -1,5 +1,5 @@
 {
-  "id": "3ca13723-2eb6-4080-95e7-cd9fc192bf4a",
+  "id": "e0c7c816-c164-4853-ae1b-c95c0283bca0",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -123,15 +123,7 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "newsletterSubscriber_email_unique": {
-          "name": "newsletterSubscriber_email_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
-        }
-      }
+      "uniqueConstraints": {}
     },
     "session": {
       "name": "session",

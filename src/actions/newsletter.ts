@@ -55,7 +55,7 @@ export async function subscribeToNewsletter(
     const emailSent = await resend.emails.send({
       from: env.RESEND_EMAIL_FROM,
       to: validatedInput.data.email,
-      subject: "Welcome to our newsletter!",
+      subject: "Witaj! Dziękujemy za subskrybowanie",
       react: NewsletterWelcomeEmail(),
     })
 

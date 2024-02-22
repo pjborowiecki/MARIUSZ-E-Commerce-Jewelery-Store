@@ -3,14 +3,14 @@ import * as z from "zod"
 
 const passwordSchema = z
   .string({
-    required_error: "Password is required",
-    invalid_type_error: "Password must be a string",
+    required_error: "Hasło jest wymagane",
+    invalid_type_error: "Nieprawidłowy typ danych",
   })
   .min(8, {
-    message: "Password must be made of at least 8 characters",
+    message: "Hasło musi się składać z przynajmniej 8 znaków",
   })
   .max(256, {
-    message: "Password must be made of at most 256 characters",
+    message: "Hasło nie może mieć więcej ni 256 znaków",
   })
 
 export const signUpWithPasswordSchema = z
@@ -20,25 +20,21 @@ export const signUpWithPasswordSchema = z
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/,
       {
         message:
-          "Password must contain at least 8 characters, including one uppercase, one lowercase, one number and one special character",
+          "Hasło musi mieć od 8 do 256 znaków, zawierać przynajmniej jedną wielką literę, jedną małą literę, jedną liczbę, oraz jedną znak specjalny",
       }
     ),
     confirmPassword: z.string(),
   })
   .refine((schema) => schema.password === schema.confirmPassword, {
-    message: "Passwords do not match",
+    message: "Podane hasła są różne",
     path: ["confirmPassword"],
   })
-
-export const signInWithEmailSchema = z.object({
-  email: emailSchema,
-})
 
 export const signInWithPasswordSchema = z.object({
   email: emailSchema,
   password: z.string({
-    required_error: "Password is required",
-    invalid_type_error: "Password must be a string",
+    required_error: "Hasło jest wymagane",
+    invalid_type_error: "Nieprawidłowy typ danych",
   }),
 })
 
@@ -52,13 +48,13 @@ export const passwordUpdateSchema = z
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/,
       {
         message:
-          "Password must contain at least 8 characters, including one uppercase, one lowercase, one number and one special character",
+          "Hasło musi mieć od 8 do 256 znaków, zawierać przynajmniej jedną wielką literę, jedną małą literę, jedną liczbę, oraz jedną znak specjalny",
       }
     ),
     confirmPassword: z.string(),
   })
   .refine((schema) => schema.password === schema.confirmPassword, {
-    message: "Passwords do not match",
+    message: "Podane hasła są różne",
     path: ["confirmPassword"],
   })
 
@@ -68,20 +64,20 @@ export const passwordUpdateSchemaExtended = z
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/,
       {
         message:
-          "Password must contain at least 8 characters, including one uppercase, one lowercase, one number and one special character",
+          "Hasło musi mieć od 8 do 256 znaków, zawierać przynajmniej jedną wielką literę, jedną małą literę, jedną liczbę, oraz jedną znak specjalny",
       }
     ),
     confirmPassword: z.string(),
     resetPasswordToken: z
       .string({
-        required_error: "Reset password token is required",
-        invalid_type_error: "Reset password token must be a string",
+        required_error: "Token do resetowania hasła jest wymagany",
+        invalid_type_error: "Nieprawidłowy typ danych",
       })
       .min(16)
       .max(256),
   })
   .refine((schema) => schema.password === schema.confirmPassword, {
-    message: "Passwords do not match",
+    message: "Podane hasła są różne",
     path: ["confirmPassword"],
   })
 
@@ -96,8 +92,6 @@ export type SignUpWithPasswordFormInput = z.infer<
 export type SignInWithPasswordFormInput = z.infer<
   typeof signInWithPasswordSchema
 >
-
-export type SignInWithEmailFormInput = z.infer<typeof signInWithEmailSchema>
 
 export type PasswordResetFormInput = z.infer<typeof passwordResetSchema>
 

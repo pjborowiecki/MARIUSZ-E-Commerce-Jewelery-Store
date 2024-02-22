@@ -9,7 +9,7 @@ import { Icons } from "@/components/icons"
 export function SignOutButton(): JSX.Element {
   return (
     <Button
-      aria-label="Sign Out"
+      aria-label="Wyloguj się"
       variant="ghost"
       className="w-full justify-start text-sm"
       onClick={() =>
@@ -20,7 +20,7 @@ export function SignOutButton(): JSX.Element {
       }
     >
       <Icons.logout className="mr-2 size-4" aria-hidden="true" />
-      Sign out
+      Wyloguj się
     </Button>
   )
 }

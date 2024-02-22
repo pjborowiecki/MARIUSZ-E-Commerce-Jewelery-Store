@@ -45,7 +45,7 @@ export function EmailVerificationEmail({
                 Please verify this address by clicking the button below
               </Text>
               <Button
-                href={`${env.NEXT_PUBLIC_APP_URL}/signup/verify-email?token=${emailVerificationToken}`}
+                href={`${env.NEXT_PUBLIC_APP_URL}/rejestracja/potwierdz-email?token=${emailVerificationToken}`}
               >
                 Verify email now
               </Button>

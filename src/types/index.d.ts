@@ -3,17 +3,24 @@ import type { JWT } from "next-auth/jwt"
 
 export interface NavItem {
   title: string
-  href: string
+  href?: string
   disabled?: boolean
+  external?: boolean
+  icon?: keyof typeof Icons
+  label?: string
+  description?: string
+  items?: NavItem[]
+}
+
+export interface FooterSubItem {
+  title: string
+  href: string
+  external?: boolean
 }
 
 export interface NavItemFooter {
   title: string
-  items: {
-    title: string
-    href: string
-    external?: boolean
-  }[]
+  items: FooterSubItem[]
 }
 
 export interface SessionCallbackParams {
@@ -36,41 +43,9 @@ export interface BlogPostParamsProps {
   }
 }
 
-export interface PricingPlan {
-  id: "basic" | "standard" | "premium"
-  name: string
-  description: string
-  features: string[]
-  limitations: string[]
-  stripePriceId: string
-  prices: {
-    monthly: number
-    yearly: number
-  }
-  stripeIds: {
-    monthly?: string
-    yearly?: string
-  }
-}
-
-export interface UserSubscriptionPlan extends SubscriptionPlan {
-  stripeSubscriptionId?: string | null
-  stripeCurrentPeriodEnd?: string | null
-  stripeCustomerId?: string | null
-  isSubscribed: boolean
-  isCanceled: boolean
-  isActive: boolean
-}
-
 export interface FrequentlyAskedQuestion {
   question: string
   answer: string
-}
-
-export interface Feature {
-  title: string
-  description: string
-  image: string
 }
 
 export interface Testimonial {
