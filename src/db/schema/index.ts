@@ -1,7 +1,10 @@
+import { type StoredFile } from "@/types"
 import type { AdapterAccount } from "@auth/core/adapters"
 import { relations } from "drizzle-orm"
 import {
+  decimal,
   integer,
+  json,
   pgTable,
   primaryKey,
   text,
@@ -96,6 +99,61 @@ export const newsletterSubscribers = pgTable("newsletterSubscriber", {
   createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
 })
 
+export const products = pgTable("product", {
+  id: text("id").notNull().primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  images: json("images").$type<StoredFile[] | null>().default(null),
+  category: text("category").notNull(),
+  subcategory: text("subcategory"),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull().default("0"),
+  inventory: integer("inventory").notNull().default(0),
+  tags: json("tags").$type<string[] | null>().default(null),
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
+})
+
+// TODO
+// export const productsRelations = relations(products, ({ one, many }) => ({
+//   users: many(products),
+// }))
+
+// export const productCategories = pgTable("categories", {
+//   id: text("id").notNull().primaryKey(),
+//   name: text("name").notNull(),
+//   slug: text("slug").notNull(),
+//   createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
+// })
+
+// export const productSubcategories = pgTable("subCategories", {
+//   id: text("id").notNull().primaryKey(),
+// }
+
+// TODO
+// export const categoriesRelations = relations(categories, () => ({}))
+
+// TODO
+// export const subCategories = pgTable("subCategories", {
+//   id: text("id").notNull().primaryKey(),
+//   name: text("name").notNull(),
+// })
+
+// TODO
+// export const subCategoriesRelations = relations(subCategories, () => ({}))
+
+export const orders = pgTable("orders", {
+  id: text("id").notNull().primaryKey(),
+})
+
+// TODO
+// export const ordersRelations = relations(orders, ({one, many}) => ({}))
+
+export const addresses = pgTable("addresses", {
+  id: text("id").notNull().primaryKey(),
+})
+
+// TODO
+// export const addressesRelations = relations(addresses, ({}) => ({}))
+
 export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert
 
@@ -110,3 +168,12 @@ export type NewVerificationToken = typeof verificationTokens.$inferInsert
 
 export type NewsletterSubscriber = typeof newsletterSubscribers.$inferSelect
 export type NewNewsletterSubscriber = typeof newsletterSubscribers.$inferInsert
+
+export type Product = typeof products.$inferSelect
+export type NewProduct = typeof products.$inferInsert
+
+export type Order = typeof orders.$inferSelect
+export type NewOrder = typeof orders.$inferInsert
+
+export type Address = typeof addresses.$inferSelect
+export type NewAddress = typeof addresses.$inferInsert

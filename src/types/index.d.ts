@@ -2,14 +2,15 @@ import type { Account, Profile, Session, User } from "next-auth"
 import type { JWT } from "next-auth/jwt"
 
 export interface NavItem {
+  href: string
   title: string
-  href?: string
+  description?: string
+  slug: string
   disabled?: boolean
   external?: boolean
+  image?: string
   icon?: keyof typeof Icons
-  label?: string
-  description?: string
-  items?: NavItem[]
+  subItems?: NavItem[]
 }
 
 export interface FooterSubItem {
@@ -37,6 +38,9 @@ export interface JWTCallbackParams {
   isNewUser?: boolean | undefined
 }
 
+export interface SearchParams {
+  [key: string]: string | string[] | undefined
+}
 export interface BlogPostParamsProps {
   params: {
     slug: string[]
@@ -54,4 +58,10 @@ export interface Testimonial {
   name: string
   role: string
   avatar: string
+}
+
+export interface StoredFile {
+  id: string
+  name: string
+  url: string
 }

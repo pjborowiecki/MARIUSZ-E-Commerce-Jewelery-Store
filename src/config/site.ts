@@ -11,7 +11,8 @@ const links = {
 
 export const siteConfig = {
   name: "Marian",
-  description: "",
+  description:
+    "Wyjątkowa biżuteria na każdą okazję. Marian to klasa sama w sobie.",
   links,
   url: "https://marian.pl",
   ogImage: links.openGraphImage,
