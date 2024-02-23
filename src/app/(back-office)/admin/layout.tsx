@@ -6,6 +6,6 @@ interface AdminLayoutProps {
 
 export default function AdminLayout({
   children,
-}: Readonly<AdminLayoutProps>): JSX.Element {
+}: AdminLayoutProps): JSX.Element {
   return <div>{children}</div>
 }

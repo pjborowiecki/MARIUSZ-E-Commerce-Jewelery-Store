@@ -18,9 +18,9 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { SignOutButton } from "@/components/auth/signout-button"
 import { CartSheet } from "@/components/checkout/cart-sheet"
-import { MainNav } from "@/components/nav/main-nav"
-import { MobileNav } from "@/components/nav/mobile-nav"
-import { ProductsCommandMenu } from "@/components/products-command-menu"
+import { HeaderSearch } from "@/components/header-search"
+import { MainNav } from "@/components/nav/store-front/main-nav"
+import { MobileNav } from "@/components/nav/store-front/mobile-nav"
 
 export async function Header(): Promise<JSX.Element> {
   const session = await auth()
@@ -36,7 +36,9 @@ export async function Header(): Promise<JSX.Element> {
       </div>
 
       <div className="flex items-center gap-2">
-        <ProductsCommandMenu />
+        <HeaderSearch />
+
+        <CartSheet />
 
         {session ? (
           <SignOutButton />
@@ -51,8 +53,6 @@ export async function Header(): Promise<JSX.Element> {
             Zaloguj się
           </Link>
         )}
-
-        <CartSheet />
       </div>
     </header>
   )

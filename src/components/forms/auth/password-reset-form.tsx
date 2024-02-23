@@ -88,7 +88,7 @@ export function PasswordResetForm(): JSX.Element {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="johnsmith@gmail.com" {...field} />
+                <Input placeholder="jan.kowalski@gmail.com" {...field} />
               </FormControl>
               <FormMessage className="pt-2 sm:text-sm" />
             </FormItem>
@@ -102,12 +102,12 @@ export function PasswordResetForm(): JSX.Element {
                 className="mr-2 size-4 animate-spin"
                 aria-hidden="true"
               />
-              <span>Pending...</span>
+              <span>Wysyłanie...</span>
             </>
           ) : (
-            <span>Continue</span>
+            <span>Kontynuuj</span>
           )}
-          <span className="sr-only">Continue resetting password</span>
+          <span className="sr-only">Kontynuuj resetowanie hasła</span>
         </Button>
       </form>
     </Form>

@@ -3,6 +3,7 @@ import type { JWT } from "next-auth/jwt"
 
 export interface NavItem {
   href: string
+  hrefPlus?: string
   title: string
   description?: string
   slug: string

@@ -60,8 +60,8 @@ export function SignUpWithPasswordForm(): JSX.Element {
             break
           case "success":
             toast({
-              title: "Link weryfikacyjny został wysłany",
-              description: "Sprawdź maila aby dokończyć rejestrację",
+              title: "Wysłaliśmy Ci link weryfikacyjny",
+              description: "Sprawdź maila aby dokończyć zakładanie konta",
             })
             router.push(DEFAULT_UNAUTHENTICATED_REDIRECT)
             break
@@ -97,7 +97,7 @@ export function SignUpWithPasswordForm(): JSX.Element {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="johnsmith@gmail.com" {...field} />
+                <Input placeholder="jan.kowalski@gmail.com" {...field} />
               </FormControl>
               <FormMessage className="pt-2 sm:text-sm" />
             </FormItem>
@@ -109,7 +109,7 @@ export function SignUpWithPasswordForm(): JSX.Element {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>Hasło</FormLabel>
               <FormControl>
                 <PasswordInput placeholder="**********" {...field} />
               </FormControl>
@@ -123,7 +123,7 @@ export function SignUpWithPasswordForm(): JSX.Element {
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
+              <FormLabel>Potwierdź hasło</FormLabel>
               <FormControl>
                 <PasswordInput placeholder="**********" {...field} />
               </FormControl>
@@ -139,13 +139,13 @@ export function SignUpWithPasswordForm(): JSX.Element {
                 className="mr-2 size-4 animate-spin"
                 aria-hidden="true"
               />
-              <span>Signing up...</span>
+              <span>Rejestrowanie...</span>
             </>
           ) : (
-            <span>Continue</span>
+            <span>Kontynuuj</span>
           )}
           <span className="sr-only">
-            Continue signing up with email and password
+            Kontynuuj zakładanie konta przy użyciu hasła
           </span>
         </Button>
       </form>

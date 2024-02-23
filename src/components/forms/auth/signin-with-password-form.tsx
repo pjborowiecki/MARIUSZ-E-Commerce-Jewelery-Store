@@ -113,7 +113,7 @@ export function SignInWithPasswordForm(): JSX.Element {
               <FormControl>
                 <Input
                   type="text"
-                  placeholder="johnsmith@gmail.com"
+                  placeholder="jan.kowalski@gmail.com"
                   {...field}
                 />
               </FormControl>
@@ -127,7 +127,7 @@ export function SignInWithPasswordForm(): JSX.Element {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>Hasło</FormLabel>
               <FormControl>
                 <PasswordInput placeholder="********" {...field} />
               </FormControl>
@@ -142,12 +142,12 @@ export function SignInWithPasswordForm(): JSX.Element {
                 className="mr-2 size-4 animate-spin"
                 aria-hidden="true"
               />
-              <span>Signing in...</span>
+              <span>Logowanie...</span>
             </>
           ) : (
-            <span>Sign in</span>
+            <span>Zaloguj</span>
           )}
-          <span className="sr-only">Sign in with email and password</span>
+          <span className="sr-only">Zaloguj się przy użyciu hasła</span>
         </Button>
       </form>
     </Form>

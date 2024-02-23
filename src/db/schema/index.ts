@@ -5,11 +5,30 @@ import {
   decimal,
   integer,
   json,
+  pgEnum,
   pgTable,
   primaryKey,
   text,
   timestamp,
 } from "drizzle-orm/pg-core"
+
+export const userRoleEnum = pgEnum("user_role", ["customer", "owner"])
+
+// TODO
+export const orderStatusEnum = pgEnum("order_status", [
+  "nowe",
+  "w trakcie realizacji",
+  "oczekuje wysyłki",
+  "wysłane",
+  "dostarczone",
+  "zamknięte",
+])
+
+// TODO
+export const paymentStatus = pgEnum("payment_status", [
+  "nieopłacone",
+  "opłacone",
+])
 
 export const accounts = pgTable(
   "account",
@@ -71,6 +90,7 @@ export const users = pgTable("user", {
     mode: "date",
   }),
   image: text("image"),
+  role: userRoleEnum("customer"),
   createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
 })
 

@@ -20,7 +20,7 @@ export function CartSheet(): JSX.Element {
           aria-label="Open cart"
           variant="outline"
           size="icon"
-          className="relative size-8"
+          className="relative size-8 shrink-0"
         >
           {/* {itemCount > 0 && (
             <Badge

@@ -97,7 +97,7 @@ export function EmailVerificationForm(): JSX.Element {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="johnsmith@gmail.com" {...field} />
+                <Input placeholder="jan.kowalski@gmail.com" {...field} />
               </FormControl>
               <FormMessage className="pt-2 sm:text-sm" />
             </FormItem>
@@ -111,12 +111,12 @@ export function EmailVerificationForm(): JSX.Element {
                 className="mr-2 size-4 animate-spin"
                 aria-hidden="true"
               />
-              <span>Pending...</span>
+              <span>Wysyłanie...</span>
             </>
           ) : (
-            <span>Get verification link</span>
+            <span>Wyślij link weryfikacyjny</span>
           )}
-          <span className="sr-only">Resend email verification link</span>
+          <span className="sr-only">Wyślij link weryfikacyjny ponownie</span>
         </Button>
       </form>
     </Form>

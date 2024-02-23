@@ -176,3 +176,63 @@ export const mainNavItems = [
 ] satisfies NavItem[]
 
 export const sidebarNavItems = [] satisfies NavItem[]
+
+export const adminSidebarNavItems = [
+  {
+    title: "Start",
+    slug: "home",
+    href: "/admin/start/panel",
+    icon: "home",
+  },
+  {
+    title: "Asortyment",
+    slug: "asortyment",
+    href: "/admin/asortyment",
+    icon: "inventory",
+    subItems: [
+      {
+        title: "Produkty",
+        slug: "produkty",
+        href: "/admin/asortyment/produkty",
+        hrefPlus: "/admin/asortyment/produkty/dodaj-produkt",
+      },
+      {
+        title: "Kategorie",
+        slug: "kategorie",
+        href: "/admin/asortyment/kategorie",
+        hrefPlus: "/admin/asortyment/kategorie/dodaj-kategorie",
+      },
+      {
+        title: "Podkategorie",
+        slug: "podkategorie",
+        href: "/admin/asortyment/podkategorie",
+        hrefPlus: "/admin/asortyment/podkategorie/dodaj-podkategorie",
+      },
+      {
+        title: "Tagi",
+        slug: "tagi",
+        href: "/admin/asortyment/tagi",
+        hrefPlus: "/admin/asortyment/tagi/dodaj-tag",
+      },
+    ],
+  },
+  {
+    title: "Sprzedaż",
+    slug: "sprzedaz",
+    href: "/admin/sprzedaz",
+    icon: "shoppingCart",
+    subItems: [
+      {
+        title: "Zamówienia",
+        slug: "zamowienia",
+        href: "/admin/sprzedaz/zamowienia",
+      },
+      {
+        title: "Zwroty",
+        slug: "zwroty",
+        href: "/admin/sprzedaz/zwroty",
+        hrefPlus: "/admin/sprzedaz/zwroty/dodaj-zwrot",
+      },
+    ],
+  },
+] satisfies NavItem[]

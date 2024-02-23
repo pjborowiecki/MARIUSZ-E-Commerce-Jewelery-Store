@@ -16,7 +16,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
-import { MainNavItem } from "@/components/nav/main-nav-item"
+import { MainNavItem } from "@/components/nav/store-front/main-nav-item"
 
 interface MainNavProps {
   items: NavItem[]
@@ -24,7 +24,7 @@ interface MainNavProps {
 
 export function MainNav({ items }: MainNavProps): JSX.Element {
   return (
-    <div className="hidden items-center gap-8 lg:flex">
+    <div className="hidden items-center gap-12 lg:flex">
       <Link
         href="/"
         className="text-2xl font-semibold uppercase tracking-tight"

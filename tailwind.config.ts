@@ -32,6 +32,10 @@ module.exports = {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
         },
+        tertiary: {
+          DEFAULT: "hsl(var(--tertiary))",
+          foreground: "hsl(var(--tertiary-foreground))",
+        },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
@@ -53,8 +57,13 @@ module.exports = {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+      width: {
+        "18": "72px",
+        "66": "264px",
+      },
       maxWidth: {
         "8xl": "1408px",
+        "9xl": "1520px",
       },
       borderRadius: {
         lg: `var(--radius)`,

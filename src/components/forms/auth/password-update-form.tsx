@@ -98,7 +98,7 @@ export function PasswordUpdateForm({
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>Hasło</FormLabel>
               <FormControl>
                 <PasswordInput placeholder="**********" {...field} />
               </FormControl>
@@ -112,7 +112,7 @@ export function PasswordUpdateForm({
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
+              <FormLabel>Potwierdź hasło</FormLabel>
               <FormControl>
                 <PasswordInput placeholder="**********" {...field} />
               </FormControl>
@@ -128,12 +128,12 @@ export function PasswordUpdateForm({
                 className="mr-2 size-4 animate-spin"
                 aria-hidden="true"
               />
-              <span>Updating...</span>
+              <span>Aktualizacja...</span>
             </>
           ) : (
-            <span>Update password</span>
+            <span>Zatwierdź zmianę</span>
           )}
-          <span className="sr-only">Update password</span>
+          <span className="sr-only">Zatwierdź zmianę hasła</span>
         </Button>
       </form>
     </Form>

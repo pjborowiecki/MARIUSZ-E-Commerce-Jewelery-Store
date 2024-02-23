@@ -36,7 +36,7 @@ export function OAuthButtons(): JSX.Element {
   }
 
   return (
-    <div className="grid gap-2 sm:grid-cols-2 sm:gap-4">
+    <div className="grid gap-3 sm:grid-cols-2">
       <Button
         aria-label="Sign in with Google"
         variant="outline"

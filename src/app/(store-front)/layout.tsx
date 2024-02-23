@@ -1,7 +1,7 @@
 import * as React from "react"
 
-import { Footer } from "@/components/nav/footer"
-import { Header } from "@/components/nav/header"
+import { Footer } from "@/components/nav/store-front/footer"
+import { Header } from "@/components/nav/store-front/header"
 
 interface StoreFrontLayoutProps {
   children: React.ReactNode
