@@ -1,7 +1,6 @@
 import Link from "next/link"
 import { auth } from "@/auth"
 
-import { siteConfig } from "@/config/site"
 import { mainNavItems, sidebarNavItems } from "@/data/nav-items"
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -13,12 +12,13 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { SignOutButton } from "@/components/auth/signout-button"
 import { CartSheet } from "@/components/checkout/cart-sheet"
+import { CustomTooltip } from "@/components/custom-tooltip"
 import { HeaderSearch } from "@/components/header-search"
+import { Icons } from "@/components/icons"
 import { MainNav } from "@/components/nav/store-front/main-nav"
 import { MobileNav } from "@/components/nav/store-front/mobile-nav"
 
@@ -38,10 +38,93 @@ export async function Header(): Promise<JSX.Element> {
       <div className="flex items-center gap-2">
         <HeaderSearch />
 
-        <CartSheet />
+        <CustomTooltip text="Zawartość koszyka">
+          <CartSheet />
+        </CustomTooltip>
 
         {session ? (
-          <SignOutButton />
+          <DropdownMenu>
+            <CustomTooltip text="Zarządzanie kontem">
+              <DropdownMenuTrigger
+                asChild
+                className={cn(
+                  buttonVariants({ variant: "user", size: "icon" }),
+                  "transition-all duration-300 ease-in-out"
+                )}
+              >
+                <Avatar className="size-8">
+                  {session.user.image ? (
+                    <AvatarImage
+                      src={session.user.image}
+                      alt={session.user.name ?? "user's profile picture"}
+                      className="size-5 rounded-full border border-border"
+                    />
+                  ) : (
+                    <AvatarFallback className="size-8 cursor-pointer border border-border bg-transparent p-1.5 hover:bg-secondary">
+                      <Icons.user className="size-4 rounded-full" />
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+              </DropdownMenuTrigger>
+            </CustomTooltip>
+            <DropdownMenuContent className="w-56" align="end" forceMount>
+              <DropdownMenuLabel className="font-normal">
+                <p className="text-xs leading-none text-muted-foreground">
+                  {session.user.email}
+                </p>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem asChild>
+                  <Link href="/">
+                    <Icons.settings
+                      className="mr-2 size-4 text-foreground/90"
+                      aria-hidden="true"
+                    />
+                    Ustawienia
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/">
+                    <Icons.package
+                      className="mr-2 size-4 text-foreground/90"
+                      aria-hidden="true"
+                    />
+                    Zamówienia
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/">
+                    <Icons.heart
+                      className="mr-2 size-4 text-foreground/90"
+                      aria-hidden="true"
+                    />
+                    Ulubione
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+
+              {/* TODO: Render conditionally if role is admin (owner) */}
+              {/* <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem asChild>
+                  <Link href="/admin/start/panel" className="">
+                    <Icons.dashboard className="mr-2 size-4" />
+                    Panel administratora
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuGroup> */}
+
+              {/*  */}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <SignOutButton
+                  buttonStyles="border-none px-0 py-[1px] shadow-none tracking-tight h-auto font-medium text-foreground/90 text-[14px]"
+                  iconStyles="text-foreground/80"
+                />
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         ) : (
           <Link
             href="/logowanie"

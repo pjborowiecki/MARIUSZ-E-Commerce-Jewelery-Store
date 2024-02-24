@@ -22,8 +22,23 @@ export function truncate(str: string, length: number) {
   return str.length > length ? `${str.substring(0, length)}...` : str
 }
 
-export function slugify(str: string) {
+export function slugify(str: string): string {
+  const polishChars: { [key: string]: string } = {
+    ą: "a",
+    ć: "c",
+    ę: "e",
+    ł: "l",
+    ń: "n",
+    ó: "o",
+    ś: "s",
+    ź: "z",
+    ż: "z",
+  }
+
   return str
+    .split("")
+    .map((char) => polishChars[char] || char)
+    .join("")
     .toLowerCase()
     .replace(/ /g, "-")
     .replace(/[^\w-]+/g, "")

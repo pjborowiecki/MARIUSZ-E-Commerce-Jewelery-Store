@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Icons } from "@/components/icons"
+import { MobileNavItem } from "@/components/nav/store-front/mobile-nav-item"
 
 interface MobileNavProps {
   mainNavItems: NavItem[]
@@ -23,5 +24,9 @@ export function MobileNav({
   const segment = useSelectedLayoutSegment()
   const [isOpen, setIsOpen] = React.useState<boolean>(false)
 
-  return <Sheet open={isOpen} onOpenChange={setIsOpen}></Sheet>
+  return (
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetTrigger asChild></SheetTrigger>
+    </Sheet>
+  )
 }

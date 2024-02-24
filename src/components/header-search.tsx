@@ -15,6 +15,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command"
+import { CustomTooltip } from "@/components/custom-tooltip"
 import { Icons } from "@/components/icons"
 
 interface ProductGroup {
@@ -32,18 +33,18 @@ export function HeaderSearch(): JSX.Element {
 
   return (
     <>
-      <Button
-        variant="outline"
-        size="icon"
-        className="flex size-8 shrink-0"
-        onClick={() => setOpen((prev) => !prev)}
-      >
-        <Icons.search
-          aria-hidden="true"
-          className="size-4 text-muted-foreground"
-        />
-        <span className="sr-only">Szukaj wśród naszych produktów</span>
-      </Button>
+      <CustomTooltip text="Wyszukiwanie produktu">
+        <Button
+          variant="outline"
+          size="icon"
+          className="flex size-8 shrink-0"
+          onClick={() => setOpen((prev) => !prev)}
+        >
+          <Icons.search aria-hidden="true" className="size-4" />
+          <span className="sr-only">Szukaj wśród naszych produktów</span>
+        </Button>
+      </CustomTooltip>
+
       <CommandDialog
         open={open}
         onOpenChange={(open) => {

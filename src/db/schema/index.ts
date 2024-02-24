@@ -1,7 +1,10 @@
-import { type StoredFile } from "@/types"
+import type { StoredFile } from "@/types"
+import type { CartItem, CheckoutItem } from "@/validations/cart"
+import type { Category, Subcategory, Tag } from "@/validations/inventory"
 import type { AdapterAccount } from "@auth/core/adapters"
 import { relations } from "drizzle-orm"
 import {
+  boolean,
   decimal,
   integer,
   json,
@@ -10,25 +13,10 @@ import {
   primaryKey,
   text,
   timestamp,
+  varchar,
 } from "drizzle-orm/pg-core"
 
 export const userRoleEnum = pgEnum("user_role", ["customer", "owner"])
-
-// TODO
-export const orderStatusEnum = pgEnum("order_status", [
-  "nowe",
-  "w trakcie realizacji",
-  "oczekuje wysyłki",
-  "wysłane",
-  "dostarczone",
-  "zamknięte",
-])
-
-// TODO
-export const paymentStatus = pgEnum("payment_status", [
-  "nieopłacone",
-  "opłacone",
-])
 
 export const accounts = pgTable(
   "account",
@@ -78,10 +66,9 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
 
 export const users = pgTable("user", {
   id: text("id").notNull().primaryKey(),
-  name: text("name"),
-  surname: text("surname"),
-  username: text("username").unique(),
-  email: text("email").unique().notNull(),
+  name: varchar("name", { length: 128 }),
+  surname: varchar("surname", { length: 128 }),
+  email: varchar("email", { length: 128 }).unique().notNull(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   emailVerificationToken: text("emailVerificationToken").unique(),
   passwordHash: text("passwordHash"),
@@ -115,20 +102,55 @@ export const verificationTokens = pgTable(
 )
 
 export const newsletterSubscribers = pgTable("newsletterSubscriber", {
-  email: text("email").notNull().primaryKey(),
+  email: varchar("email", { length: 128 }).notNull().primaryKey(),
   createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
 })
 
+// TODO
+export const tags = pgTable("tag", {
+  id: text("id").notNull().primaryKey(),
+  name: varchar("name", { length: 64 }).notNull(),
+})
+
+// TODO
+// export const tagsRelations = relations(tags, ({ one, many }) => ({})
+
+export const categories = pgTable("category", {
+  id: text("id").notNull().primaryKey(),
+  name: varchar("name", { length: 64 }).notNull(),
+  description: text("description"),
+  // subcategories: json("categories").$type<Subcategory[] | null>().default(null),
+})
+
+// TODO
+export const categoriesRelations = relations(
+  categories,
+  ({ one, many }) => ({})
+)
+
+export const subcategories = pgTable("subcategory", {
+  id: text("id").notNull().primaryKey(),
+  name: varchar("name", { length: 64 }).notNull(),
+  description: text("description"),
+  // categoryId: text("categoryId").notNull().references(),
+})
+
+// TODO
+// export const subcategoriesRelations = relations(subcategories, ({ one, many }) => ({})
+
+// TODO: Update category and subcategory types
 export const products = pgTable("product", {
   id: text("id").notNull().primaryKey(),
-  name: text("name").notNull(),
+  name: varchar("name", { length: 128 }).notNull(),
   description: text("description"),
   images: json("images").$type<StoredFile[] | null>().default(null),
-  category: text("category").notNull(),
-  subcategory: text("subcategory"),
+  // category: text("category").notNull(),
+  category: json("categories").$type<string[] | null>().default(null),
+  // subcategory: varchar("subcategory", {length: 255}),
+  subcategory: json("subcategories").$type<string[] | null>().default(null),
+  tags: json("tags").$type<string[] | null>().default(null),
   price: decimal("price", { precision: 10, scale: 2 }).notNull().default("0"),
   inventory: integer("inventory").notNull().default(0),
-  tags: json("tags").$type<string[] | null>().default(null),
   createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
 })
 
@@ -137,42 +159,62 @@ export const products = pgTable("product", {
 //   users: many(products),
 // }))
 
-// export const productCategories = pgTable("categories", {
-//   id: text("id").notNull().primaryKey(),
-//   name: text("name").notNull(),
-//   slug: text("slug").notNull(),
-//   createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
-// })
-
-// export const productSubcategories = pgTable("subCategories", {
-//   id: text("id").notNull().primaryKey(),
-// }
-
-// TODO
-// export const categoriesRelations = relations(categories, () => ({}))
-
-// TODO
-// export const subCategories = pgTable("subCategories", {
-//   id: text("id").notNull().primaryKey(),
-//   name: text("name").notNull(),
-// })
-
-// TODO
-// export const subCategoriesRelations = relations(subCategories, () => ({}))
-
-export const orders = pgTable("orders", {
+export const orders = pgTable("order", {
   id: text("id").notNull().primaryKey(),
+  items: json("items").$type<CheckoutItem[] | null>().default(null),
+  quantity: integer("quantity"),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull().default("0"),
+  stripePaymentIntentId: varchar("stripe_payment_intent_id", {
+    length: 255,
+  }).notNull(),
+  stripePaymentIntentStatus: varchar("stripe_payment_intent_status", {
+    length: 255,
+  }).notNull(),
+  name: varchar("name", { length: 255 }),
+  email: varchar("email", { length: 255 }),
+  addressId: text("addressId")
+    .notNull()
+    .references(() => addresses.id, { onDelete: "no action" }),
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
 })
 
 // TODO
 // export const ordersRelations = relations(orders, ({one, many}) => ({}))
 
-export const addresses = pgTable("addresses", {
+export const addresses = pgTable("address", {
   id: text("id").notNull().primaryKey(),
+  line1: varchar("street", { length: 128 }).notNull(),
+  line2: varchar("line2", { length: 128 }),
+  city: varchar("city", { length: 128 }).notNull(),
+  postalCode: varchar("postal_code", { length: 128 }).notNull(),
+  country: varchar("country", { length: 128 }).notNull().default("Poland"),
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
 })
 
 // TODO
-// export const addressesRelations = relations(addresses, ({}) => ({}))
+// export const addressesRelations = relations(addresses, ({one, many}) => ({}))
+
+// TODO
+// export const favouriteItems = pgTable("favourite_items", {
+//   id: text("id").notNull().primaryKey(),
+// })
+
+// TODO
+// export const favouriteItemsRelations = relations(favouriteItems, ({one, many}) => ({}))
+
+// TODO
+export const carts = pgTable("cart", {
+  id: text("id").notNull().primaryKey(),
+  paymentIntentId: varchar("payment_intent_id", { length: 255 }),
+  clientSecret: varchar("client_secret", { length: 255 }),
+  items: json("items").$type<CartItem[] | null>().default(null),
+  closed: boolean("closed").notNull().default(false),
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
+  // updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow(),
+})
+
+// TODO
+// export const cartsRelations = relations(carts, ({one, many}) => ({}))
 
 export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert

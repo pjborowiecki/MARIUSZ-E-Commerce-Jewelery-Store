@@ -12,7 +12,7 @@ export function OAuthButtons(): JSX.Element {
   const { toast } = useToast()
 
   async function handleOAuthSignIn(
-    provider: "google" | "github"
+    provider: "google" | "facebook"
   ): Promise<void> {
     try {
       await signIn(provider, {
@@ -50,11 +50,11 @@ export function OAuthButtons(): JSX.Element {
       <Button
         aria-label="Sign in with gitHub"
         variant="outline"
-        onClick={() => void handleOAuthSignIn("github")}
+        onClick={() => void handleOAuthSignIn("facebook")}
         className="w-full sm:w-auto"
       >
-        <Icons.gitHub className="mr-2 size-4" />
-        GitHub
+        <Icons.facebook className="mr-2 size-4" />
+        Facebook
       </Button>
     </div>
   )

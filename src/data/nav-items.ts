@@ -5,6 +5,7 @@ export const mainNavItems = [
     title: "Naszyjniki",
     slug: "naszyjniki",
     href: "/kategorie/naszyjniki",
+    description: "",
     subItems: [
       {
         title: "Złote",
@@ -42,6 +43,7 @@ export const mainNavItems = [
     title: "Kolczyki",
     slug: "kolczyki",
     href: "/kategorie/kolczyki",
+    description: "",
     subItems: [
       {
         title: "Złote",
@@ -91,6 +93,7 @@ export const mainNavItems = [
     title: "Pierścionki",
     slug: "pierscionki",
     href: "/kategorie/pierscionki",
+    description: "",
     subItems: [
       {
         title: "Złote",
@@ -128,6 +131,7 @@ export const mainNavItems = [
     title: "Inne",
     slug: "inne",
     href: "/kategorie/inne",
+    description: "",
     subItems: [
       {
         title: "Nowości",
