@@ -1,10 +1,10 @@
 DO $$ BEGIN
- CREATE TYPE "user_role" AS ENUM('customer', 'owner');
+ CREATE TYPE "product_category" AS ENUM('kolczyki', 'pierścionki', 'naszyjniki', 'łańcuszki', 'inne');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "account" (
+CREATE TABLE IF NOT EXISTS "accounts" (
 	"userId" text NOT NULL,
 	"type" text NOT NULL,
 	"provider" text NOT NULL,
@@ -16,10 +16,10 @@ CREATE TABLE IF NOT EXISTS "account" (
 	"scope" text,
 	"id_token" text,
 	"session_state" text,
-	CONSTRAINT "account_provider_providerAccountId_pk" PRIMARY KEY("provider","providerAccountId")
+	CONSTRAINT "accounts_provider_providerAccountId_pk" PRIMARY KEY("provider","providerAccountId")
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "address" (
+CREATE TABLE IF NOT EXISTS "addresses" (
 	"id" text PRIMARY KEY NOT NULL,
 	"street" varchar(128) NOT NULL,
 	"line2" varchar(128),
@@ -29,67 +29,73 @@ CREATE TABLE IF NOT EXISTS "address" (
 	"createdAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "cart" (
+CREATE TABLE IF NOT EXISTS "carts" (
 	"id" text PRIMARY KEY NOT NULL,
-	"payment_intent_id" varchar(255),
-	"client_secret" varchar(255),
+	"payment_intent_id" varchar(256),
+	"client_secret" varchar(256),
 	"items" json DEFAULT 'null'::json,
 	"closed" boolean DEFAULT false NOT NULL,
 	"createdAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "category" (
+CREATE TABLE IF NOT EXISTS "email_preferences" (
 	"id" text PRIMARY KEY NOT NULL,
-	"name" varchar(64) NOT NULL,
-	"description" text,
-	"menu_item" boolean DEFAULT true NOT NULL,
-	"main_category" boolean DEFAULT true NOT NULL,
-	"parentId" text
+	"user_id" varchar(256),
+	"email" varchar(256) NOT NULL,
+	"token" varchar(256) NOT NULL,
+	"newsletter" boolean DEFAULT false NOT NULL,
+	"marketing" boolean DEFAULT false NOT NULL,
+	"transactional" boolean DEFAULT false NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "newsletterSubscriber" (
+CREATE TABLE IF NOT EXISTS "newsletterSubscribers" (
 	"email" varchar(128) PRIMARY KEY NOT NULL,
 	"createdAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "order" (
+CREATE TABLE IF NOT EXISTS "orders" (
 	"id" text PRIMARY KEY NOT NULL,
 	"items" json DEFAULT 'null'::json,
 	"quantity" integer,
 	"amount" numeric(10, 2) DEFAULT '0' NOT NULL,
-	"stripe_payment_intent_id" varchar(255) NOT NULL,
-	"stripe_payment_intent_status" varchar(255) NOT NULL,
-	"name" varchar(255),
-	"email" varchar(255),
+	"stripe_payment_intent_id" varchar(256) NOT NULL,
+	"stripe_payment_intent_status" varchar(256) NOT NULL,
+	"name" varchar(256),
+	"email" varchar(256),
 	"addressId" text NOT NULL,
 	"createdAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "product" (
+CREATE TABLE IF NOT EXISTS "payments" (
+	"id" text PRIMARY KEY NOT NULL,
+	"stripe_account_id" varchar(256) NOT NULL,
+	"stripe_account_created_at" integer,
+	"stripe_account_expires_at" integer,
+	"details_submitted" boolean DEFAULT false NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "products" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" varchar(128) NOT NULL,
 	"description" text,
 	"images" json DEFAULT 'null'::json,
-	"categories" json DEFAULT 'null'::json,
-	"subcategories" json DEFAULT 'null'::json,
+	"category" "product_category" DEFAULT 'kolczyki' NOT NULL,
+	"subcategory" varchar(256),
 	"tags" json DEFAULT 'null'::json,
 	"price" numeric(10, 2) DEFAULT '0' NOT NULL,
 	"inventory" integer DEFAULT 0 NOT NULL,
 	"createdAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "session" (
+CREATE TABLE IF NOT EXISTS "sessions" (
 	"sessionToken" text PRIMARY KEY NOT NULL,
 	"userId" text NOT NULL,
 	"expires" timestamp NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "tag" (
-	"id" text PRIMARY KEY NOT NULL,
-	"name" varchar(64) NOT NULL
-);
---> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "user" (
+CREATE TABLE IF NOT EXISTS "users" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" varchar(128),
 	"surname" varchar(128),
@@ -100,40 +106,34 @@ CREATE TABLE IF NOT EXISTS "user" (
 	"resetPasswordToken" text,
 	"resetPasswordTokenExpiry" timestamp,
 	"image" text,
-	"customer" "user_role",
+	"store_owner" boolean DEFAULT false NOT NULL,
 	"createdAt" timestamp DEFAULT now() NOT NULL,
-	CONSTRAINT "user_email_unique" UNIQUE("email"),
-	CONSTRAINT "user_emailVerificationToken_unique" UNIQUE("emailVerificationToken"),
-	CONSTRAINT "user_resetPasswordToken_unique" UNIQUE("resetPasswordToken")
+	CONSTRAINT "users_email_unique" UNIQUE("email"),
+	CONSTRAINT "users_emailVerificationToken_unique" UNIQUE("emailVerificationToken"),
+	CONSTRAINT "users_resetPasswordToken_unique" UNIQUE("resetPasswordToken")
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "verificationToken" (
+CREATE TABLE IF NOT EXISTS "verificationTokens" (
 	"identifier" text NOT NULL,
 	"token" text NOT NULL,
 	"expires" timestamp NOT NULL,
-	CONSTRAINT "verificationToken_identifier_token_pk" PRIMARY KEY("identifier","token")
+	CONSTRAINT "verificationTokens_identifier_token_pk" PRIMARY KEY("identifier","token")
 );
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "account" ADD CONSTRAINT "account_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "accounts" ADD CONSTRAINT "accounts_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "category" ADD CONSTRAINT "category_parentId_address_id_fk" FOREIGN KEY ("parentId") REFERENCES "address"("id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "orders" ADD CONSTRAINT "orders_addressId_addresses_id_fk" FOREIGN KEY ("addressId") REFERENCES "addresses"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "order" ADD CONSTRAINT "order_addressId_address_id_fk" FOREIGN KEY ("addressId") REFERENCES "address"("id") ON DELETE no action ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "session" ADD CONSTRAINT "session_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "sessions" ADD CONSTRAINT "sessions_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

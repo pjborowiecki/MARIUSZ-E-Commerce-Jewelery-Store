@@ -189,6 +189,12 @@ export const adminSidebarNavItems = [
     icon: "home",
   },
   {
+    title: "Klienci",
+    slug: "klienci",
+    href: "/admin/klienci",
+    icon: "user",
+  },
+  {
     title: "Asortyment",
     slug: "asortyment",
     href: "/admin/asortyment",

@@ -6,7 +6,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { addCategory } from "@/actions/inventory"
 import type { FileWithPreview } from "@/types"
-import { categorySchema, type AddCategoryInput } from "@/validations/inventory"
+import { categorySchema, type AddCategoryInput } from "@/validations/tag"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { generateReactHelpers } from "@uploadthing/react/hooks"
 import { useForm } from "react-hook-form"
@@ -47,7 +47,6 @@ export function AddCategoryForm(): JSX.Element {
       description: "",
       menuItem: true,
       parentId: null,
-
       images: [],
     },
   })
@@ -114,7 +113,7 @@ export function AddCategoryForm(): JSX.Element {
             })
         }
       } catch (error) {
-        console.log(error)
+        console.error(error)
         toast({
           title: "Coś poszło nie tak",
           description: "Spróbuj ponownie",
@@ -233,7 +232,7 @@ export function AddCategoryForm(): JSX.Element {
           </Button>
 
           <Link
-            href="/aadmin/asortyment/kategorie"
+            href="/admin/asortyment/kategorie"
             className={cn(buttonVariants({ variant: "ghost" }), "w-fit")}
           >
             Anuluj

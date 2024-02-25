@@ -9,7 +9,6 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { AddCategoryForm } from "@/components/forms/inventory/add-category-form"
-import { SubSubHeader } from "@/components/nav/back-office/subsubheader"
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
@@ -20,7 +19,7 @@ export const metadata: Metadata = {
 export default function AddCategoryPage(): JSX.Element {
   return (
     <div>
-      <SubSubHeader />
+      {/* <SubSubHeader /> */}
       <div className="p-5">
         <Card className="max-w-5xl rounded-md bg-tertiary">
           <CardHeader className="px-5 pt-5">
