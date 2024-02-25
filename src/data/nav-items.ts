@@ -207,12 +207,6 @@ export const adminSidebarNavItems = [
         hrefPlus: "/admin/asortyment/kategorie/dodaj-kategorie",
       },
       {
-        title: "Podkategorie",
-        slug: "podkategorie",
-        href: "/admin/asortyment/podkategorie",
-        hrefPlus: "/admin/asortyment/podkategorie/dodaj-podkategorie",
-      },
-      {
         title: "Tagi",
         slug: "tagi",
         href: "/admin/asortyment/tagi",

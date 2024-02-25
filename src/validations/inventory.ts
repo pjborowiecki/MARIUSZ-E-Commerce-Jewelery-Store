@@ -57,7 +57,7 @@ export const categorySchema = z.object({
 export const getCategoryByIdSchema = z.object({
   id: z
     .string({
-      required_error: "Id kategorii jest wymagany",
+      required_error: "Id kategorii jest wymagane",
       invalid_type_error: "Dane wejściowe muszą być tekstem",
     })
     .min(1, {
@@ -75,8 +75,52 @@ export const getCategoryByNameSchema = z.object({
   }),
 })
 
+export const getTagByIdSchema = z.object({
+  id: z
+    .string({
+      required_error: "Id tagu jest wymagane",
+      invalid_type_error: "Dane wejściowe muszą być tekstem",
+    })
+    .min(1, {
+      message: "Id musi mieć przynajmniej 1 znak",
+    })
+    .max(512, {
+      message: "Id musi mieć maksymalnie 512 znaków",
+    }),
+})
+
+export const getTagByNameSchema = z.object({
+  name: z.string({
+    required_error: "Nazwa tagu jest wymagana",
+    invalid_type_error: "Dane wejściowe muszą być tekstem",
+  }),
+})
+
+export const getProductById = z.object({
+  id: z
+    .string({
+      required_error: "Id produktu jest wymagane",
+      invalid_type_error: "Dane wejściowe muszą być tekstem",
+    })
+    .min(1, {
+      message: "Id musi mieć przynajmniej 1 znak",
+    })
+    .max(512, {
+      message: "Id musi mieć maksymalnie 512 znaków",
+    }),
+})
+
+export const getProductByName = z.object({
+  name: z.string({
+    required_error: "Nazwa produktu jest wymagana",
+    invalid_type_error: "Dane wejściowe muszą być tekstem",
+  }),
+})
+
 export type AddCategoryInput = z.infer<typeof categorySchema>
-
 export type GetCategoryByIdInput = z.infer<typeof getCategoryByIdSchema>
-
 export type GetCategoryByNameInput = z.infer<typeof getCategoryByNameSchema>
+export type GetTagByIdInput = z.infer<typeof getTagByIdSchema>
+export type GetTagByNameInput = z.infer<typeof getTagByNameSchema>
+export type GetProductByIdInput = z.infer<typeof getProductById>
+export type GetProductByNameInput = z.infer<typeof getProductByName>

@@ -10,6 +10,8 @@ import {
   psDeleteTagById,
   psGetAllCategories,
   psGetAllProducts,
+  psGetAllProductsByCategoryId,
+  psGetAllProductsByCategoryName,
   psGetAllTags,
   psGetCategoryById,
   psGetCategoryByName,

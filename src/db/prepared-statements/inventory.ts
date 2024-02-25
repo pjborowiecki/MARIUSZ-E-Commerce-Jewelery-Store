@@ -67,6 +67,16 @@ export const psGetAllProducts = db
   .from(products)
   .prepare("psGetAllProducts")
 
+export const psGetAllProductsByCategoryId = db
+  .select()
+  .from(products)
+  .prepare("psGetAllProductsByCategoryId")
+
+export const psGetAllProductsByCategoryName = db
+  .select()
+  .from(products)
+  .prepare("psGetAllProductsByCategoryName")
+
 export const psDeleteProductById = db
   .delete(products)
   .where(eq(products.id, sql.placeholder("id")))
