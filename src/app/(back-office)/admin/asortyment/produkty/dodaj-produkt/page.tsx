@@ -20,16 +20,16 @@ export const metadata: Metadata = {
 export default function AddProductPage(): JSX.Element {
   return (
     <div>
-      <div className="flex h-16 w-full items-center border-b bg-tertiary px-5">
+      <div className="flex h-16 w-full items-center border-b bg-tertiary px-4">
         <Breadcrumbs />
       </div>
-      <div className="p-5">
+      <div className="p-4">
         <Card className="max-w-5xl rounded-md bg-tertiary">
-          {/* <CardHeader className="px-5 pt-5">
+          {/* <CardHeader className="px-4 pt-4">
             <CardTitle className="text-2xl">Dodaj Produkt</CardTitle>
             <CardDescription>Dodaj produkt do asortymentu</CardDescription>
           </CardHeader> */}
-          <CardContent className="p-5">
+          <CardContent className="p-4">
             <AddProductForm />
           </CardContent>
         </Card>

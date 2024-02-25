@@ -2,7 +2,6 @@ import type { StoredFile } from "@/types"
 import type { CartItem, CheckoutItem } from "@/validations/cart"
 import type { AdapterAccount } from "@auth/core/adapters"
 import { relations } from "drizzle-orm"
-import { int } from "drizzle-orm/mysql-core"
 import {
   boolean,
   decimal,

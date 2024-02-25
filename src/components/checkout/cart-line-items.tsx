@@ -28,7 +28,7 @@ export function CartLineItems({
     <Comp className="h-full">
       <div
         className={cn(
-          "flex w-full flex-col gap-5",
+          "flex w-full flex-col gap-4",
           isScrollable && "pr-6",
           className
         )}

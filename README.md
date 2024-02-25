@@ -2,6 +2,7 @@
 
 #### TODO:
 
+- [ ] Translate the date picker
 - [x] Update slugify helper function to remove polish letters
 
 - [ ] Change Start to Podsumowanie (Analytics, etc.)

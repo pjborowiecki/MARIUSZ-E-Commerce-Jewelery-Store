@@ -20,15 +20,15 @@ export default function AddCategoryPage(): JSX.Element {
   return (
     <div>
       {/* <SubSubHeader /> */}
-      <div className="p-5">
+      <div className="p-4">
         <Card className="max-w-5xl rounded-md bg-tertiary">
-          <CardHeader className="px-5 pt-5">
+          <CardHeader className="px-4 pt-4">
             <CardTitle className="text-2xl">Nowa kategoria</CardTitle>
             <CardDescription className="text-base">
               Dodaj nową kategorię produktów
             </CardDescription>
           </CardHeader>
-          <CardContent className="px-5 pt-2">
+          <CardContent className="p-4">
             <AddCategoryForm />
           </CardContent>
         </Card>

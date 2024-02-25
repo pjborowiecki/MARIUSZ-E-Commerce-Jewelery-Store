@@ -16,7 +16,7 @@ export function Breadcrumbs(): JSX.Element {
     .slice(1)
 
   return (
-    <ul className="flex size-full items-center">
+    <ul className="flex size-full items-center text-ellipsis">
       {pathNames.length > 3 && <Icons.chevronRight className="size-4" />}
       {pathNames.map((link, index) => {
         const href = `/admin/${pathNames.slice(0, index + 1).join("/")}`
@@ -27,7 +27,7 @@ export function Breadcrumbs(): JSX.Element {
               className={cn(
                 buttonVariants({ variant: "ghost" }),
                 index === 0 && "cursor-default hover:bg-transparent",
-                "px-2 text-xs capitalize"
+                "text-ellipsis px-2 text-xs capitalize"
               )}
             >
               {index === 0 ? (

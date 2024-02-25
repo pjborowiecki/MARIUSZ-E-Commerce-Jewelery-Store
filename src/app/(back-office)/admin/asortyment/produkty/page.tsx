@@ -11,9 +11,8 @@ import { and, asc, desc, gte, inArray, like, lte, sql } from "drizzle-orm"
 import { db } from "@/config/db"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
-import { Breadcrumbs } from "@/components/breadcrumbs"
-import { CustomTooltip } from "@/components/custom-tooltip"
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
+import { DateRangePicker } from "@/components/date-range-picker"
 import { Icons } from "@/components/icons"
 import { ProductsTableShell } from "@/components/shells/products-table-shell"
 
@@ -106,36 +105,22 @@ export default async function AdminProductsPage({
   const pageCount = Math.ceil(count / limit)
 
   return (
-    <div>
-      <div className="flex h-16 w-full items-center justify-between border-b bg-tertiary px-5">
-        <Breadcrumbs />
-        <div className="flex items-center gap-2">
-          <CustomTooltip text="Dodaj produkt">
-            <Link
-              href="/admin/asortyment/produkty/dodaj-produkt"
-              aria-label="Dodaj produkt"
-              className={cn(buttonVariants({ size: "sm" }), "gap-1.5")}
-            >
-              <Icons.plus aria-hidden="true" className="size-3" />
-              <span>Dodaj produkt</span>
-            </Link>
-          </CustomTooltip>
-        </div>
+    <div className="space-y-6">
+      <div className="xs:flex-row xs:items-center xs:justify-between flex flex-col gap-4">
+        <h2 className="text-2xl font-bold tracking-tight">Produkty</h2>
+        <DateRangePicker align="end" />
       </div>
-
-      <div className="p-5">
-        <React.Suspense
-          fallback={
-            <DataTableSkeleton
-              columnCount={6}
-              isNewRowCreatable={true}
-              isRowsDeletable={true}
-            />
-          }
-        >
-          <ProductsTableShell data={data} pageCount={pageCount} />
-        </React.Suspense>
-      </div>
+      <React.Suspense
+        fallback={
+          <DataTableSkeleton
+            columnCount={5}
+            isNewRowCreatable={true}
+            isRowsDeletable={true}
+          />
+        }
+      >
+        <ProductsTableShell data={data} pageCount={pageCount} />
+      </React.Suspense>
     </div>
   )
 }

@@ -2,63 +2,50 @@
 
 import * as React from "react"
 import Link from "next/link"
+import { useSelectedLayoutSegment } from "next/navigation"
 
-import { siteConfig } from "@/config/site"
+import { adminSidebarNavItems } from "@/data/nav-items"
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { CustomTooltip } from "@/components/custom-tooltip"
 import { Icons } from "@/components/icons"
-import { SidebarNav } from "@/components/nav/back-office/sidebar-nav"
 
 export function Sidebar(): JSX.Element {
-  const [collapsed, setCollapsed] = React.useState<boolean>(false)
+  const segment = useSelectedLayoutSegment()
 
   return (
-    <aside
-      className={cn(
-        "flex h-screen flex-col justify-between border-r bg-tertiary transition-all duration-300 ease-in-out",
-        collapsed ? "w-fit" : "w-66 shrink-0"
-      )}
-    >
-      <div>
-        <div className="flex h-20 items-center">
+    <div className="flex w-full flex-col gap-2">
+      {adminSidebarNavItems.map((item, index) => {
+        const Icon = Icons[item.icon as keyof typeof Icons]
+
+        return item.href ? (
           <Link
-            href="/admin/start/panel"
-            className="flex w-full items-center justify-center gap-2"
+            aria-label={item.title}
+            key={index}
+            href={item.href}
+            target={item.external ? "_blank" : ""}
+            rel={item.external ? "noreferrer" : ""}
           >
-            <Icons.gem className="size-5" aria-hidden="true" />
             <span
               className={cn(
-                "whitespace-nowrap font-bold leading-none tracking-wide",
-                collapsed && "hidden"
+                "group flex w-full items-center rounded-md border border-transparent px-2 py-1 hover:bg-muted hover:text-foreground",
+                item.href.includes(String(segment))
+                  ? "bg-muted font-medium text-foreground"
+                  : "text-muted-foreground",
+                item.disabled && "pointer-events-none opacity-60"
               )}
             >
-              {siteConfig.name}
+              <Icon className="mr-2 size-4" aria-hidden="true" />
+              <span>{item.title}</span>
             </span>
           </Link>
-        </div>
-
-        <SidebarNav collapsed={collapsed} setCollapsed={setCollapsed} />
-      </div>
-
-      <div>
-        <div className="flex h-16 items-center justify-center border-t px-2">
-          <CustomTooltip text={collapsed ? "Rozwiń menu" : "Zwiń menu"}>
-            <Button
-              variant="secondary"
-              aria-label="Zwiń lub rozwiń menu"
-              className="w-full transition-all duration-300 ease-in-out"
-              onClick={() => setCollapsed(!collapsed)}
-            >
-              {collapsed ? (
-                <Icons.chevronRight className="size-4" aria-hidden="true" />
-              ) : (
-                <Icons.chevronLeft className="size-4" aria-hidden="true" />
-              )}
-            </Button>
-          </CustomTooltip>
-        </div>
-      </div>
-    </aside>
+        ) : (
+          <span
+            key={index}
+            className="flex w-full cursor-not-allowed items-center rounded-md p-2 text-muted-foreground hover:underline"
+          >
+            {item.title}
+          </span>
+        )
+      })}
+    </div>
   )
 }
