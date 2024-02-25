@@ -1,4 +1,4 @@
-# Jubiler Marian
+# Jubiler Mariusz
 
 #### TODO:
 

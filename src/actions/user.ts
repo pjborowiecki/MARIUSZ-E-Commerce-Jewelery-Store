@@ -6,7 +6,7 @@ import {
   psGetUserByEmailVerificationToken,
   psGetUserById,
   psGetUserByResetPasswordToken,
-} from "@/db/prepared/statements"
+} from "@/db/prepared-statements/user"
 import { type User } from "@/db/schema"
 import {
   getUserByEmailSchema,

@@ -1,20 +1,20 @@
 const links = {
-  github: "https://github.com/pjborowiecki/JUBILER-MARIAN",
+  github: "https://github.com/pjborowiecki/JUBILER-MARIUSZ",
   twitter: "https://twitter.com/pjborowiecki",
   linkedin: "https://www.linkedin.com/in/pjborowiecki",
   discord: "",
   authorsWebsite: "https://pjborowiecki.com",
   authorsGitHub: "https://github.com/pjborowiecki",
-  openGraphImage: "https://marian.pl/images/opengraph-image.png",
-  manifestFile: "https://marian.pl/site.webmanifest",
+  openGraphImage: "https://mariusz.pl/images/opengraph-image.png",
+  manifestFile: "https://mariusz.pl/site.webmanifest",
 }
 
 export const siteConfig = {
-  name: "Marian",
+  name: "Mariusz",
   description:
-    "Wyjątkowa biżuteria na każdą okazję. Marian to klasa sama w sobie.",
+    "Wyjątkowa biżuteria na każdą okazję. Mariusz to klasa sama w sobie.",
   links,
-  url: "https://marian.pl",
+  url: "https://mariusz.pl",
   ogImage: links.openGraphImage,
   author: "pjborowiecki",
   hostingRegion: "fra1",

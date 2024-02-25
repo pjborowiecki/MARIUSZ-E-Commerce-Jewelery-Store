@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1708624585740,
-      "tag": "0000_dizzy_iron_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1708640090129,
-      "tag": "0001_jittery_monster_badoon",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1708714200221,
-      "tag": "0002_fluffy_james_howlett",
+      "when": 1708816775912,
+      "tag": "0000_great_doctor_doom",
       "breakpoints": true
     }
   ]

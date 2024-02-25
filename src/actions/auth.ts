@@ -4,7 +4,7 @@ import crypto from "crypto"
 import { unstable_noStore as noStore } from "next/cache"
 import { getUserByEmail, getUserByResetPasswordToken } from "@/actions/user"
 import { signIn } from "@/auth"
-import { psLinkOAuthAccount } from "@/db/prepared/statements"
+import { psLinkOAuthAccount } from "@/db/prepared-statements/auth"
 import { users } from "@/db/schema"
 import { env } from "@/env.mjs"
 import {

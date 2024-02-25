@@ -22,6 +22,8 @@ export const env = createEnv({
     RESEND_HOST: z.string(),
     RESEND_USERNAME: z.string(),
     RESEND_PORT: z.string(),
+    UPLOADTHING_APP_ID: z.string(),
+    UPLOADTHING_SECRET: z.string(),
   },
 
   /**
@@ -54,6 +56,8 @@ export const env = createEnv({
     RESEND_HOST: process.env.RESEND_HOST,
     RESEND_USERNAME: process.env.RESEND_USERNAME,
     RESEND_PORT: process.env.RESEND_PORT,
+    UPLOADTHING_APP_ID: process.env.UPLOADTHING_APP_ID,
+    UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.

@@ -38,9 +38,9 @@ export async function Header(): Promise<JSX.Element> {
       <div className="flex items-center gap-2">
         <HeaderSearch />
 
-        <CustomTooltip text="Zawartość koszyka">
-          <CartSheet />
-        </CustomTooltip>
+        {/* <CustomTooltip text="Zawartość koszyka"> */}
+        {/* <CartSheet /> */}
+        {/* </CustomTooltip> */}
 
         {session ? (
           <DropdownMenu>

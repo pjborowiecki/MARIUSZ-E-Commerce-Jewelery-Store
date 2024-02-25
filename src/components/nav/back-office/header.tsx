@@ -9,7 +9,7 @@ export async function Header(): Promise<JSX.Element> {
 
   return (
     <header className="sticky top-0 z-[50] flex h-20 items-center justify-between gap-8 border-b bg-tertiary px-5">
-      <div>Admin Dashboard Header</div>
+      <div></div>
       <div>
         {session?.user ? (
           <SignOutButton />

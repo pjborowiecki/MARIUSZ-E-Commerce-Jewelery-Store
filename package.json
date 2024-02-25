@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "jubiler-marian",
+  "name": "jubiler-mariusz",
   "description": "",
   "version": "0.1.0",
   "license": "MIT",
@@ -10,10 +10,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/pjborowiecki/JUBILER-MARIAN"
+    "url": "https://github.com/pjborowiecki/JUBILER-MARIUSZ"
   },
   "bugs": {
-    "url": "https://github.com/pjborowiecki/JUBILER-MARIAN/issues"
+    "url": "https://github.com/pjborowiecki/JUBILER-MARIUSZ/issues"
   },
   "type": "module",
   "scripts": {
@@ -71,6 +71,8 @@
     "@react-email/components": "^0.0.15",
     "@studio-freight/react-lenis": "^0.0.45",
     "@t3-oss/env-nextjs": "^0.7.3",
+    "@tanstack/react-table": "^8.12.0",
+    "@uploadthing/react": "^6.2.4",
     "@vercel/analytics": "^1.2.2",
     "bcryptjs": "^2.4.3",
     "bufferutil": "^4.0.8",
@@ -87,17 +89,21 @@
     "next-themes": "^0.2.1",
     "nodemailer": "^6.9.10",
     "react": "^18.2.0",
+    "react-cropper": "^2.3.3",
     "react-day-picker": "^8.10.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
     "react-email": "^2.1.0",
     "react-hook-form": "^7.50.1",
+    "react-medium-image-zoom": "^5.1.10",
     "react-wrap-balancer": "^1.1.0",
     "resend": "^3.2.0",
     "sonner": "^1.4.0",
+    "stripe": "^14.18.0",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
     "undici": "^6.6.2",
+    "uploadthing": "^6.4.1",
     "zod": "^3.22.4",
     "zustand": "^4.5.1"
   },
@@ -129,6 +135,11 @@
     "remark-gfm": "^4.0.0",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.3.3"
+  },
+  "overrides": {
+    "next-contentlayer": {
+      "next": "$next"
+    }
   },
   "engine": {
     "node": ">=20.10.0"

@@ -1,5 +1,6 @@
 import type { Account, Profile, Session, User } from "next-auth"
 import type { JWT } from "next-auth/jwt"
+import type { FileWithPath } from "react-dropzone"
 
 export interface NavItem {
   href: string
@@ -65,4 +66,8 @@ export interface StoredFile {
   id: string
   name: string
   url: string
+}
+
+export type FileWithPreview = FileWithPath & {
+  preview: string
 }

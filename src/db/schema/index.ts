@@ -1,6 +1,5 @@
 import type { StoredFile } from "@/types"
 import type { CartItem, CheckoutItem } from "@/validations/cart"
-import type { Category, Subcategory, Tag } from "@/validations/inventory"
 import type { AdapterAccount } from "@auth/core/adapters"
 import { relations } from "drizzle-orm"
 import {
@@ -119,24 +118,16 @@ export const categories = pgTable("category", {
   id: text("id").notNull().primaryKey(),
   name: varchar("name", { length: 64 }).notNull(),
   description: text("description"),
-  // subcategories: json("categories").$type<Subcategory[] | null>().default(null),
+  menuItem: boolean("menu_item").notNull().default(true),
+  topLevel: boolean("main_category").notNull().default(true),
+  parentId: text("parentId").references(() => addresses.id, {
+    onDelete: "no action",
+  }),
 })
 
-// TODO
-export const categoriesRelations = relations(
-  categories,
-  ({ one, many }) => ({})
-)
-
-export const subcategories = pgTable("subcategory", {
-  id: text("id").notNull().primaryKey(),
-  name: varchar("name", { length: 64 }).notNull(),
-  description: text("description"),
-  // categoryId: text("categoryId").notNull().references(),
-})
-
-// TODO
-// export const subcategoriesRelations = relations(subcategories, ({ one, many }) => ({})
+export const categoriesRelations = relations(categories, ({ one, many }) => ({
+  categories: many(categories),
+}))
 
 // TODO: Update category and subcategory types
 export const products = pgTable("product", {

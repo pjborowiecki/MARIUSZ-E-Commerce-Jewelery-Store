@@ -1,4 +1,4 @@
-import { newsletterSubscribers, users } from "@/db/schema"
+import { users } from "@/db/schema"
 import { eq, sql } from "drizzle-orm"
 
 import { db } from "@/config/db"
@@ -26,15 +26,3 @@ export const psGetUserByResetPasswordToken = db
   .from(users)
   .where(eq(users.resetPasswordToken, sql.placeholder("token")))
   .prepare("psGetUserByResetPasswordToken")
-
-export const psGetNewsletterSubscriberByEmail = db
-  .select()
-  .from(newsletterSubscribers)
-  .where(eq(newsletterSubscribers.email, sql.placeholder("email")))
-  .prepare("psGetNewsletterSubscriberByEmail")
-
-export const psLinkOAuthAccount = db
-  .update(users)
-  .set({ emailVerified: new Date() })
-  .where(eq(users.id, sql.placeholder("userId")))
-  .prepare("psLinkOAuthAccount")

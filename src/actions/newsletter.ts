@@ -1,7 +1,7 @@
 "use server"
 
 import { unstable_noStore as noStore } from "next/cache"
-import { psGetNewsletterSubscriberByEmail } from "@/db/prepared/statements"
+import { psGetNewsletterSubscriberByEmail } from "@/db/prepared-statements/newsletter"
 import { newsletterSubscribers } from "@/db/schema"
 import { env } from "@/env.mjs"
 import {
