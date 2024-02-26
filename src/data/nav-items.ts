@@ -181,56 +181,54 @@ export const mainNavItems = [
 
 export const sidebarNavItems = [] satisfies NavItem[]
 
-export const adminSidebarNavItems = [
+export const adminNavItems = [
   {
-    title: "Start",
-    slug: "home",
-    href: "/admin/start/panel",
-    icon: "home",
+    title: "Zamówienia",
+    href: "/admin/zamowienia",
+    icon: "box",
+    external: false,
+    disabled: false,
   },
   {
-    title: "Asortyment",
-    slug: "asortyment",
-    href: "/admin/asortyment",
+    title: "Produkty",
+    href: "/admin/produkty",
+    icon: "gem",
+    external: false,
+    disabled: false,
+  },
+  {
+    title: "Kategorie",
+    href: "/admin/kategorie",
     icon: "inventory",
-    subItems: [
-      {
-        title: "Produkty",
-        slug: "produkty",
-        href: "/admin/asortyment/produkty",
-        hrefPlus: "/admin/asortyment/produkty/dodaj-produkt",
-      },
-      {
-        title: "Kategorie",
-        slug: "kategorie",
-        href: "/admin/asortyment/kategorie",
-        hrefPlus: "/admin/asortyment/kategorie/dodaj-kategorie",
-      },
-      {
-        title: "Tagi",
-        slug: "tagi",
-        href: "/admin/asortyment/tagi",
-        hrefPlus: "/admin/asortyment/tagi/dodaj-tag",
-      },
-    ],
+    external: false,
+    disabled: false,
   },
   {
-    title: "Sprzedaż",
-    slug: "sprzedaz",
-    href: "/admin/sprzedaz",
-    icon: "shoppingCart",
-    subItems: [
-      {
-        title: "Zamówienia",
-        slug: "zamowienia",
-        href: "/admin/sprzedaz/zamowienia",
-      },
-      {
-        title: "Zwroty",
-        slug: "zwroty",
-        href: "/admin/sprzedaz/zwroty",
-        hrefPlus: "/admin/sprzedaz/zwroty/dodaj-zwrot",
-      },
-    ],
+    title: "Tagi",
+    href: "/admin/tagi",
+    icon: "tag",
+    external: false,
+    disabled: false,
+  },
+  {
+    title: "Klienci",
+    href: "/admin/klienci",
+    icon: "users",
+    external: false,
+    disabled: false,
+  },
+  {
+    title: "Statystyki",
+    href: "/admin/statystyki",
+    icon: "barChart",
+    external: false,
+    disabled: false,
+  },
+  {
+    title: "Promocje",
+    href: "/admin/promocje",
+    icon: "percent",
+    external: false,
+    disabled: false,
   },
 ] satisfies NavItem[]

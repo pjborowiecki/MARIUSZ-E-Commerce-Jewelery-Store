@@ -1,5 +1,6 @@
-import { type Product } from "@/db/schema"
 import type { SearchParams } from "@/types"
+
+import { type Product } from "@/db/schema"
 
 interface CategoryPageProps {
   params: {

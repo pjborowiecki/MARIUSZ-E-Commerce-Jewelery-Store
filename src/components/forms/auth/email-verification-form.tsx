@@ -3,15 +3,17 @@
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import { resendEmailVerificationLink } from "@/actions/email"
-import {
-  emailVerificationSchema,
-  type EmailVerificationFormInput,
-} from "@/validations/email"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
 import { DEFAULT_UNAUTHENTICATED_REDIRECT } from "@/config/defaults"
+import {
+  emailVerificationSchema,
+  type EmailVerificationFormInput,
+} from "@/validations/email"
+
 import { useToast } from "@/hooks/use-toast"
+
 import { Button } from "@/components/ui/button"
 import {
   Form,

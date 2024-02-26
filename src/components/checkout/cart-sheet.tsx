@@ -2,6 +2,7 @@ import Link from "next/link"
 import { getCart } from "@/actions/cart"
 
 import { cn, formatPrice } from "@/lib/utils"
+
 import { Badge } from "@/components/ui/badge"
 import { Button, buttonVariables } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"

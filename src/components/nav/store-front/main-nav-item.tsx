@@ -5,6 +5,7 @@ import Link from "next/link"
 import Balancer from "react-wrap-balancer"
 
 import { cn } from "@/lib/utils"
+
 import { NavigationMenuLink } from "@/components/ui/navigation-menu"
 
 export const MainNavItem = React.forwardRef<

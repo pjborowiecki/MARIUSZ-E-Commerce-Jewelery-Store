@@ -1,8 +1,10 @@
 import Image from "next/image"
-import { type CartLineItem } from "@/validations/cart"
 import { Slot } from "@radix-ui/react-slot"
 
+import { type CartLineItem } from "@/validations/cart"
+
 import { cn, formatPrice } from "@/lib/utils"
+
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { UpdateCart } from "@/components/checkout/update-cart"
@@ -28,7 +30,7 @@ export function CartLineItems({
     <Comp className="h-full">
       <div
         className={cn(
-          "flex w-full flex-col gap-5",
+          "flex w-full flex-col gap-4",
           isScrollable && "pr-6",
           className
         )}

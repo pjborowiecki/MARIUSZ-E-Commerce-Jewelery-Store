@@ -1,10 +1,15 @@
 "use server"
 
 import crypto from "crypto"
+
 import { unstable_noStore as noStore } from "next/cache"
 import { getUserByEmail } from "@/actions/user"
-import { users } from "@/db/schema"
+import { eq } from "drizzle-orm"
+
 import { env } from "@/env.mjs"
+import { db } from "@/config/db"
+import { resend } from "@/config/email"
+import { users } from "@/db/schema"
 import {
   checkIfEmailVerifiedSchema,
   emailVerificationSchema,
@@ -13,10 +18,7 @@ import {
   type EmailVerificationFormInput,
   type MarkEmailAsVerifiedInput,
 } from "@/validations/email"
-import { eq } from "drizzle-orm"
 
-import { db } from "@/config/db"
-import { resend } from "@/config/email"
 import { EmailVerificationEmail } from "@/components/emails/email-verification-email"
 
 export async function resendEmailVerificationLink(

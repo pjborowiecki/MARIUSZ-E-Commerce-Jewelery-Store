@@ -6,7 +6,9 @@ import type { NavItem } from "@/types"
 import Balancer from "react-wrap-balancer"
 
 import { siteConfig } from "@/config/site"
+
 import { cn } from "@/lib/utils"
+
 import {
   NavigationMenu,
   NavigationMenuContent,

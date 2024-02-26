@@ -1,5 +1,4 @@
 import type { StoredFile } from "@/types"
-import type { CartItem, CheckoutItem } from "@/validations/cart"
 import type { AdapterAccount } from "@auth/core/adapters"
 import { relations } from "drizzle-orm"
 import {
@@ -15,10 +14,18 @@ import {
   varchar,
 } from "drizzle-orm/pg-core"
 
-export const userRoleEnum = pgEnum("user_role", ["customer", "owner"])
+import type { CartItem, CheckoutItem } from "@/validations/cart"
+
+export const productCategoryEnum = pgEnum("product_category", [
+  "kolczyki",
+  "pierścionki",
+  "naszyjniki",
+  "łańcuszki",
+  "inne",
+])
 
 export const accounts = pgTable(
-  "account",
+  "accounts",
   {
     userId: text("userId")
       .notNull()
@@ -48,7 +55,7 @@ export const accountsRelations = relations(accounts, ({ one }) => ({
   }),
 }))
 
-export const sessions = pgTable("session", {
+export const sessions = pgTable("sessions", {
   sessionToken: text("sessionToken").notNull().primaryKey(),
   userId: text("userId")
     .notNull()
@@ -63,7 +70,7 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
   }),
 }))
 
-export const users = pgTable("user", {
+export const users = pgTable("users", {
   id: text("id").notNull().primaryKey(),
   name: varchar("name", { length: 128 }),
   surname: varchar("surname", { length: 128 }),
@@ -76,7 +83,7 @@ export const users = pgTable("user", {
     mode: "date",
   }),
   image: text("image"),
-  role: userRoleEnum("customer"),
+  storeOwner: boolean("store_owner").notNull().default(false),
   createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
 })
 
@@ -89,7 +96,7 @@ export const usersRelations = relations(users, ({ one, many }) => ({
 }))
 
 export const verificationTokens = pgTable(
-  "verificationToken",
+  "verificationTokens",
   {
     identifier: text("identifier").notNull(),
     token: text("token").notNull(),
@@ -100,79 +107,63 @@ export const verificationTokens = pgTable(
   })
 )
 
-export const newsletterSubscribers = pgTable("newsletterSubscriber", {
+export const newsletterSubscribers = pgTable("newsletterSubscribers", {
   email: varchar("email", { length: 128 }).notNull().primaryKey(),
   createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
 })
 
-// TODO
-export const tags = pgTable("tag", {
-  id: text("id").notNull().primaryKey(),
-  name: varchar("name", { length: 64 }).notNull(),
-})
-
-// TODO
-// export const tagsRelations = relations(tags, ({ one, many }) => ({})
-
-export const categories = pgTable("category", {
-  id: text("id").notNull().primaryKey(),
-  name: varchar("name", { length: 64 }).notNull(),
-  description: text("description"),
-  menuItem: boolean("menu_item").notNull().default(true),
-  topLevel: boolean("main_category").notNull().default(true),
-  parentId: text("parentId").references(() => addresses.id, {
-    onDelete: "no action",
-  }),
-})
-
-export const categoriesRelations = relations(categories, ({ one, many }) => ({
-  categories: many(categories),
-}))
-
-// TODO: Update category and subcategory types
-export const products = pgTable("product", {
+export const products = pgTable("products", {
   id: text("id").notNull().primaryKey(),
   name: varchar("name", { length: 128 }).notNull(),
   description: text("description"),
   images: json("images").$type<StoredFile[] | null>().default(null),
-  // category: text("category").notNull(),
-  category: json("categories").$type<string[] | null>().default(null),
-  // subcategory: varchar("subcategory", {length: 255}),
-  subcategory: json("subcategories").$type<string[] | null>().default(null),
+  category: productCategoryEnum("category").notNull().default("kolczyki"),
+  subcategory: varchar("subcategory", { length: 256 }),
   tags: json("tags").$type<string[] | null>().default(null),
   price: decimal("price", { precision: 10, scale: 2 }).notNull().default("0"),
   inventory: integer("inventory").notNull().default(0),
   createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
 })
 
-// TODO
-// export const productsRelations = relations(products, ({ one, many }) => ({
-//   users: many(products),
-// }))
+export const carts = pgTable("carts", {
+  id: text("id").notNull().primaryKey(),
+  paymentIntentId: varchar("payment_intent_id", { length: 256 }),
+  clientSecret: varchar("client_secret", { length: 256 }),
+  items: json("items").$type<CartItem[] | null>().default(null),
+  closed: boolean("closed").notNull().default(false),
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
+  // updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow(),
+})
 
-export const orders = pgTable("order", {
+export const orders = pgTable("orders", {
   id: text("id").notNull().primaryKey(),
   items: json("items").$type<CheckoutItem[] | null>().default(null),
   quantity: integer("quantity"),
   amount: decimal("amount", { precision: 10, scale: 2 }).notNull().default("0"),
   stripePaymentIntentId: varchar("stripe_payment_intent_id", {
-    length: 255,
+    length: 256,
   }).notNull(),
   stripePaymentIntentStatus: varchar("stripe_payment_intent_status", {
-    length: 255,
+    length: 256,
   }).notNull(),
-  name: varchar("name", { length: 255 }),
-  email: varchar("email", { length: 255 }),
+  name: varchar("name", { length: 256 }),
+  email: varchar("email", { length: 256 }),
   addressId: text("addressId")
     .notNull()
     .references(() => addresses.id, { onDelete: "no action" }),
   createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
 })
 
-// TODO
-// export const ordersRelations = relations(orders, ({one, many}) => ({}))
+export const payments = pgTable("payments", {
+  id: text("id").notNull().primaryKey(),
+  stripeAccountId: varchar("stripe_account_id", { length: 256 }).notNull(),
+  stripeAccountCreatedAt: integer("stripe_account_created_at"),
+  stripeAccountExpiresAt: integer("stripe_account_expires_at"),
+  detailsSubmitted: boolean("details_submitted").notNull().default(false),
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
+})
 
-export const addresses = pgTable("address", {
+export const addresses = pgTable("addresses", {
   id: text("id").notNull().primaryKey(),
   line1: varchar("street", { length: 128 }).notNull(),
   line2: varchar("line2", { length: 128 }),
@@ -182,30 +173,16 @@ export const addresses = pgTable("address", {
   createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
 })
 
-// TODO
-// export const addressesRelations = relations(addresses, ({one, many}) => ({}))
-
-// TODO
-// export const favouriteItems = pgTable("favourite_items", {
-//   id: text("id").notNull().primaryKey(),
-// })
-
-// TODO
-// export const favouriteItemsRelations = relations(favouriteItems, ({one, many}) => ({}))
-
-// TODO
-export const carts = pgTable("cart", {
+export const emailPreferences = pgTable("email_preferences", {
   id: text("id").notNull().primaryKey(),
-  paymentIntentId: varchar("payment_intent_id", { length: 255 }),
-  clientSecret: varchar("client_secret", { length: 255 }),
-  items: json("items").$type<CartItem[] | null>().default(null),
-  closed: boolean("closed").notNull().default(false),
-  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
-  // updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow(),
+  userId: varchar("user_id", { length: 256 }),
+  email: varchar("email", { length: 256 }).notNull(),
+  token: varchar("token", { length: 256 }).notNull(),
+  newsletter: boolean("newsletter").notNull().default(false),
+  marketing: boolean("marketing").notNull().default(false),
+  transactional: boolean("transactional").notNull().default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 })
-
-// TODO
-// export const cartsRelations = relations(carts, ({one, many}) => ({}))
 
 export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert
@@ -225,8 +202,17 @@ export type NewNewsletterSubscriber = typeof newsletterSubscribers.$inferInsert
 export type Product = typeof products.$inferSelect
 export type NewProduct = typeof products.$inferInsert
 
+export type Cart = typeof carts.$inferSelect
+export type NewCart = typeof carts.$inferInsert
+
 export type Order = typeof orders.$inferSelect
 export type NewOrder = typeof orders.$inferInsert
 
+export type Payment = typeof payments.$inferSelect
+export type NewPayment = typeof payments.$inferInsert
+
 export type Address = typeof addresses.$inferSelect
 export type NewAddress = typeof addresses.$inferInsert
+
+export type EmailPreferences = typeof emailPreferences.$inferSelect
+export type NewEmailPreferences = typeof emailPreferences.$inferInsert

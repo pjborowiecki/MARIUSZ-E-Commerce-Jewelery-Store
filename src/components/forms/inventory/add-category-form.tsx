@@ -4,15 +4,17 @@ import * as React from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { addCategory } from "@/actions/inventory"
+import { addCategory } from "@/actions/category"
 import type { FileWithPreview } from "@/types"
-import { categorySchema, type AddCategoryInput } from "@/validations/inventory"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { generateReactHelpers } from "@uploadthing/react/hooks"
 import { useForm } from "react-hook-form"
 
+import { categorySchema, type AddCategoryInput } from "@/validations/tag"
+
 import { useToast } from "@/hooks/use-toast"
 import { cn, isArrayOfFile } from "@/lib/utils"
+
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
   Form,
@@ -47,7 +49,6 @@ export function AddCategoryForm(): JSX.Element {
       description: "",
       menuItem: true,
       parentId: null,
-
       images: [],
     },
   })
@@ -114,7 +115,7 @@ export function AddCategoryForm(): JSX.Element {
             })
         }
       } catch (error) {
-        console.log(error)
+        console.error(error)
         toast({
           title: "Coś poszło nie tak",
           description: "Spróbuj ponownie",
@@ -233,7 +234,7 @@ export function AddCategoryForm(): JSX.Element {
           </Button>
 
           <Link
-            href="/aadmin/asortyment/kategorie"
+            href="/admin/asortyment/kategorie"
             className={cn(buttonVariants({ variant: "ghost" }), "w-fit")}
           >
             Anuluj

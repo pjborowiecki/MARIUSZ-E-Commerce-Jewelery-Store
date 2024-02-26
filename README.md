@@ -2,7 +2,10 @@
 
 #### TODO:
 
+- [ ] Translate the date picker
 - [x] Update slugify helper function to remove polish letters
+
+- [ ] Change Start to Podsumowanie (Analytics, etc.)
 
 - [ ] Update default redirects
 - [ ] Update redirects, depending on user's role (admin vs regular user)

@@ -2,63 +2,49 @@
 
 import * as React from "react"
 import Link from "next/link"
+import { useSelectedLayoutSegment } from "next/navigation"
 
-import { siteConfig } from "@/config/site"
+import { adminNavItems } from "@/data/nav-items"
+
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { CustomTooltip } from "@/components/custom-tooltip"
+
+import { buttonVariants } from "@/components/ui/button"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { Icons } from "@/components/icons"
-import { SidebarNav } from "@/components/nav/back-office/sidebar-nav"
 
 export function Sidebar(): JSX.Element {
-  const [collapsed, setCollapsed] = React.useState<boolean>(false)
+  const segment = useSelectedLayoutSegment()
 
   return (
-    <aside
-      className={cn(
-        "flex h-screen flex-col justify-between border-r bg-tertiary transition-all duration-300 ease-in-out",
-        collapsed ? "w-fit" : "w-66 shrink-0"
-      )}
-    >
-      <div>
-        <div className="flex h-20 items-center">
-          <Link
-            href="/admin/start/panel"
-            className="flex w-full items-center justify-center gap-2"
-          >
-            <Icons.gem className="size-5" aria-hidden="true" />
-            <span
-              className={cn(
-                "whitespace-nowrap font-bold leading-none tracking-wide",
-                collapsed && "hidden"
-              )}
-            >
-              {siteConfig.name}
-            </span>
-          </Link>
+    <aside className="hidden h-full w-56 overflow-y-auto border-r bg-tertiary pl-4 md:sticky md:block">
+      <ScrollArea className="py-6">
+        <div className="flex w-full flex-col gap-2">
+          {adminNavItems.map((item) => {
+            const Icon = Icons[item.icon as keyof typeof Icons]
+            return (
+              <Link
+                key={item.title}
+                href={item.href}
+                aria-label={item.title}
+                target={item.external ? "_blank" : ""}
+                rel={item.external ? "noreferrer" : ""}
+                className={cn(
+                  buttonVariants({ variant: "ghost" }),
+                  "w-full justify-start",
+                  item.href.includes(String(segment)) &&
+                    cn(
+                      buttonVariants({ variant: "secondary" }),
+                      "justify-start"
+                    )
+                )}
+              >
+                <Icon className="mr-2 size-4" aria-hidden="true" />
+                {item.title}
+              </Link>
+            )
+          })}
         </div>
-
-        <SidebarNav collapsed={collapsed} setCollapsed={setCollapsed} />
-      </div>
-
-      <div>
-        <div className="flex h-16 items-center justify-center border-t px-2">
-          <CustomTooltip text={collapsed ? "Rozwiń menu" : "Zwiń menu"}>
-            <Button
-              variant="secondary"
-              aria-label="Zwiń lub rozwiń menu"
-              className="w-full transition-all duration-300 ease-in-out"
-              onClick={() => setCollapsed(!collapsed)}
-            >
-              {collapsed ? (
-                <Icons.chevronRight className="size-4" aria-hidden="true" />
-              ) : (
-                <Icons.chevronLeft className="size-4" aria-hidden="true" />
-              )}
-            </Button>
-          </CustomTooltip>
-        </div>
-      </div>
+      </ScrollArea>
     </aside>
   )
 }
