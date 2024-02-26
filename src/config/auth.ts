@@ -1,11 +1,12 @@
 import { getUserByEmail } from "@/actions/user"
-import { env } from "@/env.mjs"
-import { signInWithPasswordSchema } from "@/validations/auth"
 import bcryptjs from "bcryptjs"
 import type { NextAuthConfig } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import GitHubProvider from "next-auth/providers/github"
 import GoogleProvider from "next-auth/providers/google"
+
+import { env } from "@/env.mjs"
+import { signInWithPasswordSchema } from "@/validations/auth"
 
 export default {
   providers: [

@@ -1,5 +1,6 @@
-import { products } from "@/db/schema"
 import * as z from "zod"
+
+import { products } from "@/db/schema"
 
 // TODO: Improve validations and messages
 

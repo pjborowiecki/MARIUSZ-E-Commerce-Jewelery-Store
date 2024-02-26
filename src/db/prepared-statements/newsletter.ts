@@ -1,7 +1,7 @@
-import { newsletterSubscribers } from "@/db/schema"
 import { eq, sql } from "drizzle-orm"
 
 import { db } from "@/config/db"
+import { newsletterSubscribers } from "@/db/schema"
 
 export const psGetNewsletterSubscriberByEmail = db
   .select()

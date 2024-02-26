@@ -1,3 +1,3 @@
 export function OrdersTableShell(): JSX.Element {
-    return <div>Orders Table Shell</div>
+  return <div>Orders Table Shell</div>
 }

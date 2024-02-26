@@ -1,5 +1,4 @@
 import type { StoredFile } from "@/types"
-import type { CartItem, CheckoutItem } from "@/validations/cart"
 import type { AdapterAccount } from "@auth/core/adapters"
 import { relations } from "drizzle-orm"
 import {
@@ -14,6 +13,8 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core"
+
+import type { CartItem, CheckoutItem } from "@/validations/cart"
 
 export const productCategoryEnum = pgEnum("product_category", [
   "kolczyki",

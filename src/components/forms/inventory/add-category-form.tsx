@@ -4,15 +4,17 @@ import * as React from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { addCategory } from "@/actions/inventory"
+import { addCategory } from "@/actions/category"
 import type { FileWithPreview } from "@/types"
-import { categorySchema, type AddCategoryInput } from "@/validations/tag"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { generateReactHelpers } from "@uploadthing/react/hooks"
 import { useForm } from "react-hook-form"
 
+import { categorySchema, type AddCategoryInput } from "@/validations/tag"
+
 import { useToast } from "@/hooks/use-toast"
 import { cn, isArrayOfFile } from "@/lib/utils"
+
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
   Form,

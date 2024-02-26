@@ -1,6 +1,7 @@
-import { env } from "@/env.mjs"
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+
+import { env } from "@/env.mjs"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -26,6 +27,22 @@ export function formatDate(date: Date | string | number) {
     day: "numeric",
     year: "numeric",
   }).format(new Date(date))
+}
+
+export function formatPrice(
+  price: number | string,
+  options: {
+    currency?: "USD" | "EUR" | "GBP" | "BDT" | "PLN"
+    notation?: Intl.NumberFormatOptions["notation"]
+  } = {}
+) {
+  const { currency = "USD", notation = "compact" } = options
+
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency,
+    notation,
+  }).format(Number(price))
 }
 
 export function absoluteUrl(path: string) {
@@ -57,6 +74,12 @@ export function slugify(str: string): string {
     .replace(/ /g, "-")
     .replace(/[^\w-]+/g, "")
     .replace(/--+/g, "-")
+}
+
+export function toSentenceCase(str: string) {
+  return str
+    .replace(/([A-Z])/g, " $1")
+    .replace(/^./, (str) => str.toUpperCase())
 }
 
 export function isArrayOfFile(files: unknown): files is File[] {

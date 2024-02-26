@@ -3,7 +3,9 @@ import type { User } from "next-auth"
 
 import { siteConfig } from "@/config/site"
 import { adminNavItems } from "@/data/nav-items"
+
 import { cn } from "@/lib/utils"
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { buttonVariants } from "@/components/ui/button"
 import {

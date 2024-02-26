@@ -4,16 +4,18 @@ import * as React from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { addProduct } from "@/actions/products"
-import { products } from "@/db/schema"
+import { addProduct } from "@/actions/product"
 import type { FileWithPreview } from "@/types"
-import { productSchema, type AddProductInput } from "@/validations/product"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { generateReactHelpers } from "@uploadthing/react/hooks"
 import { useForm } from "react-hook-form"
 
+import { products } from "@/db/schema"
+import { productSchema, type AddProductInput } from "@/validations/product"
+
 import { useToast } from "@/hooks/use-toast"
 import { cn, isArrayOfFile } from "@/lib/utils"
+
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
   Form,

@@ -1,7 +1,7 @@
-import { users } from "@/db/schema"
 import { eq, sql } from "drizzle-orm"
 
 import { db } from "@/config/db"
+import { users } from "@/db/schema"
 
 export const psLinkOAuthAccount = db
   .update(users)

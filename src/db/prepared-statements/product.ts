@@ -1,7 +1,7 @@
-import { products } from "@/db/schema"
 import { eq, sql } from "drizzle-orm"
 
 import { db } from "@/config/db"
+import { products } from "@/db/schema"
 
 export const psGetProductById = db
   .select()

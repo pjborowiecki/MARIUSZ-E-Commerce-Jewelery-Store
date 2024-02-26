@@ -1,11 +1,13 @@
 "use client"
 
 import * as React from "react"
-import { deleteProduct } from "@/actions/products"
-import { type Product } from "@/db/schema"
+import { deleteProduct } from "@/actions/product"
 import type { ColumnDef } from "@tanstack/react-table"
 
+import { type Product } from "@/db/schema"
+
 import { useToast } from "@/hooks/use-toast"
+
 import { Badge } from "@/components/ui/badge"
 import { CheckBox } from "@/components/ui/checkbox"
 import { Icons } from "@/components/icons"
