@@ -7,7 +7,7 @@ export interface NavItem {
   hrefPlus?: string
   title: string
   description?: string
-  slug: string
+  slug?: string
   disabled?: boolean
   external?: boolean
   image?: string

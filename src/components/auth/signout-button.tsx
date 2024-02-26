@@ -9,6 +9,7 @@ import { Icons } from "@/components/icons"
 
 interface SignOutButtonProps {
   buttonStyles?: string
+  buttonSize?: string
   iconStyles?: string
 }
 

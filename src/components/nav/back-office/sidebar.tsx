@@ -4,48 +4,45 @@ import * as React from "react"
 import Link from "next/link"
 import { useSelectedLayoutSegment } from "next/navigation"
 
-import { adminSidebarNavItems } from "@/data/nav-items"
+import { adminNavItems } from "@/data/nav-items"
 import { cn } from "@/lib/utils"
+import { buttonVariants } from "@/components/ui/button"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { Icons } from "@/components/icons"
 
 export function Sidebar(): JSX.Element {
   const segment = useSelectedLayoutSegment()
 
   return (
-    <div className="flex w-full flex-col gap-2">
-      {adminSidebarNavItems.map((item, index) => {
-        const Icon = Icons[item.icon as keyof typeof Icons]
-
-        return item.href ? (
-          <Link
-            aria-label={item.title}
-            key={index}
-            href={item.href}
-            target={item.external ? "_blank" : ""}
-            rel={item.external ? "noreferrer" : ""}
-          >
-            <span
-              className={cn(
-                "group flex w-full items-center rounded-md border border-transparent px-2 py-1 hover:bg-muted hover:text-foreground",
-                item.href.includes(String(segment))
-                  ? "bg-muted font-medium text-foreground"
-                  : "text-muted-foreground",
-                item.disabled && "pointer-events-none opacity-60"
-              )}
-            >
-              <Icon className="mr-2 size-4" aria-hidden="true" />
-              <span>{item.title}</span>
-            </span>
-          </Link>
-        ) : (
-          <span
-            key={index}
-            className="flex w-full cursor-not-allowed items-center rounded-md p-2 text-muted-foreground hover:underline"
-          >
-            {item.title}
-          </span>
-        )
-      })}
-    </div>
+    <aside className="fixed top-14 z-30 -ml-2 hidden size-full shrink-0 overflow-y-auto border-r bg-tertiary md:sticky md:block">
+      <ScrollArea className="py-6  lg:py-8">
+        <div className="flex w-full flex-col gap-2">
+          {adminNavItems.map((item) => {
+            const Icon = Icons[item.icon as keyof typeof Icons]
+            return (
+              <Link
+                key={item.title}
+                href={item.href}
+                aria-label={item.title}
+                target={item.external ? "_blank" : ""}
+                rel={item.external ? "noreferrer" : ""}
+                className={cn(
+                  buttonVariants({ variant: "ghost" }),
+                  "w-full justify-start",
+                  item.href.includes(String(segment)) &&
+                    cn(
+                      buttonVariants({ variant: "secondary" }),
+                      "justify-start"
+                    )
+                )}
+              >
+                <Icon className="mr-2 size-4" aria-hidden="true" />
+                {item.title}
+              </Link>
+            )
+          })}
+        </div>
+      </ScrollArea>
+    </aside>
   )
 }
