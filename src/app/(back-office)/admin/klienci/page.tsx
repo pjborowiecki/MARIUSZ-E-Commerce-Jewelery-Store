@@ -99,8 +99,10 @@ export default async function CustomersPage({
 
   return (
     <div>
-      <div className="flex min-h-20 flex-col gap-2 border-b bg-tertiary p-4 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-2xl font-bold tracking-tight">Klienci</h2>
+      <div className="flex flex-col gap-2 border-b bg-tertiary p-4 sm:flex-row sm:items-center sm:justify-between md:min-h-20">
+        <h2 className="text-xl font-bold tracking-tight md:text-2xl">
+          Klienci
+        </h2>
 
         <div className="w-full sm:w-fit">
           <DateRangePicker align="end" />

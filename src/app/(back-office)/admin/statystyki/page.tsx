@@ -11,8 +11,10 @@ export const metadata: Metadata = {
 export default function AdminStatsPage(): JSX.Element {
   return (
     <div>
-      <div className="flex min-h-20 items-center border-b bg-tertiary p-4">
-        <h2 className="text-2xl font-bold tracking-tight">Statystyki</h2>
+      <div className="flex items-center border-b bg-tertiary p-4 md:min-h-20">
+        <h2 className="text-xl font-bold tracking-tight md:text-2xl">
+          Statystyki
+        </h2>
       </div>
 
       <div className="p-4">
