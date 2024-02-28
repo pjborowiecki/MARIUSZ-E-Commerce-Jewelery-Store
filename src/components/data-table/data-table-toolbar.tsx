@@ -8,7 +8,7 @@ import type {
 } from "@/types"
 import type { Table } from "@tanstack/react-table"
 
-import { cn, filterNamesToPolish } from "@/lib/utils"
+import { cn, translateFilterNamesToPolish } from "@/lib/utils"
 
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -43,7 +43,7 @@ export function DataTableToolbar<TData>({
               table.getColumn(column.id ? String(column.id) : "") && (
                 <Input
                   key={String(column.id)}
-                  placeholder={`Filtruj ${filterNamesToPolish(column.title)}..`}
+                  placeholder={`Filtruj ${translateFilterNamesToPolish(column.title)}..`}
                   value={
                     (table
                       .getColumn(String(column.id))

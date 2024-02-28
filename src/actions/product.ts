@@ -1,6 +1,6 @@
 "use server"
 
-import { unstable_noStore as noStore } from "next/cache"
+import { unstable_noStore as noStore, revalidatePath } from "next/cache"
 
 import {
   psDeleteProductById,
@@ -8,7 +8,9 @@ import {
 } from "@/db/prepared-statements/product"
 import type { Product } from "@/db/schema"
 import {
+  deleteProductByIdSchema,
   getProductByIdSchema,
+  type DeleteProductByIdInput,
   type GetProductByIdInput,
 } from "@/validations/product"
 
@@ -30,4 +32,21 @@ export async function getProductById(
   }
 }
 
-export async function deleteProduct() {}
+export async function deleteProduct(
+  rawInput: DeleteProductByIdInput
+): Promise<"error" | "success"> {
+  try {
+    const validatedInput = deleteProductByIdSchema.safeParse(rawInput)
+    if (!validatedInput.success) return "error"
+
+    const deleted = await psDeleteProductById.execute({
+      id: validatedInput.data.id,
+    })
+
+    revalidatePath("/admin/produkty")
+    return deleted ? "success" : "error"
+  } catch (error) {
+    console.error(error)
+    throw new Error("Error deleting product by Id")
+  }
+}

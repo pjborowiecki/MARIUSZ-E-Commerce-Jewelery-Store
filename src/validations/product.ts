@@ -3,6 +3,18 @@ import * as z from "zod"
 // TODO: Think about how to define categories and subcategories
 // TODO: Adjust to the current db schema
 
+export const productIdSchema = z
+  .string({
+    required_error: "Id produktu jest wymagane",
+    invalid_type_error: "Dane wejściowe muszą być tekstem",
+  })
+  .min(1, {
+    message: "Id musi mieć przynajmniej 1 znak",
+  })
+  .max(512, {
+    message: "Id może mieć maksymalnie 512 znaków",
+  })
+
 export const productSchema = z.object({
   name: z
     .string({
@@ -35,17 +47,7 @@ export const productSchema = z.object({
 })
 
 export const getProductByIdSchema = z.object({
-  id: z
-    .string({
-      required_error: "Id produktu jest wymagane",
-      invalid_type_error: "Dane wejściowe muszą być tekstem",
-    })
-    .min(1, {
-      message: "Id musi mieć przynajmniej 1 znak",
-    })
-    .max(512, {
-      message: "Id może mieć maksymalnie 512 znaków",
-    }),
+  id: productIdSchema,
 })
 
 export const getProductByNameSchema = z.object({
@@ -55,6 +57,11 @@ export const getProductByNameSchema = z.object({
   }),
 })
 
+export const deleteProductByIdSchema = z.object({
+  id: productIdSchema,
+})
+
 export type GetProductByIdInput = z.infer<typeof getProductByIdSchema>
 export type GetProductByNameInput = z.infer<typeof getProductByNameSchema>
 export type AddProductInput = z.infer<typeof productSchema>
+export type DeleteProductByIdInput = z.infer<typeof deleteProductByIdSchema>

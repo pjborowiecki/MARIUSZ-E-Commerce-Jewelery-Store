@@ -102,7 +102,7 @@ export function DateRangePicker({
                 format(date.from, "LLL dd, y", { locale: pl })
               )
             ) : (
-              <span>Wybierz datę</span>
+              <span>Wybierz daty</span>
             )}
           </Button>
         </PopoverTrigger>

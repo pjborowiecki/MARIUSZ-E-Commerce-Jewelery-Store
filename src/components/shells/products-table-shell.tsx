@@ -81,13 +81,13 @@ export function ProductsTableShell({
       {
         accessorKey: "name",
         header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Name" />
+          <DataTableColumnHeader column={column} title="Nazwa" />
         ),
       },
       {
         accessorKey: "category",
         header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Category" />
+          <DataTableColumnHeader column={column} title="Kategoria" />
         ),
         cell: ({ cell }) => {
           const categories = Object.values(products.category.enumValues)
@@ -105,20 +105,20 @@ export function ProductsTableShell({
       {
         accessorKey: "price",
         header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Price" />
+          <DataTableColumnHeader column={column} title="Cena" />
         ),
         cell: ({ cell }) => formatPrice(cell.getValue() as number),
       },
       {
         accessorKey: "inventory",
         header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Inventory" />
+          <DataTableColumnHeader column={column} title="Dostępność" />
         ),
       },
       {
         accessorKey: "createdAt",
         header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Created At" />
+          <DataTableColumnHeader column={column} title="Data dodania" />
         ),
         cell: ({ cell }) => formatDate(cell.getValue() as Date),
         enableColumnFilter: false,
@@ -129,7 +129,7 @@ export function ProductsTableShell({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                aria-label="Open menu"
+                aria-label="Rozwiń menu"
                 variant="ghost"
                 className="flex size-8 p-0 data-[state=open]:bg-muted"
               >
@@ -138,28 +138,45 @@ export function ProductsTableShell({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[160px]">
               <DropdownMenuItem asChild>
-                <Link href={`/admin/produkty/${row.original.id}`}>Edit</Link>
+                {/* TODO: Check this link */}
+                <Link href={`/admin/produkty/${row.original.id}`}>Edytuj</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href={`/product/${row.original.id}`}>View</Link>
+                {/* TODO: Check this link */}
+                <Link href={`/admin/produkty/${row.original.id}`}>Zobacz</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => {
-                  startTransition(() => {
-                    row.toggleSelected(false)
+                  startTransition(async () => {
+                    try {
+                      row.toggleSelected(false)
 
-                    // toast.promise(
-                    //   deleteProduct({
-                    //     id: row.original.id,
-                    //     storeId,
-                    //   }),
-                    //   {
-                    //     loading: "Deleting...",
-                    //     success: () => "Product deleted successfully.",
-                    //     error: (err: unknown) => catchError(err),
-                    //   }
-                    // )
+                      const message = await deleteProduct({
+                        id: row.original.id,
+                      })
+
+                      switch (message) {
+                        case "success":
+                          toast({
+                            title: "Produkt został usunięty",
+                          })
+                          break
+                        default:
+                          toast({
+                            title: "Nie udało się usunąć produktu",
+                            description: "Spróbuj ponownie",
+                            variant: "destructive",
+                          })
+                      }
+                    } catch (error) {
+                      console.error(error)
+                      toast({
+                        title: "Coś poszło nie tak",
+                        description: "Spróbuj ponownie",
+                        variant: "destructive",
+                      })
+                    }
                   })
                 }}
                 disabled={isPending}
@@ -172,31 +189,46 @@ export function ProductsTableShell({
         ),
       },
     ],
-    [data, isPending]
+    [data, isPending, toast]
   )
 
   function deleteSelectedRows() {
-    // toast.promise(
-    //   Promise.all(
-    //     selectedRowIds.map((id) =>
-    //       deleteProduct({
-    //         id,
-    //         storeId,
-    //       })
-    //     )
-    //   ),
-    //   {
-    //     loading: "Deleting...",
-    //     success: () => {
-    //       setSelectedRowIds([])
-    //       return "Products deleted successfully."
-    //     },
-    //     error: (err: unknown) => {
-    //       setSelectedRowIds([])
-    //       return catchError(err)
-    //     },
-    //   }
-    // )
+    startTransition(async () => {
+      const messages = await Promise.all(
+        selectedRowIds.map((id) =>
+          deleteProduct({
+            id,
+          }).catch((error) => {
+            console.error(error)
+            return "error"
+          })
+        )
+      )
+
+      const allSucceeded = messages.every((message) => message === "success")
+
+      if (allSucceeded) {
+        toast({
+          title: "Wybrane produkty zostały usunięte",
+        })
+      } else {
+        toast({
+          title: "Niektóre produkty nie zostały usunięte",
+          description: "Spróbuj ponownie",
+          variant: "destructive",
+        })
+      }
+
+      try {
+      } catch (error) {
+        console.error(error)
+        toast({
+          title: "Coś poszło nie tak",
+          description: "Spróbuj ponownie",
+          variant: "destructive",
+        })
+      }
+    })
   }
 
   return (

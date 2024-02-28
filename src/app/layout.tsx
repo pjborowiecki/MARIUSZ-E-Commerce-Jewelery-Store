@@ -3,7 +3,8 @@ import "@/styles/mdx.css"
 
 import * as React from "react"
 import type { Metadata, Viewport } from "next"
-import { Analytics } from "@vercel/analytics/react"
+
+// import { Analytics } from "@vercel/analytics/react"
 
 import { env } from "@/env.mjs"
 import { fontHeading, fontInter } from "@/config/fonts"
@@ -90,7 +91,7 @@ export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
           >
             {children}
             <Toaster />
-            <Analytics />
+            {/* <Analytics /> */}
             <TailwindIndicator />
           </ThemeProvider>
         </SmoothScrollProvider>

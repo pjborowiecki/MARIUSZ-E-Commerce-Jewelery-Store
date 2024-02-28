@@ -80,17 +80,19 @@ export function slugify(str: string): string {
     .replace(/--+/g, "-")
 }
 
-export function filterNamesToPolish(name: string): string {
+export function translateFilterNamesToPolish(name: string): string {
   const nameTranslations: Record<string, string> = {
     orders: "zamówienia",
     customers: "klientów",
     products: "produkty",
+    category: "kategorie",
+    names: "nazwy",
   }
 
   return nameTranslations[name] || name
 }
 
-export function columnNamesToPolish(name: string): string {
+export function translateColumnNamesToPolish(name: string): string {
   const nameTranslations: Record<string, string> = {
     id: "Id",
     name: "Nazwa",
@@ -98,6 +100,7 @@ export function columnNamesToPolish(name: string): string {
     category: "Kategoria",
     price: "Cena",
     status: "Status płatności",
+    inventory: "Dostępność",
     quantity: "Ilość",
     amount: "Wartość",
     createdAt: "Data",
