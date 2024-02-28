@@ -93,7 +93,10 @@ export function filterNamesToPolish(name: string): string {
 export function columnNamesToPolish(name: string): string {
   const nameTranslations: Record<string, string> = {
     id: "Id",
+    name: "Nazwa",
     customer: "Klient",
+    category: "Kategoria",
+    price: "Cena",
     status: "Status płatności",
     quantity: "Ilość",
     amount: "Wartość",

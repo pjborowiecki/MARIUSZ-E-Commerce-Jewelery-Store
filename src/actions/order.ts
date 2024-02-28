@@ -138,7 +138,7 @@ export async function getOrderLineItems(
         stripePaymentIntentStatus: input.paymentIntent.status,
         name: input.paymentIntent.shipping?.name,
         email: input.paymentIntent.receipt_email,
-        addressId: Number(newAddress.insertId),
+        addressId: String(newAddress.insertId),
       })
 
       // Update product inventory in db

@@ -163,7 +163,7 @@ export async function POST(req: Request) {
             stripePaymentIntentStatus: paymentIntentSucceeded?.status,
             name: paymentIntentSucceeded?.shipping?.name,
             email: paymentIntentSucceeded?.receipt_email,
-            addressId: Number(newAddress.insertId),
+            addressId: String(newAddress.insertId),
           })
 
           // Update product inventory in db
