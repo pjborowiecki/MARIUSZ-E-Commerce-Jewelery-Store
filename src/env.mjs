@@ -16,6 +16,8 @@ export const env = createEnv({
     FACEBOOK_SECRET: z.string(),
     GITHUB_ID: z.string(),
     GITHUB_SECRET: z.string(),
+    STRIPE_API_KEY: z.string(),
+    STRIPE_WEBHOOK_SECRET: z.string(),
     RESEND_API_KEY: z.string(),
     RESEND_EMAIL_FROM: z.string().email(),
     RESEND_EMAIL_TO: z.string().email(),
@@ -33,6 +35,7 @@ export const env = createEnv({
    */
   client: {
     NEXT_PUBLIC_APP_URL: z.string().url(),
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string(),
   },
 
   /**
@@ -50,6 +53,10 @@ export const env = createEnv({
     FACEBOOK_SECRET: process.env.FACEBOOK_SECRET,
     GITHUB_ID: process.env.GITHUB_ID,
     GITHUB_SECRET: process.env.GITHUB_SECRET,
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:
+      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+    STRIPE_API_KEY: process.env.STRIPE_API_KEY,
+    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     RESEND_EMAIL_FROM: process.env.RESEND_EMAIL_FROM,
     RESEND_EMAIL_TO: process.env.RESEND_EMAIL_TO,

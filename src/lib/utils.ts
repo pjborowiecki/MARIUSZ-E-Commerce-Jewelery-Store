@@ -45,6 +45,10 @@ export function formatPrice(
   }).format(Number(price))
 }
 
+export function formatId(id: string) {
+  return `#${id.padStart(4, "0")}`
+}
+
 export function absoluteUrl(path: string) {
   return `${env.NEXT_PUBLIC_APP_URL}${path}`
 }
@@ -74,6 +78,29 @@ export function slugify(str: string): string {
     .replace(/ /g, "-")
     .replace(/[^\w-]+/g, "")
     .replace(/--+/g, "-")
+}
+
+export function filterNamesToPolish(name: string): string {
+  const nameTranslations: Record<string, string> = {
+    orders: "zamówienia",
+    customers: "klientów",
+    products: "produkty",
+  }
+
+  return nameTranslations[name] || name
+}
+
+export function columnNamesToPolish(name: string): string {
+  const nameTranslations: Record<string, string> = {
+    id: "Id",
+    customer: "Klient",
+    status: "Status płatności",
+    quantity: "Ilość",
+    amount: "Wartość",
+    createdAt: "Data",
+  }
+
+  return nameTranslations[name] || name
 }
 
 export function toSentenceCase(str: string) {

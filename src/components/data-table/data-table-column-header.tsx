@@ -39,10 +39,10 @@ export function DataTableColumnHeader<TData, TValue>({
           <Button
             aria-label={
               column.getIsSorted() === "desc"
-                ? `Sorted descending. Click to sort ascending.`
+                ? `Sortowanie malejące. Kliknij by sortować rosnąco`
                 : column.getIsSorted() === "asc"
-                  ? `Sorted ascending. Click to sort descending.`
-                  : `Not sorted. Click to sort ascending.`
+                  ? `Sortowanie rosnące. Kliknij by sortować malejąco`
+                  : `Brak sortowania. Kliknij by sortować rosnąco`
             }
             variant="ghost"
             size="sm"
@@ -60,35 +60,35 @@ export function DataTableColumnHeader<TData, TValue>({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
           <DropdownMenuItem
-            aria-label="Sort ascending"
+            aria-label="Sortowanie rosnące"
             onClick={() => column.toggleSorting(false)}
           >
             <ArrowUpIcon
               className="mr-2 size-3.5 text-muted-foreground/70"
               aria-hidden="true"
             />
-            Asc
+            Rosnąco
           </DropdownMenuItem>
           <DropdownMenuItem
-            aria-label="Sort descending"
+            aria-label="Sortowanie malejące"
             onClick={() => column.toggleSorting(true)}
           >
             <ArrowDownIcon
               className="mr-2 size-3.5 text-muted-foreground/70"
               aria-hidden="true"
             />
-            Desc
+            Malejąco
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            aria-label="Hide column"
+            aria-label="Ukryj kolumnę"
             onClick={() => column.toggleVisibility(false)}
           >
             <EyeNoneIcon
               className="mr-2 size-3.5 text-muted-foreground/70"
               aria-hidden="true"
             />
-            Hide
+            Ukryj
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

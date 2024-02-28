@@ -67,7 +67,6 @@ export function DataTable<TData, TValue>({
   const sort = searchParams?.get("sort")
   const [column, order] = sort?.split(".") ?? []
 
-  // Create query string
   const createQueryString = React.useCallback(
     (params: Record<string, string | number | null>) => {
       const newSearchParams = new URLSearchParams(searchParams?.toString())
@@ -85,7 +84,6 @@ export function DataTable<TData, TValue>({
     [searchParams]
   )
 
-  // Table states
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
@@ -93,7 +91,6 @@ export function DataTable<TData, TValue>({
     []
   )
 
-  // Handle server-side pagination
   const [{ pageIndex, pageSize }, setPagination] =
     React.useState<PaginationState>({
       pageIndex: fallbackPage - 1,
@@ -125,11 +122,8 @@ export function DataTable<TData, TValue>({
         scroll: false,
       }
     )
+  }, [pageIndex, pageSize, pathname, router, createQueryString])
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageIndex, pageSize])
-
-  // Handle server-side sorting
   const [sorting, setSorting] = React.useState<SortingState>([
     {
       id: column ?? "",
@@ -149,11 +143,8 @@ export function DataTable<TData, TValue>({
         scroll: false,
       }
     )
+  }, [sorting, page, pathname, router, createQueryString])
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sorting])
-
-  // Handle server-side filtering
   const debouncedSearchableColumnFilters = JSON.parse(
     useDebounce(
       JSON.stringify(
@@ -200,8 +191,14 @@ export function DataTable<TData, TValue>({
         )
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedSearchableColumnFilters])
+  }, [
+    debouncedSearchableColumnFilters,
+    router,
+    pathname,
+    searchParams,
+    searchableColumns,
+    createQueryString,
+  ])
 
   React.useEffect(() => {
     for (const column of filterableColumnFilters) {
@@ -234,8 +231,14 @@ export function DataTable<TData, TValue>({
         )
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterableColumnFilters])
+  }, [
+    filterableColumnFilters,
+    pathname,
+    searchParams,
+    createQueryString,
+    filterableColumns,
+    router,
+  ])
 
   const table = useReactTable({
     data,
@@ -317,7 +320,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  Brak wyników
                 </TableCell>
               </TableRow>
             )}

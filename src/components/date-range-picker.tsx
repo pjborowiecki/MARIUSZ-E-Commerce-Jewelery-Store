@@ -3,6 +3,7 @@
 import * as React from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { addDays, format } from "date-fns"
+import { pl } from "date-fns/locale"
 import type { DateRange } from "react-day-picker"
 
 import { cn } from "@/lib/utils"
@@ -49,7 +50,6 @@ export function DateRangePicker({
 
   const [date, setDate] = React.useState<DateRange | undefined>({ from, to })
 
-  // Create query string
   const createQueryString = React.useCallback(
     (params: Record<string, string | number | null>) => {
       const newSearchParams = new URLSearchParams(searchParams?.toString())
@@ -67,7 +67,6 @@ export function DateRangePicker({
     [searchParams]
   )
 
-  // Update query string
   React.useEffect(() => {
     router.push(
       `${pathname}?${createQueryString({
@@ -78,8 +77,7 @@ export function DateRangePicker({
         scroll: false,
       }
     )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [date?.from, date?.to])
+  }, [date?.from, date?.to, createQueryString, pathname, router])
 
   return (
     <div className="grid gap-2">
@@ -97,19 +95,20 @@ export function DateRangePicker({
             {date?.from ? (
               date.to ? (
                 <>
-                  {format(date.from, "LLL dd, y")} -{" "}
-                  {format(date.to, "LLL dd, y")}
+                  {format(date.from, "LLL dd, y", { locale: pl })} -{" "}
+                  {format(date.to, "LLL dd, y", { locale: pl })}
                 </>
               ) : (
-                format(date.from, "LLL dd, y")
+                format(date.from, "LLL dd, y", { locale: pl })
               )
             ) : (
-              <span>Pick a date</span>
+              <span>Wybierz datę</span>
             )}
           </Button>
         </PopoverTrigger>
         <PopoverContent className={cn("w-auto p-0", className)} {...props}>
           <Calendar
+            locale={pl}
             initialFocus
             mode="range"
             defaultMonth={date?.from}

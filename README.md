@@ -2,6 +2,7 @@
 
 #### TODO:
 
+- [ ] Fix the stripe web hook and a single order page
 - [ ] Translate the date picker
 - [x] Update slugify helper function to remove polish letters
 

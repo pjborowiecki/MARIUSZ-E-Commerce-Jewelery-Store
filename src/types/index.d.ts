@@ -1,6 +1,7 @@
 import type { Account, Profile, Session, User } from "next-auth"
 import type { JWT } from "next-auth/jwt"
 import type { FileWithPath } from "react-dropzone"
+import type { Stripe } from "stripe"
 
 export interface NavItem {
   href: string
@@ -101,3 +102,5 @@ export interface Subcategory {
   image?: string
   slug: string
 }
+
+export type StripePaymentStatus = Stripe.PaymentIntent.Status
