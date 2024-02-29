@@ -22,7 +22,7 @@ export function formatBytes(
 }
 
 export function formatDate(date: Date | string | number) {
-  return new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat("pl-PL", {
     month: "long",
     day: "numeric",
     year: "numeric",
@@ -36,9 +36,9 @@ export function formatPrice(
     notation?: Intl.NumberFormatOptions["notation"]
   } = {}
 ) {
-  const { currency = "USD", notation = "compact" } = options
+  const { currency = "PLN", notation = "compact" } = options
 
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("pl-PL", {
     style: "currency",
     currency,
     notation,

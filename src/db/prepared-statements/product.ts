@@ -39,4 +39,14 @@ export const psDeleteAllProducts = db
   .delete(products)
   .prepare("psDeleteAllProducts")
 
+export const psCheckIfProductNameTaken = db.query.products
+  .findFirst({
+    columns: {
+      id: true,
+    },
+    where: eq(products.name, sql.placeholder("name")),
+  })
+  .prepare("psCheckIfProductNameTaken")
+
+
 //   TODO: Get products by TagId, TagName, TagsIds, TagNames (array of arguments?)

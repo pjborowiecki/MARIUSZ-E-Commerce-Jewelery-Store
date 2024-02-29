@@ -2,6 +2,7 @@ import * as React from "react"
 import type { Metadata } from "next"
 import { unstable_noStore as noStore } from "next/cache"
 import type { SearchParams } from "@/types"
+import { endOfDay, startOfDay } from "date-fns"
 import { and, asc, desc, gte, inArray, like, lte, sql } from "drizzle-orm"
 
 import { env } from "@/env.mjs"
@@ -32,8 +33,8 @@ export default async function ProductsPage({
   const fallbackPage = isNaN(page) || page < 1 ? 1 : page
   const limit = isNaN(per_page) ? 10 : per_page
   const offset = fallbackPage > 0 ? (fallbackPage - 1) * limit : 0
-  const fromDay = from ? new Date(from) : undefined
-  const toDay = to ? new Date(to) : undefined
+  const fromDay = from ? startOfDay(new Date(from)) : undefined
+  const toDay = to ? endOfDay(new Date(to)) : undefined
 
   const categories = (category?.split(".") as Product["category"][]) ?? []
 

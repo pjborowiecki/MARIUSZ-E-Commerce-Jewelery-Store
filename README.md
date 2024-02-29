@@ -2,6 +2,17 @@
 
 #### TODO:
 
+- Add more fields to product form:
+
+  - size
+  - materials
+  - colours
+  - stone
+  - weight
+  - próba
+  - kolekcja
+  - producent
+
 - [ ] Fix the stripe web hook and a single order page
 - [ ] Translate the date picker
 - [x] Update slugify helper function to remove polish letters
@@ -15,11 +26,13 @@
 - [ ] Style transactional emails
 
 - [ ] Add middleware
+- [ ] Add auth and role checks for all dashboard pages
 
 - [ ] Decide on how to handle categories and subcategories
 - [ ] Define Zod validations for Categories and Subcategories
 - [ ] Define database schemas for categories and subcategories
 - [ ] Define database schema for products and tags
+- [ ] Add tags related field to "add product" form
 
 - [ ] Implement getCart() method
 - [ ] Finish the shopping cart sheet

@@ -12,6 +12,7 @@ import { useForm } from "react-hook-form"
 
 import { products } from "@/db/schema"
 import { productSchema, type AddProductInput } from "@/validations/product"
+import { getSubcategories } from "@/data/products"
 
 import { useToast } from "@/hooks/use-toast"
 import { cn, isArrayOfFile } from "@/lib/utils"
@@ -27,6 +28,14 @@ import {
   UncontrolledFormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { FileDialog } from "@/components/file-dialog"
 import { Icons } from "@/components/icons"
@@ -40,20 +49,68 @@ export function AddProductForm(): JSX.Element {
   const { toast } = useToast()
   const [isPending, startTransition] = React.useTransition()
   const [files, setFiles] = React.useState<FileWithPreview[] | null>(null)
-  const { isUploading, upload } = useUploadThing("productImage")
+  const { isUploading, startUpload } = useUploadThing("productImage")
 
   const form = useForm<AddProductInput>({
     resolver: zodResolver(productSchema),
     defaultValues: {
       name: "",
       description: "",
+      category: "kolczyki",
+      subcategory: "",
+      price: "",
+      inventory: NaN,
       images: [],
     },
   })
 
+  const subcategories = getSubcategories(form.watch("category"))
+
   function onSubmit(formData: AddProductInput) {
     startTransition(async () => {
       try {
+        let message
+
+        if (isArrayOfFile(formData.images)) {
+          const uploadResults = await startUpload(formData.images)
+          const formattedImages =
+            uploadResults?.map((image) => ({
+              id: image.key,
+              name: image.key.split("_")[1] ?? image.key,
+              url: image.url,
+            })) ?? null
+
+          message = await addProduct({
+            ...formData,
+            images: formattedImages,
+          })
+        } else {
+          message = await addProduct({
+            ...formData,
+          })
+        }
+
+        switch (message) {
+          case "exists":
+            toast({
+              title: "Produt o podanej nazwie już istnieje",
+              description: "Wybierz inną nazwę i spróbuj ponownie",
+              variant: "destructive",
+            })
+            break
+          case "success":
+            toast({
+              title: "Produkt został dodany",
+            })
+            router.push("/admin/produkty")
+            break
+          default:
+            toast({
+              title: "Nie udało się dodać produktu",
+              description: "Spróbuj ponownie",
+              variant: "destructive",
+            })
+        }
       } catch (error) {
         console.error(error)
         toast({
@@ -75,26 +132,13 @@ export function AddProductForm(): JSX.Element {
           control={form.control}
           name="name"
           render={({ field }) => (
-            <FormItem className="w-full md:w-2/3">
+            <FormItem className="w-full md:w-3/4 xl:w-2/3">
               <FormLabel>Nazwa</FormLabel>
               <FormControl>
-                <Input type="text" placeholder="Nazwa produktu" {...field} />
-              </FormControl>
-              <FormMessage className="pt-2 sm:text-sm" />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem className="w-full md:w-2/3">
-              <FormLabel>Opis</FormLabel>
-
-              <FormControl className="min-h-[120px]">
-                <Textarea
-                  placeholder="Opis produktu (opcjonalnie)"
+                <Input
+                  className="placeholder:text-sm"
+                  type="text"
+                  placeholder="Nazwa produktu"
                   {...field}
                 />
               </FormControl>
@@ -105,9 +149,132 @@ export function AddProductForm(): JSX.Element {
 
         <FormField
           control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem className="w-full md:w-4/5 xl:w-2/3">
+              <FormLabel>Opis</FormLabel>
+
+              <FormControl className="min-h-[120px]">
+                <Textarea
+                  className="placeholder:text-sm"
+                  placeholder="Opis produktu (opcjonalnie)"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage className="pt-2 sm:text-sm" />
+            </FormItem>
+          )}
+        />
+
+        <div className="flex w-full flex-col items-start gap-6 sm:flex-row md:w-4/5 xl:w-2/3">
+          <FormField
+            control={form.control}
+            name="category"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Kategoria</FormLabel>
+                <Select
+                  value={field.value}
+                  onValueChange={(value: typeof field.value) =>
+                    field.onChange(value)
+                  }
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder={field.value} />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectGroup>
+                      {Object.values(products.category.enumValues).map(
+                        (option) => (
+                          <SelectItem key={option} value={option}>
+                            {option}
+                          </SelectItem>
+                        )
+                      )}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="subcategory"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Podkategoria</FormLabel>
+                <Select
+                  value={field.value?.toString()}
+                  onValueChange={field.onChange}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Wybierz podkategorię" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectGroup>
+                      {subcategories.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <div className="flex w-full flex-col items-start gap-6 sm:flex-row md:w-4/5 xl:w-2/3">
+          <FormField
+            control={form.control}
+            name="price"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Cena</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Np. 499.99"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="inventory"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Dostępność</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    inputMode="numeric"
+                    placeholder="Ilość w magazynie"
+                    value={Number.isNaN(field.value) ? "" : field.value}
+                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <FormField
+          control={form.control}
           name="images"
           render={() => (
-            <FormItem className="mt-2.5 flex w-full flex-col gap-[5px] md:w-2/3">
+            <FormItem className="mt-2.5 flex w-full flex-col gap-[5px] md:w-4/5 xl:w-2/3">
               <FormLabel>Zdjęcia</FormLabel>
               {files?.length ? (
                 <div className="flex items-center gap-2">
@@ -164,7 +331,7 @@ export function AddProductForm(): JSX.Element {
           </Button>
 
           <Link
-            href="/admin/asortyment/produkty"
+            href="/admin/produkty"
             className={cn(buttonVariants({ variant: "ghost" }), "w-fit")}
           >
             Anuluj

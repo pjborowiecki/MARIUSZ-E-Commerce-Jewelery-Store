@@ -17,10 +17,9 @@ import {
 import type { CartItem, CheckoutItem } from "@/validations/cart"
 
 export const productCategoryEnum = pgEnum("product_category", [
+  "naszyjniki",
   "kolczyki",
   "pierścionki",
-  "naszyjniki",
-  "łańcuszki",
   "inne",
 ])
 

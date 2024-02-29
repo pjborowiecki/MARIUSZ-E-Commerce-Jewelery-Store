@@ -135,7 +135,7 @@ export function AddCategoryForm(): JSX.Element {
           control={form.control}
           name="name"
           render={({ field }) => (
-            <FormItem className="w-full md:w-2/3">
+            <FormItem className="w-full md:w-4/5 xl:w-2/3">
               <FormLabel>Nazwa</FormLabel>
               <FormControl>
                 <Input type="text" placeholder="Np. kolczyki" {...field} />
@@ -149,7 +149,7 @@ export function AddCategoryForm(): JSX.Element {
           control={form.control}
           name="description"
           render={({ field }) => (
-            <FormItem className="w-full md:w-2/3">
+            <FormItem className="w-full md:w-4/5 xl:w-2/3">
               <FormLabel>Opis</FormLabel>
 
               <FormControl className="min-h-[120px]">
@@ -167,7 +167,7 @@ export function AddCategoryForm(): JSX.Element {
           control={form.control}
           name="menuItem"
           render={({ field }) => (
-            <FormItem className="mt-3 flex w-full items-center justify-between rounded-md border px-3 py-2.5 md:w-2/3">
+            <FormItem className="mt-3 flex w-full items-center justify-between rounded-md border px-3 py-2.5 md:w-4/5 xl:w-2/3">
               <FormLabel>Widoczna w menu</FormLabel>
               <FormControl className="!my-0">
                 <Switch
@@ -180,7 +180,7 @@ export function AddCategoryForm(): JSX.Element {
           )}
         />
 
-        <FormItem className="mt-2.5 flex w-full flex-col gap-[5px] md:w-2/3">
+        <FormItem className="mt-2.5 flex w-full flex-col gap-[5px] md:w-2/3 xl:w-4/5">
           <FormLabel>Zdjęcia</FormLabel>
           {files?.length ? (
             <div className="flex items-center gap-2">
