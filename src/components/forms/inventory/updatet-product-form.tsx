@@ -12,8 +12,8 @@ import { useForm } from "react-hook-form"
 
 import { products, type Product } from "@/db/schema"
 import {
-  updateProductSchema,
-  type UpdateProductInput,
+  updateProductFormSchema,
+  type UpdateProductFormInput,
 } from "@/validations/product"
 import { getSubcategories } from "@/data/products"
 
@@ -54,11 +54,10 @@ const { useUploadThing } = generateReactHelpers<OurFileRouter>()
 export function UpdateProductForm({
   product,
 }: UpdateProductFormProps): JSX.Element {
-  const { toast } = useToast()
   const router = useRouter()
+  const { toast } = useToast()
   const [files, setFiles] = React.useState<FileWithPreview[] | null>(null)
   const [isUpdating, startUpdateTransition] = React.useTransition()
-  const { isUploading, startUpload } = useUploadThing("productImage")
 
   React.useEffect(() => {
     if (product.images && product.images.length > 0) {
@@ -77,8 +76,10 @@ export function UpdateProductForm({
     }
   }, [product])
 
-  const form = useForm<UpdateProductInput>({
-    resolver: zodResolver(updateProductSchema),
+  const { isUploading, startUpload } = useUploadThing("productImage")
+
+  const form = useForm<UpdateProductFormInput>({
+    resolver: zodResolver(updateProductFormSchema),
     defaultValues: {
       category: product.category,
       subcategory: product.subcategory,
@@ -87,8 +88,7 @@ export function UpdateProductForm({
 
   const subcategories = getSubcategories(form.watch("category"))
 
-  function onSubmit(formData: UpdateProductInput) {
-    console.log("Button clicked!")
+  function onSubmit(formData: UpdateProductFormInput) {
     startUpdateTransition(async () => {
       try {
         const images = isArrayOfFile(formData.images)
@@ -108,7 +108,7 @@ export function UpdateProductForm({
           description: formData.description,
           category: formData.category,
           subcategory: formData.subcategory,
-          price: formData.price.toString(),
+          price: formData.price,
           inventory: formData.inventory,
           images: images ?? product.images,
         })
@@ -118,6 +118,7 @@ export function UpdateProductForm({
             toast({
               title: "Produkt został zaktualizowany",
             })
+            setFiles(null)
             router.push("/admin/produkty")
             break
           case "not-found":
@@ -127,8 +128,12 @@ export function UpdateProductForm({
               variant: "destructive",
             })
             break
-          // case "invalid-input":
-          //   break
+          case "invalid-input":
+            toast({
+              title: "Nieprawidłowy typ danych wejściowych",
+              variant: "destructive",
+            })
+            break
           default:
             toast({
               title: "Nie udało się zaktualizować produktu",
@@ -260,8 +265,6 @@ export function UpdateProductForm({
             <FormLabel>Cena</FormLabel>
             <FormControl>
               <Input
-                type="number"
-                inputMode="numeric"
                 placeholder="Np. 499.99"
                 defaultValue={product.price}
                 {...form.register("price")}
@@ -272,46 +275,43 @@ export function UpdateProductForm({
             />
           </FormItem>
 
-          <FormField
-            control={form.control}
-            name="inventory"
-            render={() => (
-              <FormItem className="w-full">
-                <FormLabel>Dostępność</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    inputMode="numeric"
-                    placeholder="Ilość w magazynie"
-                    {...form.register("inventory", {
-                      valueAsNumber: true,
-                    })}
-                    defaultValue={product.inventory}
-                  />
-                </FormControl>
-                <UncontrolledFormMessage
-                  message={form.formState.errors.inventory?.message}
-                />
-              </FormItem>
-            )}
-          />
+          <FormItem className="w-full">
+            <FormLabel>Dostępność</FormLabel>
+            <FormControl>
+              <Input
+                type="number"
+                inputMode="numeric"
+                placeholder="Ilość w magazynie"
+                {...form.register("inventory", {
+                  valueAsNumber: true,
+                })}
+                defaultValue={product.inventory}
+              />
+            </FormControl>
+            <UncontrolledFormMessage
+              message={form.formState.errors.inventory?.message}
+            />
+          </FormItem>
         </div>
 
         <FormItem className="mt-2.5 flex w-full flex-col gap-[5px] md:w-4/5 xl:w-2/3">
           <FormLabel>Zdjęcia</FormLabel>
           {files?.length ? (
             <div className="flex items-center gap-2">
-              {files.map((file, i) => (
-                <Zoom key={i}>
-                  <Image
-                    src={file.preview}
-                    alt={file.name}
-                    className="size-20 shrink-0 rounded-md object-cover object-center"
-                    width={80}
-                    height={80}
-                  />
-                </Zoom>
-              ))}
+              {files.map((file, i) => {
+                console.log(file.preview)
+                return (
+                  <Zoom key={i}>
+                    <Image
+                      src={file.preview}
+                      alt={file.name}
+                      className="size-20 shrink-0 rounded-md object-cover object-center"
+                      width={80}
+                      height={80}
+                    />
+                  </Zoom>
+                )
+              })}
             </div>
           ) : null}
           <FormControl>
@@ -332,8 +332,12 @@ export function UpdateProductForm({
         </FormItem>
 
         <div className="flex items-center gap-2 pt-2">
-          <Button disabled={isUpdating}>
-            {isUpdating && (
+          <Button
+            disabled={isUpdating}
+            aria-label="zapisz zmiany"
+            className="w-fit"
+          >
+            {isUpdating ? (
               <>
                 <Icons.spinner
                   className="mr-2 size-4 animate-spin"
@@ -341,14 +345,16 @@ export function UpdateProductForm({
                 />
                 <span>Zapisywanie ...</span>
               </>
+            ) : (
+              <span>Zapisz zmiany</span>
             )}
-            Zapisz zmiany
             <span className="sr-only">Zapisz zmiany</span>
           </Button>
 
           <Link
             href="/admin/produkty"
             className={cn(buttonVariants({ variant: "outline" }), "w-fit")}
+            aria-label="anuluj"
           >
             Anuluj
           </Link>

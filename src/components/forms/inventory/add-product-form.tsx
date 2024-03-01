@@ -57,7 +57,7 @@ export function AddProductForm(): JSX.Element {
       name: "",
       description: "",
       category: undefined,
-      subcategory: "",
+      subcategory: undefined,
       price: "",
       inventory: NaN,
       images: [],
@@ -181,7 +181,7 @@ export function AddProductForm(): JSX.Element {
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder={field.value} />
+                      <SelectValue placeholder="Wybierz podkategorię" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -335,6 +335,7 @@ export function AddProductForm(): JSX.Element {
           <Link
             href="/admin/produkty"
             className={cn(buttonVariants({ variant: "outline" }), "w-fit")}
+            aria-label="anuluj"
           >
             Anuluj
           </Link>

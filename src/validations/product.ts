@@ -86,7 +86,9 @@ export const getProductByNameSchema = z.object({
   name: productNameSchema,
 })
 
-export const updateProductSchema = extendedProductSchema.extend({
+export const updateProductFormSchema = productSchema
+
+export const updateProductFunctionSchema = extendedProductSchema.extend({
   id: productIdSchema,
 })
 
@@ -107,15 +109,27 @@ export const checkIfProductExistsSchema = z.object({
 })
 
 export type GetProductByIdInput = z.infer<typeof getProductByIdSchema>
+
 export type GetProductByNameInput = z.infer<typeof getProductByNameSchema>
+
 export type GetProductsInput = z.infer<typeof getProductsSchema>
+
 export type AddProductInput = z.infer<typeof productSchema>
-export type UpdateProductInput = z.infer<typeof updateProductSchema>
+
+export type UpdateProductFormInput = z.infer<typeof updateProductFormSchema>
+
+export type UpdateProductFunctionInput = z.infer<
+  typeof updateProductFunctionSchema
+>
+
 export type DeleteProductInput = z.infer<typeof deleteProductSchema>
+
 export type FilterProductInput = z.infer<typeof filterProductSchema>
+
 export type CheckIfProductExistsInput = z.infer<
   typeof checkIfProductExistsSchema
 >
+
 export type CheckIfProductNameTakenInput = z.infer<
   typeof checkIfProductNameTakenSchema
 >

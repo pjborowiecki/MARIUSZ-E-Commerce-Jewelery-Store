@@ -21,14 +21,14 @@ import {
   extendedProductSchema,
   getProductByIdSchema,
   getProductByNameSchema,
-  updateProductSchema,
+  updateProductFunctionSchema,
   type AddProductInput,
   type CheckIfProductExistsInput,
   type CheckIfProductNameTakenInput,
   type DeleteProductInput,
   type GetProductByIdInput,
   type GetProductByNameInput,
-  type UpdateProductInput,
+  type UpdateProductFunctionInput,
 } from "@/validations/product"
 
 export async function getProductById(
@@ -119,6 +119,7 @@ export async function addProduct(
     })
     if (nameTaken) return "exists"
 
+    noStore()
     const newProduct = await db
       .insert(products)
       .values({
@@ -162,15 +163,16 @@ export async function deleteProduct(
 }
 
 export async function updateProduct(
-  rawInput: UpdateProductInput
+  rawInput: UpdateProductFunctionInput
 ): Promise<"invalid-input" | "not-found" | "error" | "success"> {
   try {
-    const validatedInput = updateProductSchema.safeParse(rawInput)
+    const validatedInput = updateProductFunctionSchema.safeParse(rawInput)
     if (!validatedInput.success) return "invalid-input"
 
     const exists = await checkIfProductExists({ id: validatedInput.data.id })
     if (!exists) return "not-found"
 
+    noStore()
     const updatedProduct = await db
       .update(products)
       .set({
