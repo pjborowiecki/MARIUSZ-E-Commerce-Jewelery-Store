@@ -3,27 +3,65 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 export default function UpdateProductLoading(): JSX.Element {
   return (
-    <Card>
-      <CardHeader className="space-y-2">
-        <Skeleton className="h-6 w-1/4" />
-        <Skeleton className="h-4 w-2/4" />
-      </CardHeader>
-      <CardContent>
-        <div className="grid w-full max-w-xl gap-4">
-          <div className="space-y-2.5">
-            <Skeleton className="h-4 w-32" />
-            <Skeleton className="h-6" />
+    <div className="p-4">
+      <Card className="rounded-md bg-tertiary">
+        <CardHeader className="space-y-2">
+          <Skeleton className="h-6 w-1/4" />
+          <Skeleton className="h-4 w-2/4" />
+        </CardHeader>
+        <CardContent>
+          <div className="grid w-full gap-6">
+            {/* Name */}
+            <div className="w-full space-y-2.5 md:w-4/5 xl:w-2/3">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-6" />
+            </div>
+
+            {/* Description */}
+            <div className="w-full space-y-2.5 md:w-4/5 xl:w-2/3">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-[120px]" />
+            </div>
+
+            {/* Category and subcategory */}
+            <div className="flex w-full gap-4 md:w-4/5 xl:w-2/3">
+              <div className="w-full space-y-2.5">
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-6" />
+              </div>
+              <div className="w-full space-y-2.5">
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-6" />
+              </div>
+            </div>
+
+            {/* Price and inventory */}
+            <div className="flex w-full gap-4 md:w-4/5 xl:w-2/3">
+              <div className="w-full space-y-2.5">
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-6" />
+              </div>
+              <div className="w-full space-y-2.5">
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-6" />
+              </div>
+            </div>
+
+            {/* Images */}
+            <div className="mt-2.5 flex w-full flex-col gap-[5px] md:w-4/5 xl:w-2/3">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-24" />
+              <Skeleton className="h-6" />
+            </div>
           </div>
-          <div className="space-y-2.5">
-            <Skeleton className="h-4 w-32" />
-            <Skeleton className="h-20" />
-          </div>
-        </div>
-      </CardContent>
-      <CardFooter className="space-x-2">
-        <Skeleton className="h-10 w-32" />
-        <Skeleton className="h-10 w-32" />
-      </CardFooter>
-    </Card>
+        </CardContent>
+
+        {/* Buttons */}
+        <CardFooter className="space-x-2">
+          <Skeleton className="h-9 w-32" />
+          <Skeleton className="h-9 w-32" />
+        </CardFooter>
+      </Card>
+    </div>
   )
 }

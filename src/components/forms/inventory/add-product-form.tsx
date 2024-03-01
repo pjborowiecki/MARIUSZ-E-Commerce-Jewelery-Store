@@ -56,7 +56,7 @@ export function AddProductForm(): JSX.Element {
     defaultValues: {
       name: "",
       description: "",
-      category: "kolczyki",
+      category: undefined,
       subcategory: "",
       price: "",
       inventory: NaN,
@@ -69,7 +69,7 @@ export function AddProductForm(): JSX.Element {
   function onSubmit(formData: AddProductInput) {
     startTransition(async () => {
       try {
-        let message
+        let message = null
 
         if (isArrayOfFile(formData.images)) {
           const uploadResults = await startUpload(formData.images)
@@ -240,6 +240,8 @@ export function AddProductForm(): JSX.Element {
                 <FormLabel>Cena</FormLabel>
                 <FormControl>
                   <Input
+                    type="numeric"
+                    inputMode="numeric"
                     placeholder="Np. 499.99"
                     value={field.value}
                     onChange={field.onChange}
@@ -322,7 +324,7 @@ export function AddProductForm(): JSX.Element {
                   className="mr-2 size-4 animate-spin"
                   aria-hidden="true"
                 />
-                <span>Dodawanie...</span>
+                <span aria-hidden="true">Dodawanie...</span>
               </>
             ) : (
               <span>Dodaj</span>
@@ -332,7 +334,7 @@ export function AddProductForm(): JSX.Element {
 
           <Link
             href="/admin/produkty"
-            className={cn(buttonVariants({ variant: "ghost" }), "w-fit")}
+            className={cn(buttonVariants({ variant: "outline" }), "w-fit")}
           >
             Anuluj
           </Link>

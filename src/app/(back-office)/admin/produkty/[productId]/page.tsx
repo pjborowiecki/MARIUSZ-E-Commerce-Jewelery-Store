@@ -32,8 +32,8 @@ export default async function AdminProductPage({
   if (!product) notFound()
 
   return (
-    <div className="p-5">
-      <Card>
+    <div className="p-4">
+      <Card className="rounded-md bg-tertiary">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl">Szczegóły produktu</CardTitle>
 

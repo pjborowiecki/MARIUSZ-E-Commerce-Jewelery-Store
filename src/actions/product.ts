@@ -3,9 +3,11 @@
 import crypto from "crypto"
 
 import { unstable_noStore as noStore, revalidatePath } from "next/cache"
+import { eq } from "drizzle-orm"
 
 import { db } from "@/config/db"
 import {
+  psCheckIfProductExists,
   psCheckIfProductNameTaken,
   psDeleteProductById,
   psGetProductById,
@@ -13,16 +15,20 @@ import {
 } from "@/db/prepared-statements/product"
 import { products, type Product } from "@/db/schema"
 import {
+  checkIfProductExistsSchema,
   checkIfProductNameTakenSchema,
-  deleteProductByIdSchema,
+  deleteProductSchema,
   extendedProductSchema,
   getProductByIdSchema,
   getProductByNameSchema,
+  updateProductSchema,
   type AddProductInput,
+  type CheckIfProductExistsInput,
   type CheckIfProductNameTakenInput,
-  type DeleteProductByIdInput,
+  type DeleteProductInput,
   type GetProductByIdInput,
   type GetProductByNameInput,
+  type UpdateProductInput,
 } from "@/validations/product"
 
 export async function getProductById(
@@ -81,6 +87,25 @@ export async function checkIfProductNameTaken(
   }
 }
 
+export async function checkIfProductExists(
+  rawInput: CheckIfProductExistsInput
+): Promise<"invalid-input" | boolean> {
+  try {
+    const validatedInput = checkIfProductExistsSchema.safeParse(rawInput)
+    if (!validatedInput.success) return "invalid-input"
+
+    noStore()
+    const exists = await psCheckIfProductExists.execute({
+      id: validatedInput.data.id,
+    })
+
+    return exists ? true : false
+  } catch (error) {
+    console.error(error)
+    throw new Error("Error checking if product exists")
+  }
+}
+
 export async function addProduct(
   rawInput: AddProductInput
 ): Promise<"invalid-input" | "exists" | "error" | "success"> {
@@ -108,6 +133,7 @@ export async function addProduct(
       })
       .returning()
 
+    revalidatePath("/")
     revalidatePath("/admin/produkty")
     return newProduct ? "success" : "error"
   } catch (error) {
@@ -117,10 +143,10 @@ export async function addProduct(
 }
 
 export async function deleteProduct(
-  rawInput: DeleteProductByIdInput
+  rawInput: DeleteProductInput
 ): Promise<"invalid-input" | "error" | "success"> {
   try {
-    const validatedInput = deleteProductByIdSchema.safeParse(rawInput)
+    const validatedInput = deleteProductSchema.safeParse(rawInput)
     if (!validatedInput.success) return "invalid-input"
 
     const deleted = await psDeleteProductById.execute({
@@ -135,4 +161,36 @@ export async function deleteProduct(
   }
 }
 
-export async function updateProduct() {}
+export async function updateProduct(
+  rawInput: UpdateProductInput
+): Promise<"invalid-input" | "not-found" | "error" | "success"> {
+  try {
+    const validatedInput = updateProductSchema.safeParse(rawInput)
+    if (!validatedInput.success) return "invalid-input"
+
+    const exists = await checkIfProductExists({ id: validatedInput.data.id })
+    if (!exists) return "not-found"
+
+    const updatedProduct = await db
+      .update(products)
+      .set({
+        name: validatedInput.data.name,
+        description: validatedInput.data.description,
+        category: validatedInput.data.category,
+        subcategory: validatedInput.data.subcategory,
+        price: validatedInput.data.price,
+        inventory: validatedInput.data.inventory,
+        images: validatedInput.data.images,
+      })
+      .where(eq(products.id, validatedInput.data.id))
+      .returning()
+
+    revalidatePath("/")
+    revalidatePath("/admin/produkty")
+
+    return updatedProduct ? "success" : "error"
+  } catch (error) {
+    console.error(error)
+    throw new Error("Error updating product")
+  }
+}

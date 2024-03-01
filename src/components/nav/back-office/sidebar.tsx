@@ -16,8 +16,8 @@ export function Sidebar(): JSX.Element {
   const segment = useSelectedLayoutSegment()
 
   return (
-    <aside className="hidden h-full w-56 overflow-y-auto border-r bg-tertiary pl-4 md:sticky md:block">
-      <ScrollArea className="py-6">
+    <aside className="fixed left-0 top-0 z-40 h-screen w-64 -translate-x-full border-r border-border bg-tertiary px-2 py-16 lg:translate-x-0">
+      <ScrollArea className="w-full py-6">
         <div className="flex w-full flex-col gap-2">
           {adminNavItems.map((item) => {
             const Icon = Icons[item.icon as keyof typeof Icons]

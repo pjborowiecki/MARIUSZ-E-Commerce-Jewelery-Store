@@ -1,13 +1,8 @@
-import { withContentlayer } from "next-contentlayer"
-
 import("./src/env.mjs")
 
 /** @type {import("next").NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  experimental: {
-    webpackBuildWorker: true,
-  },
   images: {
     remotePatterns: [
       {
@@ -22,8 +17,12 @@ const nextConfig = {
         protocol: "https",
         hostname: "uploadthing.com",
       },
+      {
+        protocol: "https",
+        hostname: "utfs.io",
+      },
     ],
   },
 }
 
-export default withContentlayer(nextConfig)
+export default nextConfig

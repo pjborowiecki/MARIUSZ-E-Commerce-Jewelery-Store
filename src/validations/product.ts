@@ -1,4 +1,3 @@
-import { getPreviousProductId } from "@/actions/product"
 import * as z from "zod"
 
 import { products } from "@/db/schema"
@@ -42,9 +41,14 @@ export const productSchema = z.object({
     })
     .default(products.category.enumValues[0]),
   subcategory: z.string().optional().nullable(),
-  price: z.string().regex(/^\d+(\.\d{1,2})?$/, {
-    message: "Must be a valid price",
-  }),
+  price: z
+    .string({
+      required_error: "Cena jest wymagana",
+      invalid_type_error: "Cena musi być tekstem",
+    })
+    .regex(/^\d+(\.\d{1,2})?$/, {
+      message: "Nieprawidłowy format daty. Spróbuj z kropką, np. 120.99",
+    }),
   inventory: z.number(),
   images: z
     .unknown()
@@ -82,7 +86,11 @@ export const getProductByNameSchema = z.object({
   name: productNameSchema,
 })
 
-export const deleteProductByIdSchema = z.object({
+export const updateProductSchema = extendedProductSchema.extend({
+  id: productIdSchema,
+})
+
+export const deleteProductSchema = z.object({
   id: productIdSchema,
 })
 
@@ -94,13 +102,20 @@ export const checkIfProductNameTakenSchema = z.object({
   name: productNameSchema,
 })
 
+export const checkIfProductExistsSchema = z.object({
+  id: productIdSchema,
+})
+
 export type GetProductByIdInput = z.infer<typeof getProductByIdSchema>
 export type GetProductByNameInput = z.infer<typeof getProductByNameSchema>
 export type GetProductsInput = z.infer<typeof getProductsSchema>
 export type AddProductInput = z.infer<typeof productSchema>
-export type DeleteProductByIdInput = z.infer<typeof deleteProductByIdSchema>
+export type UpdateProductInput = z.infer<typeof updateProductSchema>
+export type DeleteProductInput = z.infer<typeof deleteProductSchema>
 export type FilterProductInput = z.infer<typeof filterProductSchema>
-
+export type CheckIfProductExistsInput = z.infer<
+  typeof checkIfProductExistsSchema
+>
 export type CheckIfProductNameTakenInput = z.infer<
   typeof checkIfProductNameTakenSchema
 >

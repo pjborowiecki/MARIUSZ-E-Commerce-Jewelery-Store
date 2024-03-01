@@ -26,7 +26,7 @@ export default async function NewProductPage(): Promise<JSX.Element> {
 
   return (
     <div className="p-4">
-      <Card>
+      <Card className="rounded-md bg-tertiary">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl">Dodaj produkt</CardTitle>
           <CardDescription>

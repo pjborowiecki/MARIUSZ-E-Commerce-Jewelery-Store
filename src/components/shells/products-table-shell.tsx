@@ -137,16 +137,11 @@ export function ProductsTableShell({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[160px]">
-              <DropdownMenuItem asChild>
-                {/* TODO: Check this link */}
+              <DropdownMenuItem asChild className="cursor-pointer">
                 <Link href={`/admin/produkty/${row.original.id}`}>Edytuj</Link>
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                {/* TODO: Check this link */}
-                <Link href={`/admin/produkty/${row.original.id}`}>Zobacz</Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
               <DropdownMenuItem
+                className="cursor-pointer"
                 onClick={() => {
                   startTransition(async () => {
                     try {
@@ -181,8 +176,7 @@ export function ProductsTableShell({
                 }}
                 disabled={isPending}
               >
-                Delete
-                <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
+                Usuń
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
