@@ -1,19 +1,15 @@
 import * as React from "react"
 import type { Metadata } from "next"
 import { unstable_noStore as noStore } from "next/cache"
-import { redirect } from "next/navigation"
-import { auth } from "@/auth"
 import type { SearchParams } from "@/types"
 import { endOfDay, startOfDay } from "date-fns"
 import { and, asc, desc, gte, inArray, like, lte, sql } from "drizzle-orm"
 
 import { env } from "@/env.mjs"
 import { db } from "@/config/db"
-import { DEFAULT_UNAUTHENTICATED_REDIRECT } from "@/config/defaults"
 import { products, type Product } from "@/db/schema"
 import { storeProductsSearchParamsSchema } from "@/validations/params"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DateRangePicker } from "@/components/date-range-picker"
 import { ProductsTableShell } from "@/components/shells/products-table-shell"
@@ -30,10 +26,7 @@ interface ProductsPageProps {
 
 export default async function ProductsPage({
   searchParams,
-}: ProductsPageProps): Promise<React.JSX.Element> {
-  const session = await auth()
-  if (session?.user.role !== "owner") redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
-
+}: ProductsPageProps): Promise<JSX.Element> {
   const { page, per_page, sort, name, category, from, to } =
     storeProductsSearchParamsSchema.parse(searchParams)
 
@@ -56,7 +49,6 @@ export default async function ProductsPage({
       id: products.id,
       name: products.name,
       category: products.category,
-      status: products.status,
       price: products.price,
       inventory: products.inventory,
       createdAt: products.createdAt,
@@ -111,34 +103,30 @@ export default async function ProductsPage({
   const pageCount = Math.ceil(count / limit)
 
   return (
-    <div className="px-2 py-5 sm:pl-14 sm:pr-6">
-      <Card className="rounded-md">
-        <CardHeader className="">
-          <CardTitle className="flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
-            <div className="text-xl font-bold tracking-tight md:text-2xl">
-              Produkty
-            </div>
-            <DateRangePicker align="end" />
-          </CardTitle>
-        </CardHeader>
+    <div>
+      <div className="flex flex-col gap-2 border-b bg-tertiary p-4 sm:flex-row sm:items-center sm:justify-between md:min-h-20">
+        <h2 className="text-xl font-bold tracking-tight md:text-2xl">
+          Produkty
+        </h2>
+        <DateRangePicker align="end" />
+      </div>
 
-        <CardContent>
-          <React.Suspense
-            fallback={
-              <DataTableSkeleton
-                columnCount={5}
-                isNewRowCreatable={true}
-                isRowsDeletable={true}
-              />
-            }
-          >
-            <ProductsTableShell
-              data={data ? data : []}
-              pageCount={pageCount ? pageCount : 0}
+      <div className="p-4">
+        <React.Suspense
+          fallback={
+            <DataTableSkeleton
+              columnCount={5}
+              isNewRowCreatable={true}
+              isRowsDeletable={true}
             />
-          </React.Suspense>
-        </CardContent>
-      </Card>
+          }
+        >
+          <ProductsTableShell
+            data={data ? data : []}
+            pageCount={pageCount ? pageCount : 0}
+          />
+        </React.Suspense>
+      </div>
     </div>
   )
 }

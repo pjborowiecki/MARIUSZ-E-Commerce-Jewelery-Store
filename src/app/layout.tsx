@@ -92,6 +92,7 @@ export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
             {children}
             <Toaster />
             {/* <Analytics /> */}
+
             <TailwindIndicator />
           </ThemeProvider>
         </SmoothScrollProvider>

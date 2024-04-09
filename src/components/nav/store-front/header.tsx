@@ -77,7 +77,7 @@ export async function Header(): Promise<JSX.Element> {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem asChild>
+                <DropdownMenuItem asChild className="cursor-pointer">
                   <Link href="/">
                     <Icons.settings
                       className="mr-2 size-4 text-foreground/90"
@@ -86,7 +86,7 @@ export async function Header(): Promise<JSX.Element> {
                     Ustawienia
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
+                <DropdownMenuItem asChild className="cursor-pointer">
                   <Link href="/">
                     <Icons.package
                       className="mr-2 size-4 text-foreground/90"
@@ -95,7 +95,7 @@ export async function Header(): Promise<JSX.Element> {
                     Zamówienia
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
+                <DropdownMenuItem asChild className="cursor-pointer">
                   <Link href="/">
                     <Icons.heart
                       className="mr-2 size-4 text-foreground/90"
@@ -106,18 +106,23 @@ export async function Header(): Promise<JSX.Element> {
                 </DropdownMenuItem>
               </DropdownMenuGroup>
 
-              {/* TODO: Render conditionally if role is admin (owner) */}
-              {/* <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuItem asChild>
-                  <Link href="/admin/start/panel" className="">
-                    <Icons.dashboard className="mr-2 size-4" />
-                    Panel administratora
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuGroup> */}
+              {session?.user.role === "owner" && (
+                <div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem
+                      asChild
+                      className="cursor-pointer bg-secondary"
+                    >
+                      <Link href="/admin/zamowienia" className="">
+                        <Icons.dashboard className="mr-2 size-4" />
+                        Panel administratora
+                      </Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                </div>
+              )}
 
-              {/*  */}
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <SignOutButton

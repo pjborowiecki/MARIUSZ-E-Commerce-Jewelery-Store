@@ -3,48 +3,73 @@
 import * as React from "react"
 import Link from "next/link"
 import { useSelectedLayoutSegment } from "next/navigation"
-
-import { adminNavItems } from "@/data/nav-items"
+import type { NavItem } from "@/types"
 
 import { cn } from "@/lib/utils"
 
-import { buttonVariants } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { Icons } from "@/components/icons"
 
-export function Sidebar(): JSX.Element {
+interface SidebarProps {
+  navItems: NavItem[]
+}
+
+export function Sidebar({ navItems }: SidebarProps): JSX.Element {
   const segment = useSelectedLayoutSegment()
 
   return (
-    <aside className="fixed left-0 top-0 z-40 h-screen w-64 -translate-x-full border-r border-border bg-tertiary px-2 py-16 lg:translate-x-0">
-      <ScrollArea className="w-full py-6">
-        <div className="flex w-full flex-col gap-2">
-          {adminNavItems.map((item) => {
+    <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
+      <nav className="flex flex-col items-center gap-4 px-2 sm:py-[18px]">
+        <TooltipProvider>
+          {navItems?.map((item) => {
             const Icon = Icons[item.icon as keyof typeof Icons]
+
             return (
-              <Link
-                key={item.title}
-                href={item.href}
-                aria-label={item.title}
-                target={item.external ? "_blank" : ""}
-                rel={item.external ? "noreferrer" : ""}
-                className={cn(
-                  buttonVariants({ variant: "ghost" }),
-                  "w-full justify-start",
-                  item.href.includes(String(segment)) &&
-                    cn(
-                      buttonVariants({ variant: "secondary" }),
-                      "justify-start"
-                    )
-                )}
-              >
-                <Icon className="mr-2 size-4" aria-hidden="true" />
-                {item.title}
-              </Link>
+              <Tooltip key={item.title}>
+                <TooltipTrigger asChild>
+                  <Link
+                    href={item.href}
+                    target={item.external ? "_blank" : undefined}
+                    aria-label={item.title}
+                    className={cn(
+                      "flex size-9 items-center justify-center rounded-lg text-muted-foreground md:size-8",
+                      "transition-colors hover:bg-accent hover:text-foreground",
+                      item.href.includes(String(segment)) &&
+                        "bg-accent text-accent-foreground"
+                    )}
+                  >
+                    <Icon className="size-5" />
+                    <span className="sr-only">{item.title}</span>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent side="right">{item.title}</TooltipContent>
+              </Tooltip>
             )
           })}
-        </div>
-      </ScrollArea>
+        </TooltipProvider>
+      </nav>
+
+      <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-4">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                href="/admin/ustawienia"
+                className="flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:size-8"
+              >
+                <Icons.settings className="size-5" />
+                <span className="sr-only">Ustawienia</span>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="right">Ustawienia</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </nav>
     </aside>
   )
 }

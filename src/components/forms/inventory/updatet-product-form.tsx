@@ -83,6 +83,7 @@ export function UpdateProductForm({
     defaultValues: {
       category: product.category,
       subcategory: product.subcategory,
+      images: product.images,
     },
   })
 

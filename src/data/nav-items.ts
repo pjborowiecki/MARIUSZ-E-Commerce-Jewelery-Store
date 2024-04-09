@@ -183,16 +183,23 @@ export const sidebarNavItems = [] satisfies NavItem[]
 
 export const adminNavItems = [
   {
+    title: "Podsumowanie",
+    href: "/admin",
+    icon: "home",
+    external: false,
+    disabled: false,
+  },
+  {
     title: "Zamówienia",
     href: "/admin/zamowienia",
-    icon: "box",
+    icon: "shoppingCart",
     external: false,
     disabled: false,
   },
   {
     title: "Produkty",
     href: "/admin/produkty",
-    icon: "gem",
+    icon: "box",
     external: false,
     disabled: false,
   },

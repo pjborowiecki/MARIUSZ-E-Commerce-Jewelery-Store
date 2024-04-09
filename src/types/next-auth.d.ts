@@ -1,9 +1,23 @@
 import type { DefaultSession } from "next-auth"
 
+type Role = "user" | "owner"
+
 declare module "next-auth" {
+  interface User {
+    role: Role
+  }
+
   interface Session {
-    user: {
+    user: DefaultSession["user"] & {
       id: string
-    } & DefaultSession["user"]
+      role: UserRole
+    }
+  }
+}
+
+declare module "@auth/core/adapters" {
+  interface AdapterUser {
+    id: string
+    role: Role
   }
 }

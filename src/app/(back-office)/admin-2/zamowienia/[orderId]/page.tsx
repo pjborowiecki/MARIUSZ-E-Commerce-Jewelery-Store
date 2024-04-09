@@ -1,11 +1,9 @@
 import { type Metadata } from "next"
 import Link from "next/link"
-import { notFound, redirect } from "next/navigation"
+import { notFound } from "next/navigation"
 import { getOrderById, getOrderLineItems } from "@/actions/order"
-import { auth } from "@/auth"
 
 import { env } from "@/env.mjs"
-import { DEFAULT_UNAUTHENTICATED_REDIRECT } from "@/config/defaults"
 
 import { formatId, formatPrice } from "@/lib/utils"
 
@@ -30,9 +28,6 @@ interface AdminOrderPageProps {
 }
 
 export default async function AdminOrderPage({ params }: AdminOrderPageProps) {
-  const session = await auth()
-  if (session?.user.role !== "owner") redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
-
   const order = await getOrderById({ id: params.orderId })
   if (!order) notFound()
 
@@ -41,7 +36,7 @@ export default async function AdminOrderPage({ params }: AdminOrderPageProps) {
   })
 
   return (
-    <Card className="rounded-md">
+    <Card>
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl">
           Zamówienie {formatId(order.id)}

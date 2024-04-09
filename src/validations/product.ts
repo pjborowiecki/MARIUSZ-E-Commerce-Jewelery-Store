@@ -47,9 +47,9 @@ export const productSchema = z.object({
       invalid_type_error: "Cena musi być tekstem",
     })
     .regex(/^\d+(\.\d{1,2})?$/, {
-      message: "Nieprawidłowy format daty. Spróbuj z kropką, np. 120.99",
+      message: "Nieprawidłowy format. Spróbuj z kropką, np. 120.99",
     }),
-  inventory: z.number(),
+  inventory: z.number().min(0, { message: "Ilość nie może być ujemna" }),
   images: z
     .unknown()
     .refine((val) => {

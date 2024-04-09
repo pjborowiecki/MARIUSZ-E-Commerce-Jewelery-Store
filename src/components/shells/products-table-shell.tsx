@@ -17,8 +17,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { DataTable } from "@/components/data-table/data-table"
@@ -27,7 +25,7 @@ import { Icons } from "@/components/icons"
 
 type AwaitedProduct = Pick<
   Product,
-  "id" | "name" | "category" | "price" | "inventory" | "createdAt"
+  "id" | "name" | "category" | "status" | "price" | "inventory" | "createdAt"
 >
 
 interface ProductsTableShellProps {
@@ -98,6 +96,24 @@ export function ProductsTableShell({
           return (
             <Badge variant="outline" className="capitalize">
               {category}
+            </Badge>
+          )
+        },
+      },
+      {
+        accessorKey: "status",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Status" />
+        ),
+        cell: ({ cell }) => {
+          const statuses = Object.values(products.status.enumValues)
+          const status = cell.getValue() as Product["status"]
+
+          if (!statuses.includes(status)) return null
+
+          return (
+            <Badge variant="secondary" className="capitalize">
+              {status}
             </Badge>
           )
         },

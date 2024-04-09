@@ -3,7 +3,6 @@ import { redirect } from "next/navigation"
 import { auth } from "@/auth"
 
 import { env } from "@/env.mjs"
-import { DEFAULT_UNAUTHENTICATED_REDIRECT } from "@/config/defaults"
 
 import {
   Card,
@@ -16,19 +15,20 @@ import { AddProductForm } from "@/components/forms/inventory/add-product-form"
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
-  title: "Dodaj nowy produkt",
-  description: "Dodaj nowy produkt do swojego asortymentu",
+  title: "Dodaj produkt",
+  description: "Dodaj nowy projekt do swojego asortymentu",
 }
 
 export default async function NewProductPage(): Promise<JSX.Element> {
+  // TODO: Check for role === owner
   const session = await auth()
-  if (session?.user.role !== "owner") redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
+  if (!session?.user) redirect("/logowanie")
 
   return (
-    <div className="px-2 py-5 sm:pl-14 sm:pr-6">
+    <div className="p-4">
       <Card className="rounded-md bg-tertiary">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl">Dodaj nowy produkt</CardTitle>
+          <CardTitle className="text-2xl">Dodaj produkt</CardTitle>
           <CardDescription>
             Dodaj produkt do swojego asortymentu
           </CardDescription>

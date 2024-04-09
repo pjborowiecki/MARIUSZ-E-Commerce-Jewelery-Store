@@ -16,11 +16,19 @@ import {
 
 import type { CartItem, CheckoutItem } from "@/validations/cart"
 
+export const userRoleEnum = pgEnum("user_role", ["user", "owner"])
+
 export const productCategoryEnum = pgEnum("product_category", [
   "naszyjniki",
   "kolczyki",
   "pierścionki",
   "inne",
+])
+
+export const productStatusEnum = pgEnum("product_status", [
+  "roboczy",
+  "aktywny",
+  "zarchiwizowany",
 ])
 
 export const accounts = pgTable(
@@ -71,6 +79,7 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
 
 export const users = pgTable("users", {
   id: text("id").notNull().primaryKey(),
+  role: userRoleEnum("role").notNull().default("user"),
   name: varchar("name", { length: 128 }),
   surname: varchar("surname", { length: 128 }),
   email: varchar("email", { length: 128 }).unique().notNull(),
@@ -117,6 +126,7 @@ export const products = pgTable("products", {
   description: text("description"),
   images: json("images").$type<StoredFile[] | null>().default(null),
   category: productCategoryEnum("category").notNull().default("kolczyki"),
+  status: productStatusEnum("status").notNull().default("roboczy"),
   subcategory: varchar("subcategory", { length: 256 }),
   tags: json("tags").$type<string[] | null>().default(null),
   price: decimal("price", { precision: 10, scale: 2 }).notNull().default("0"),

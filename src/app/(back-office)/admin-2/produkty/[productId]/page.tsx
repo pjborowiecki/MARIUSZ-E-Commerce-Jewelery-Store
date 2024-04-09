@@ -1,10 +1,8 @@
 import type { Metadata } from "next"
-import { notFound, redirect } from "next/navigation"
+import { notFound } from "next/navigation"
 import { getProductById } from "@/actions/product"
-import { auth } from "@/auth"
 
 import { env } from "@/env.mjs"
-import { DEFAULT_UNAUTHENTICATED_REDIRECT } from "@/config/defaults"
 
 import {
   Card,
@@ -30,19 +28,18 @@ interface AdminProductPage {
 export default async function AdminProductPage({
   params,
 }: AdminProductPage): Promise<JSX.Element> {
-  const session = await auth()
-  if (session?.user.role !== "owner") redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
-
   const product = await getProductById({ id: params.productId })
   if (!product) notFound()
 
   return (
-    <div className="px-2 py-5 sm:pl-14 sm:pr-6">
+    <div className="p-4">
       <Card className="rounded-md bg-tertiary">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl">Szczegóły produktu</CardTitle>
 
-          <CardDescription>Zarządzaj i edytuj dane produktu</CardDescription>
+          <CardDescription>
+            Zarządzaj, edytuj dane lub usuń produkt
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <UpdateProductForm product={product} />
