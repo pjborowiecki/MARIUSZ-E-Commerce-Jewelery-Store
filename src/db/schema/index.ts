@@ -134,6 +134,16 @@ export const products = pgTable("products", {
   createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
 })
 
+export const categories = pgTable("categories", {
+  id: text("id").notNull().primaryKey(),
+  name: varchar("name", { length: 32 }).notNull(),
+  description: text("description"),
+  menuItem: boolean("menu_item").notNull().default(false),
+  images: json("images").$type<StoredFile[] | null>().default(null),
+  // TODO: Add parentId reference
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
+})
+
 export const carts = pgTable("carts", {
   id: text("id").notNull().primaryKey(),
   paymentIntentId: varchar("payment_intent_id", { length: 256 }),
@@ -210,6 +220,9 @@ export type NewNewsletterSubscriber = typeof newsletterSubscribers.$inferInsert
 
 export type Product = typeof products.$inferSelect
 export type NewProduct = typeof products.$inferInsert
+
+export type Category = typeof categories.$inferSelect
+export type NewCategory = typeof categories.$inferInsert
 
 export type Cart = typeof carts.$inferSelect
 export type NewCart = typeof carts.$inferInsert

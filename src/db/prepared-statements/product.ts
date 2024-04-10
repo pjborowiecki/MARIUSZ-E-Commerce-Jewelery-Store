@@ -20,11 +20,13 @@ export const psGetAllProducts = db
   .from(products)
   .prepare("psGetAllProducts")
 
+// TODO
 export const psGetAllProductsByCategoryId = db
   .select()
   .from(products)
   .prepare("psGetAllProductsByCategoryId")
 
+// TODO
 export const psGetAllProductsByCategoryName = db
   .select()
   .from(products)

@@ -16,7 +16,7 @@ export const productIdSchema = z
 
 export const productNameSchema = z
   .string({
-    required_error: "Nazwa jest wymagana",
+    required_error: "Nazwa produktu jest wymagana",
     invalid_type_error: "Nazwa musi być tekstem",
   })
   .min(3, {

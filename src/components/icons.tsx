@@ -397,6 +397,23 @@ export const Icons = {
       />
     </svg>
   ),
+  crown: (props: IconProps) => (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z" />
+      <path d="M5 21h14" />
+    </svg>
+  ),
   plusCircle: (props: IconProps) => (
     <svg
       {...props}
@@ -685,6 +702,32 @@ export const Icons = {
       <path d="M18 21a8 8 0 0 0-16 0" />
       <circle cx="10" cy="8" r="5" />
       <path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3" />
+    </svg>
+  ),
+  userCog: (props: IconProps) => (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="18" cy="15" r="3" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M10 15H6a4 4 0 0 0-4 4v2" />
+      <path d="m21.7 16.4-.9-.3" />
+      <path d="m15.2 13.9-.9-.3" />
+      <path d="m16.6 18.7.3-.9" />
+      <path d="m19.1 12.2.3-.9" />
+      <path d="m19.6 18.7-.4-1" />
+      <path d="m16.8 12.3-.4-1" />
+      <path d="m14.3 16.6 1-.4" />
+      <path d="m20.7 13.8 1-.4" />
     </svg>
   ),
   avatar: (props: IconProps) => (

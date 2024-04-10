@@ -225,6 +225,13 @@ export const adminNavItems = [
     disabled: false,
   },
   {
+    title: "Użytkownicy",
+    href: "/admin/uzytkownicy",
+    icon: "userCog",
+    external: false,
+    disabled: false,
+  },
+  {
     title: "Statystyki",
     href: "/admin/statystyki",
     icon: "barChart",

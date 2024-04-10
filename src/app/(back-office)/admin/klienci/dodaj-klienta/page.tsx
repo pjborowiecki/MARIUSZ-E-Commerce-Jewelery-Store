@@ -6,28 +6,26 @@ import { env } from "@/env.mjs"
 import { DEFAULT_UNAUTHENTICATED_REDIRECT } from "@/config/defaults"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { AddProductForm } from "@/components/forms/inventory/product/add-product-form"
+import { AddCustomerForm } from "@/components/forms/customer/add-customer-form"
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
-  title: "Dodaj nowy produkt",
-  description: "Dodaj nowy produkt do swojego asortymentu",
+  title: "Dodaj nowego użytkownika",
+  description: "Dodaj nowego użytkownika do bazy klientów",
 }
 
-export default async function NewProductPage(): Promise<JSX.Element> {
+export default async function NewCustomer(): Promise<JSX.Element> {
   const session = await auth()
   if (session?.user.role !== "owner") redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
 
   return (
     <div className="px-2 py-5 sm:pl-14 sm:pr-6">
       <Card className="rounded-md">
-        <CardHeader>
-          <CardTitle className="text-xl font-bold tracking-tight md:text-2xl">
-            Dodaj nowy produkt
-          </CardTitle>
+        <CardHeader className="text-xl font-bold tracking-tight md:text-2xl">
+          <CardTitle>Dodaj nowego użytkownika</CardTitle>
         </CardHeader>
         <CardContent>
-          <AddProductForm />
+          <AddCustomerForm />
         </CardContent>
       </Card>
     </div>

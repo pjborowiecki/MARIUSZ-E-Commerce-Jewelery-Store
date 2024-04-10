@@ -1,19 +1,21 @@
 import * as React from "react"
 import type { Metadata } from "next"
-import { unstable_noStore as noStore } from "next/cache"
 import Link from "next/link"
 import { redirect } from "next/navigation"
 import { auth } from "@/auth"
 import type { SearchParams } from "@/types"
 import { endOfDay, startOfDay } from "date-fns"
-import { and, asc, desc, gte, inArray, like, lte, sql } from "drizzle-orm"
+import { and, asc, desc, gte, like, lte, sql } from "drizzle-orm"
 
 import { env } from "@/env.mjs"
 import { db } from "@/config/db"
 import { DEFAULT_UNAUTHENTICATED_REDIRECT } from "@/config/defaults"
-import { orders, type Order } from "@/db/schema"
-import { ordersSearchParamsSchema } from "@/validations/params"
+import { orders } from "@/db/schema"
+import { customersSearchParamsSchema } from "@/validations/params"
 
+import { cn } from "@/lib/utils"
+
+import { buttonVariants } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -23,26 +25,26 @@ import {
 } from "@/components/ui/card"
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DateRangePicker } from "@/components/date-range-picker"
-import { OrdersTableShell } from "@/components/shells/orders-table-shell"
+import { CustomersTableShell } from "@/components/shells/customers-table-shell"
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
-  title: "Zamówienia",
-  description: "Zarządzaj zamówieniami klientów",
+  title: "Klienci",
+  description: "Zarządzaj danymi swoich klientów",
 }
 
-interface AdminOrdersPageProps {
+interface CustomersPageProps {
   searchParams: SearchParams
 }
 
-export default async function AdminOrdersPage({
+export default async function CustomersPage({
   searchParams,
-}: AdminOrdersPageProps): Promise<JSX.Element> {
+}: CustomersPageProps): Promise<JSX.Element> {
   const session = await auth()
   if (session?.user.role !== "owner") redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
 
-  const { page, per_page, sort, customer, status, from, to } =
-    ordersSearchParamsSchema.parse(searchParams)
+  const { page, per_page, sort, email, from, to } =
+    customersSearchParamsSchema.parse(searchParams)
 
   const fallbackPage = isNaN(page) || page < 1 ? 1 : page
   const limit = isNaN(per_page) ? 10 : per_page
@@ -50,47 +52,50 @@ export default async function AdminOrdersPage({
   const fromDay = from ? startOfDay(new Date(from)) : undefined
   const toDay = to ? endOfDay(new Date(to)) : undefined
 
-  const statuses = status ? status.split(".") : []
-
-  const [column, order] = (sort.split(".") as [
-    keyof Order | undefined,
-    "asc" | "desc" | undefined,
-  ]) ?? ["createdAt", "desc"]
-
-  noStore()
   const data = await db
     .select({
-      id: orders.id,
-      quantity: orders.quantity,
-      amount: orders.amount,
-      paymentIntentId: orders.stripePaymentIntentId,
-      status: orders.stripePaymentIntentStatus,
-      customer: orders.email,
-      createdAt: orders.createdAt,
+      name: orders.name,
+      email: orders.email,
+      orderPlaced: sql<number>`count(*)`,
+      totalSpent: sql<number>`sum(${orders.amount})`,
+      createdAt: sql<string>`min(${orders.createdAt})`,
     })
     .from(orders)
     .limit(limit)
     .offset(offset)
     .where(
       and(
-        customer ? like(orders.email, `%${customer}%`) : undefined,
-        statuses.length > 0
-          ? inArray(orders.stripePaymentIntentStatus, statuses)
-          : undefined,
+        email ? like(orders.email, `%${email}%`) : undefined,
         fromDay && toDay
           ? and(gte(orders.createdAt, fromDay), lte(orders.createdAt, toDay))
           : undefined
       )
     )
+    .groupBy(orders.email, orders.name)
     .orderBy(
-      column && column in orders
-        ? order === "asc"
-          ? asc(orders[column])
-          : desc(orders[column])
-        : desc(orders.createdAt)
+      sort === "name.asc"
+        ? asc(orders.name)
+        : sort === "name.desc"
+          ? desc(orders.name)
+          : sort === "email.asc"
+            ? asc(orders.email)
+            : sort === "email.desc"
+              ? desc(orders.email)
+              : sort === "totalSpent.asc"
+                ? asc(sql<number>`sum(${orders.amount})`)
+                : sort === "totalSpent.desc"
+                  ? desc(sql<number>`sum(${orders.amount})`)
+                  : sort === "orderPlaced.asc"
+                    ? asc(sql<number>`count(*)`)
+                    : sort === "orderPlaced.desc"
+                      ? desc(sql<number>`count(*)`)
+                      : sort === "createdAt.asc"
+                        ? asc(sql<string>`min(${orders.createdAt})`)
+                        : sort === "createdAt.desc"
+                          ? desc(sql<string>`min(${orders.createdAt})`)
+                          : sql<string>`min(${orders.createdAt})`
     )
 
-  noStore()
   const count = await db
     .select({
       count: sql<number>`count(*)`,
@@ -98,15 +103,13 @@ export default async function AdminOrdersPage({
     .from(orders)
     .where(
       and(
-        customer ? like(orders.email, `%${customer}%`) : undefined,
-        statuses.length > 0
-          ? inArray(orders.stripePaymentIntentStatus, statuses)
-          : undefined,
+        email ? like(orders.email, `%${email}%`) : undefined,
         fromDay && toDay
           ? and(gte(orders.createdAt, fromDay), lte(orders.createdAt, toDay))
           : undefined
       )
     )
+    .groupBy(orders.email, orders.name)
     .execute()
     .then((res) => res[0]?.count ?? 0)
 
@@ -118,26 +121,44 @@ export default async function AdminOrdersPage({
         <Card className="flex h-[84vh] flex-1 flex-col items-center justify-center rounded-md border-2 border-dashed bg-accent/40 text-center">
           <CardHeader>
             <CardTitle className="text-2xl font-bold tracking-tight">
-              Brak zamówień do wyświetlenia
+              Brak klientów do wyświetlenia
             </CardTitle>
             <CardDescription className="text-sm text-muted-foreground">
-              Gdy tylko się pojawią, zobaczysz tutaj swoje zamówienia
+              Dodaj pierwszego klienta aby wyświetlić listę
             </CardDescription>
           </CardHeader>
+          <CardContent>
+            <Link
+              href="/admin/klienci/dodaj-klienta"
+              aria-label="dodaj klienta"
+              className={cn(buttonVariants())}
+            >
+              Dodaj klienta
+            </Link>
+          </CardContent>
         </Card>
       ) : (
         <Card className="rounded-md">
           <CardHeader>
             <CardTitle className="flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
               <div className="text-xl font-bold tracking-tight md:text-2xl">
-                Zamówienia
+                Klienci
               </div>
               <DateRangePicker align="end" />
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <React.Suspense fallback={<DataTableSkeleton columnCount={6} />}>
-              <OrdersTableShell
+            {/* TODO: Update Suspense fallback shape */}
+            <React.Suspense
+              fallback={
+                <DataTableSkeleton
+                  columnCount={5}
+                  isNewRowCreatable={true}
+                  isRowsDeletable={true}
+                />
+              }
+            >
+              <CustomersTableShell
                 data={data ? data : []}
                 pageCount={pageCount ? pageCount : 0}
               />

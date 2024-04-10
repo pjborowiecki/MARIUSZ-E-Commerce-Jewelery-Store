@@ -51,3 +51,8 @@ export const customersSearchParamsSchema = searchParamsSchema.extend({
 export const customerSearchParamsSchema = searchParamsSchema.extend({
   status: z.string().optional(),
 })
+
+export const productCategoriesSearchParamsSchema = searchParamsSchema.omit({
+  from: true,
+  to: true,
+})

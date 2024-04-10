@@ -1,6 +1,7 @@
 import * as React from "react"
 import type { Metadata } from "next"
 import { unstable_noStore as noStore } from "next/cache"
+import Link from "next/link"
 import { redirect } from "next/navigation"
 import { auth } from "@/auth"
 import type { SearchParams } from "@/types"
@@ -13,7 +14,16 @@ import { DEFAULT_UNAUTHENTICATED_REDIRECT } from "@/config/defaults"
 import { products, type Product } from "@/db/schema"
 import { storeProductsSearchParamsSchema } from "@/validations/params"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { cn } from "@/lib/utils"
+
+import { buttonVariants } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DateRangePicker } from "@/components/date-range-picker"
 import { ProductsTableShell } from "@/components/shells/products-table-shell"
@@ -112,33 +122,55 @@ export default async function ProductsPage({
 
   return (
     <div className="px-2 py-5 sm:pl-14 sm:pr-6">
-      <Card className="rounded-md">
-        <CardHeader className="">
-          <CardTitle className="flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
-            <div className="text-xl font-bold tracking-tight md:text-2xl">
-              Produkty
-            </div>
-            <DateRangePicker align="end" />
-          </CardTitle>
-        </CardHeader>
+      {data?.length === 0 ? (
+        <Card className="flex h-[84vh] flex-1 flex-col items-center justify-center rounded-md border-2 border-dashed bg-accent/40 text-center">
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold tracking-tight">
+              Brak produktów do wyświetlenia
+            </CardTitle>
+            <CardDescription className="text-sm text-muted-foreground">
+              Dodaj pierwszy produkt aby wyświetlić listę
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link
+              href="/admin/produkty/dodaj-produkt"
+              aria-label="dodaj produkt"
+              className={cn(buttonVariants())}
+            >
+              Dodaj produkt
+            </Link>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="rounded-md">
+          <CardHeader className="space-y-1">
+            <CardTitle className="flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
+              <div className="text-xl font-bold tracking-tight md:text-2xl">
+                Produkty
+              </div>
+              <DateRangePicker align="end" />
+            </CardTitle>
+          </CardHeader>
 
-        <CardContent>
-          <React.Suspense
-            fallback={
-              <DataTableSkeleton
-                columnCount={5}
-                isNewRowCreatable={true}
-                isRowsDeletable={true}
+          <CardContent>
+            <React.Suspense
+              fallback={
+                <DataTableSkeleton
+                  columnCount={5}
+                  isNewRowCreatable={true}
+                  isRowsDeletable={true}
+                />
+              }
+            >
+              <ProductsTableShell
+                data={data ? data : []}
+                pageCount={pageCount ? pageCount : 0}
               />
-            }
-          >
-            <ProductsTableShell
-              data={data ? data : []}
-              pageCount={pageCount ? pageCount : 0}
-            />
-          </React.Suspense>
-        </CardContent>
-      </Card>
+            </React.Suspense>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

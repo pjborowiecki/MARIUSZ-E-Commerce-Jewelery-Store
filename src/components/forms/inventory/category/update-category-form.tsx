@@ -4,13 +4,18 @@ import * as React from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { addCategory } from "@/actions/category"
+import { updateCategory } from "@/actions/category"
 import type { FileWithPreview } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { Switch } from "@radix-ui/react-switch"
 import { generateReactHelpers } from "@uploadthing/react/hooks"
 import { useForm } from "react-hook-form"
 
-import { categorySchema, type AddCategoryInput } from "@/validations/tag"
+import { categories, type Category } from "@/db/schema"
+import {
+  updateCategoryFormSchema,
+  type UpdateCategoryFormInput,
+} from "@/validations/category"
 
 import { useToast } from "@/hooks/use-toast"
 import { cn, isArrayOfFile } from "@/lib/utils"
@@ -26,90 +31,108 @@ import {
   UncontrolledFormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Switch } from "@/components/ui/switch"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { FileDialog } from "@/components/file-dialog"
 import { Icons } from "@/components/icons"
 import { Zoom } from "@/components/image-zoom"
 import type { OurFileRouter } from "@/app/api/uploadthing/core"
 
+interface UpdateCategoryFormProps {
+  category: Category
+}
+
 const { useUploadThing } = generateReactHelpers<OurFileRouter>()
 
-export function AddCategoryForm(): JSX.Element {
+export function UpdateCategoryForm({
+  category,
+}: UpdateCategoryFormProps): JSX.Element {
   const router = useRouter()
   const { toast } = useToast()
-  const [isPending, startTransition] = React.useTransition()
   const [files, setFiles] = React.useState<FileWithPreview[] | null>(null)
+  const [isUpdating, startUpdateTransition] = React.useTransition()
+
+  React.useEffect(() => {
+    if (category.images && category.images.length > 0) {
+      setFiles(
+        category.images.map((image) => {
+          const file = new File([], image.name, {
+            type: "image",
+          })
+          const fileWithPreview = Object.assign(file, {
+            preview: image.url,
+          })
+
+          return fileWithPreview
+        })
+      )
+    }
+  }, [category])
+
   const { isUploading, startUpload } = useUploadThing("categoryImage")
 
-  const form = useForm<AddCategoryInput>({
-    resolver: zodResolver(categorySchema),
+  const form = useForm<UpdateCategoryFormInput>({
+    resolver: zodResolver(updateCategoryFormSchema),
     defaultValues: {
-      name: "",
-      description: "",
-      menuItem: true,
-      parentId: null,
-      images: [],
+      name: category.name,
+      menuItem: category.menuItem,
+      images: category.images,
     },
   })
 
-  function onSubmit(formData: AddCategoryInput) {
-    startTransition(async () => {
-      let message
-
+  function onSubmit(formData: UpdateCategoryFormInput) {
+    startUpdateTransition(async () => {
       try {
-        if (isArrayOfFile(formData.images)) {
-          toast({
-            title: "Wgrywanie zdjęć",
-            description: "Proszę czekać..",
-          })
-
-          try {
-            const response = await startUpload(formData.images)
-            const formattedImages =
-              response?.map((image) => ({
+        const images = isArrayOfFile(formData.images)
+          ? await startUpload(formData.images).then((res) => {
+              const formattedImages = res?.map((image) => ({
                 id: image.key,
                 name: image.key.split("_")[1] ?? image.key,
                 url: image.url,
-              })) ?? null
+              }))
+              return formattedImages ?? null
+            })
+          : null
 
-            message = await addCategory({
-              ...formData,
-              images: formattedImages,
-            })
-          } catch (error) {
-            toast({
-              title: "Błąd podczas wgrywania zdjęć",
-              description: "Coś poszło nie tak. Spróbuj ponownie",
-              variant: "destructive",
-            })
-          }
-        } else {
-          message = await addCategory({
-            name: formData.name,
-            description: formData.description,
-            menuItem: formData.menuItem,
-          })
-        }
+        const message = await updateCategory({
+          id: product.id,
+          name: formData.name,
+          description: formData.description,
+          menuItem: formData.menuItem,
+          images: images ?? product.images,
+        })
 
         switch (message) {
-          case "exists":
+          case "success":
             toast({
-              title: "Podana kategoria już istnieje",
-              description: "Użyj innej nazwy",
+              title: "Produkt został zaktualizowany",
+            })
+            setFiles(null)
+            router.push("/admin/produkty")
+            break
+          case "not-found":
+            toast({
+              title: "Nie znaleziono produktu",
+              description: "Produkt o podanym numerze Id nie istnieje",
               variant: "destructive",
             })
             break
-          case "success":
+          case "invalid-input":
             toast({
-              title: "Kategoria została dodana",
+              title: "Nieprawidłowy typ danych wejściowych",
+              variant: "destructive",
             })
-            router.push("/admin/asortyment/kategorie")
-            router.refresh()
             break
           default:
             toast({
-              title: "Błąd przy dodawaniu kategorii",
+              title: "Nie udało się zaktualizować produktu",
               description: "Spróbuj ponownie",
               variant: "destructive",
             })
@@ -131,19 +154,21 @@ export function AddCategoryForm(): JSX.Element {
         className="grid w-full gap-4"
         onSubmit={(...args) => void form.handleSubmit(onSubmit)(...args)}
       >
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem className="w-full md:w-4/5 xl:w-2/3">
-              <FormLabel>Nazwa</FormLabel>
-              <FormControl>
-                <Input type="text" placeholder="Np. kolczyki" {...field} />
-              </FormControl>
-              <FormMessage className="pt-2 sm:text-sm" />
-            </FormItem>
-          )}
-        />
+        <FormItem className="w-full md:w-4/5  xl:w-2/3">
+          <FormLabel>Nazwa</FormLabel>
+          <FormControl>
+            <Input
+              aria-invalid={!!form.formState.errors.name}
+              type="text"
+              placeholder="Np. kolczyki"
+              defaultValue={category.name}
+              {...form.register("name")}
+            />
+            <UncontrolledFormMessage
+              message={form.formState.errors.name?.message}
+            />
+          </FormControl>
+        </FormItem>
 
         <FormField
           control={form.control}
@@ -155,6 +180,7 @@ export function AddCategoryForm(): JSX.Element {
               <FormControl className="min-h-[120px]">
                 <Textarea
                   placeholder="Opis kategorii (opcjonalnie)"
+                  defaultValue={category.description ?? ""}
                   {...field}
                 />
               </FormControl>
@@ -180,7 +206,7 @@ export function AddCategoryForm(): JSX.Element {
           )}
         />
 
-        <FormItem className="mt-2.5 flex w-full flex-col gap-[5px] md:w-2/3 xl:w-4/5">
+        <FormItem className="mt-2.5 flex w-full flex-col gap-[5px] md:w-4/5 xl:w-2/3">
           <FormLabel>Zdjęcia</FormLabel>
           {files?.length ? (
             <div className="flex items-center gap-2">
@@ -206,36 +232,37 @@ export function AddCategoryForm(): JSX.Element {
               files={files}
               setFiles={setFiles}
               isUploading={isUploading}
-              disabled={isPending}
+              disabled={isUpdating}
             />
           </FormControl>
           <UncontrolledFormMessage
             message={form.formState.errors.images?.message}
           />
         </FormItem>
-        <div className=" flex items-center gap-2 pt-2">
+        <div className="flex items-center gap-2 pt-2">
           <Button
-            disabled={isPending}
-            aria-label="Dodaj kategorię"
+            disabled={isUpdating}
+            aria-label="zapisz zmiany"
             className="w-fit"
           >
-            {isPending ? (
+            {isUpdating ? (
               <>
                 <Icons.spinner
                   className="mr-2 size-4 animate-spin"
                   aria-hidden="true"
                 />
-                <span>Dodawanie...</span>
+                <span>Zapisywanie...</span>
               </>
             ) : (
-              <span>Dodaj</span>
+              <span>Zapisz zmiany</span>
             )}
-            <span className="sr-only">Dodaj kategorię</span>
+            <span className="sr-only">Zapisz zmiany</span>
           </Button>
 
           <Link
-            href="/admin/asortyment/kategorie"
+            href="/admin/kategorie"
             className={cn(buttonVariants({ variant: "ghost" }), "w-fit")}
+            aria-label="anuluj"
           >
             Anuluj
           </Link>

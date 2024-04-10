@@ -6,7 +6,7 @@ export default function ProductNotFound(): JSX.Element {
     <Shell variant="centered" className="max-w-md">
       <ErrorCard
         title="Nie znaleziono produktu"
-        description="Być może usunąłeś lub zmieniłeś jego nazwę"
+        description="Być może został usunięty lub zmieniono jego nazwę"
         retryLink="/admin/produkty"
         retryLinkText="Wróć do listy produktów"
       />

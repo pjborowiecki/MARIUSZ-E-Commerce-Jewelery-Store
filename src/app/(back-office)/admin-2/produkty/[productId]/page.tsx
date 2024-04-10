@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { UpdateProductForm } from "@/components/forms/inventory/updatet-product-form"
+import { UpdateProductForm } from "@/components/forms/inventory/product/updatet-product-form"
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
