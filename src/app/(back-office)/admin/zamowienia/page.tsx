@@ -39,7 +39,8 @@ export default async function AdminOrdersPage({
   searchParams,
 }: AdminOrdersPageProps): Promise<JSX.Element> {
   const session = await auth()
-  if (session?.user.role !== "owner") redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
+  if (session?.user.role !== "administrator")
+    redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
 
   const { page, per_page, sort, customer, status, from, to } =
     ordersSearchParamsSchema.parse(searchParams)

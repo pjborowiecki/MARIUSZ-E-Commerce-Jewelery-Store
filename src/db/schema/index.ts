@@ -16,7 +16,7 @@ import {
 
 import type { CartItem, CheckoutItem } from "@/validations/cart"
 
-export const userRoleEnum = pgEnum("user_role", ["user", "owner"])
+export const userRoleEnum = pgEnum("user_role", ["klient", "administrator"])
 
 export const productCategoryEnum = pgEnum("product_category", [
   "naszyjniki",
@@ -91,7 +91,6 @@ export const users = pgTable("users", {
     mode: "date",
   }),
   image: text("image"),
-  storeOwner: boolean("store_owner").notNull().default(false),
   createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
 })
 

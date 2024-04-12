@@ -5,6 +5,7 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 import { auth } from "@/auth"
 import type { SearchParams } from "@/types"
+import { asc, desc, like } from "drizzle-orm"
 
 import { env } from "@/env.mjs"
 import { db } from "@/config/db"
@@ -39,14 +40,46 @@ export default async function AdminCategoriesPage({
   searchParams,
 }: AdminCategoriesPageProps): Promise<JSX.Element> {
   const session = await auth()
-  if (session?.user.role !== "owner") redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
+  if (session?.user.role !== "administrator")
+    redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
 
   const { page, per_page, sort, name } =
     productCategoriesSearchParamsSchema.parse(searchParams)
 
-  const data = []
+  const fallbackPage = isNaN(page) || page < 1 ? 1 : page
+  const limit = isNaN(per_page) ? 10 : per_page
+  const offset = fallbackPage > 0 ? (fallbackPage - 1) * limit : 0
 
-  const pageCount = 0
+  const [column, order] = (sort?.split(".") as [
+    keyof Category | undefined,
+    "asc" | "desc" | undefined,
+  ]) ?? ["createdAt", "desc"]
+
+  noStore()
+  const data = await db
+    .select({
+      id: categories.id,
+      name: categories.name,
+      menuItem: categories.menuItem,
+      createdAt: categories.createdAt,
+    })
+    .from(categories)
+    .limit(limit)
+    .offset(offset)
+    .where(name ? like(categories.name, `%${name}%`) : undefined)
+    .orderBy(
+      column && column in categories
+        ? order === "asc"
+          ? asc(categories[column])
+          : desc(categories[column])
+        : desc(categories.createdAt)
+    )
+
+    // TODO FROM HERE
+    const count = await db.select()
+
+
+  const pageCount = Math.ceil(count  limit)
 
   return (
     <div className="px-2 py-5 sm:pl-14 sm:pr-6">

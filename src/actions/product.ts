@@ -170,7 +170,7 @@ export async function updateProduct(
     if (!validatedInput.success) return "invalid-input"
 
     const exists = await checkIfProductExists({ id: validatedInput.data.id })
-    if (!exists) return "not-found"
+    if (!exists || exists === "invalid-input") return "not-found"
 
     noStore()
     const updatedProduct = await db

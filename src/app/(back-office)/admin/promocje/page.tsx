@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 
 export default async function AdminPromosPage(): Promise<JSX.Element> {
   const session = await auth()
-  if (session?.user.role !== "owner") redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
+  if (session?.user.role !== "administrator") redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
 
   const data = []
   const pageCount = 0

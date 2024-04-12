@@ -2,7 +2,7 @@ import * as z from "zod"
 
 import { emailSchema } from "@/validations/email"
 
-const passwordSchema = z
+export const passwordSchema = z
   .string({
     required_error: "Hasło jest wymagane",
     invalid_type_error: "Nieprawidłowy typ danych",

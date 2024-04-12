@@ -54,7 +54,7 @@ export function ProductsTableShell({
                 prev.length === data.length ? [] : data.map((row) => row.id)
               )
             }}
-            aria-label="Select all"
+            aria-label="Zaznacz wszystko"
             className="translate-y-[2px]"
           />
         ),
@@ -69,7 +69,7 @@ export function ProductsTableShell({
                   : prev.filter((id) => id !== row.original.id)
               )
             }}
-            aria-label="Select row"
+            aria-label="Zaznacz rząd"
             className="translate-y-[2px]"
           />
         ),

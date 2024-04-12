@@ -56,3 +56,5 @@ export const productCategoriesSearchParamsSchema = searchParamsSchema.omit({
   from: true,
   to: true,
 })
+
+export const registeredUsersSearchParamsSchema = searchParamsSchema

@@ -1,6 +1,5 @@
 import * as React from "react"
 import type { Metadata } from "next"
-import Link from "next/link"
 import { redirect } from "next/navigation"
 import { auth } from "@/auth"
 import type { SearchParams } from "@/types"
@@ -13,9 +12,6 @@ import { DEFAULT_UNAUTHENTICATED_REDIRECT } from "@/config/defaults"
 import { orders } from "@/db/schema"
 import { customersSearchParamsSchema } from "@/validations/params"
 
-import { cn } from "@/lib/utils"
-
-import { buttonVariants } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -41,7 +37,7 @@ export default async function CustomersPage({
   searchParams,
 }: CustomersPageProps): Promise<JSX.Element> {
   const session = await auth()
-  if (session?.user.role !== "owner") redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
+  if (session?.user.role !== "administrator") redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
 
   const { page, per_page, sort, email, from, to } =
     customersSearchParamsSchema.parse(searchParams)
@@ -124,18 +120,9 @@ export default async function CustomersPage({
               Brak klientów do wyświetlenia
             </CardTitle>
             <CardDescription className="text-sm text-muted-foreground">
-              Dodaj pierwszego klienta aby wyświetlić listę
+              Gdy tylko się pojawią, zobaczysz tutaj listę klientów
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <Link
-              href="/admin/klienci/dodaj-klienta"
-              aria-label="dodaj klienta"
-              className={cn(buttonVariants())}
-            >
-              Dodaj klienta
-            </Link>
-          </CardContent>
         </Card>
       ) : (
         <Card className="rounded-md">
@@ -148,14 +135,9 @@ export default async function CustomersPage({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {/* TODO: Update Suspense fallback shape */}
             <React.Suspense
               fallback={
-                <DataTableSkeleton
-                  columnCount={5}
-                  isNewRowCreatable={true}
-                  isRowsDeletable={true}
-                />
+                <DataTableSkeleton columnCount={5} filterableColumnCount={0} />
               }
             >
               <CustomersTableShell

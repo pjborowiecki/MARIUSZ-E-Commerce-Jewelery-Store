@@ -26,3 +26,17 @@ export const psGetUserByResetPasswordToken = db
   .from(users)
   .where(eq(users.resetPasswordToken, sql.placeholder("token")))
   .prepare("psGetUserByResetPasswordToken")
+
+export const psCheckIfUserExists = db.query.users
+  .findFirst({
+    columns: {
+      id: true,
+    },
+    where: eq(users.id, sql.placeholder("id")),
+  })
+  .prepare("psCheckIfUserExists")
+
+export const psDeleteUserById = db
+  .delete(users)
+  .where(eq(users.id, sql.placeholder("id")))
+  .prepare("psDeleteUserById")

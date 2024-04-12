@@ -96,6 +96,8 @@ export function translateColumnNamesToPolish(name: string): string {
   const nameTranslations: Record<string, string> = {
     id: "Id",
     name: "Nazwa",
+    email: "Email",
+    role: "Rola",
     customer: "Klient",
     category: "Kategoria",
     price: "Cena",

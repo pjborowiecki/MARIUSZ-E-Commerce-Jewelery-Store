@@ -31,7 +31,8 @@ interface AdminOrderPageProps {
 
 export default async function AdminOrderPage({ params }: AdminOrderPageProps) {
   const session = await auth()
-  if (session?.user.role !== "owner") redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
+  if (session?.user.role !== "administrator")
+    redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
 
   const order = await getOrderById({ id: params.orderId })
   if (!order) notFound()

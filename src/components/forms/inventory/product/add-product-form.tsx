@@ -181,7 +181,7 @@ export function AddProductForm(): JSX.Element {
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Wybierz podkategorię" />
+                      <SelectValue placeholder="Wybierz kategorię" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -200,6 +200,7 @@ export function AddProductForm(): JSX.Element {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="subcategory"

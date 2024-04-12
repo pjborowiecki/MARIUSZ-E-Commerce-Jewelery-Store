@@ -37,15 +37,6 @@ export const categorySchema = z.object({
       invalid_type_error: "dane wejściowe muszą być typu boolean",
     })
     .default(true),
-  parentId: z
-    .string({
-      invalid_type_error: "Dane wejściowe muszą być tekstem",
-    })
-    .max(512, {
-      message: "Id kategorii musi mieć maksymalnie 512 znaków",
-    })
-    .optional()
-    .nullable(),
   images: z
     .unknown()
     .refine((val) => {

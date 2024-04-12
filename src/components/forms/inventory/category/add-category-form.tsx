@@ -48,47 +48,31 @@ export function AddCategoryForm(): JSX.Element {
       name: "",
       description: "",
       menuItem: true,
-      parentId: null,
       images: [],
     },
   })
 
   function onSubmit(formData: AddCategoryInput) {
     startTransition(async () => {
-      let message
-
       try {
+        let message = null
+
         if (isArrayOfFile(formData.images)) {
-          toast({
-            title: "Wgrywanie zdjęć",
-            description: "Proszę czekać..",
+          const uploadResults = await startUpload(formData.images)
+          const formattedImages =
+            uploadResults?.map((image) => ({
+              id: image.key,
+              name: image.key.split("_")[1] ?? image.key,
+              url: image.url,
+            })) ?? null
+
+          message = await addCategory({
+            ...formData,
+            images: formattedImages,
           })
-
-          try {
-            const response = await startUpload(formData.images)
-            const formattedImages =
-              response?.map((image) => ({
-                id: image.key,
-                name: image.key.split("_")[1] ?? image.key,
-                url: image.url,
-              })) ?? null
-
-            message = await addCategory({
-              ...formData,
-              images: formattedImages,
-            })
-          } catch (error) {
-            toast({
-              title: "Błąd podczas wgrywania zdjęć",
-              description: "Coś poszło nie tak. Spróbuj ponownie",
-              variant: "destructive",
-            })
-          }
         } else {
           message = await addCategory({
-            name: formData.name,
-            description: formData.description,
-            menuItem: formData.menuItem,
+            ...formData,
           })
         }
 

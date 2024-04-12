@@ -6,26 +6,29 @@ import { env } from "@/env.mjs"
 import { DEFAULT_UNAUTHENTICATED_REDIRECT } from "@/config/defaults"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { AddCustomerForm } from "@/components/forms/customer/add-customer-form"
+import { AddUserAsAdminForm } from "@/components/forms/user/add-user-as-admin-form"
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
   title: "Dodaj nowego użytkownika",
-  description: "Dodaj nowego użytkownika do bazy klientów",
+  description: "Dodaj nowego użytkownika jako administrator",
 }
 
-export default async function NewCustomer(): Promise<JSX.Element> {
+export default async function AdminAddUserPage(): Promise<JSX.Element> {
   const session = await auth()
-  if (session?.user.role !== "owner") redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
+  if (session?.user.role !== "administrator")
+    redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
 
   return (
     <div className="px-2 py-5 sm:pl-14 sm:pr-6">
       <Card className="rounded-md">
-        <CardHeader className="text-xl font-bold tracking-tight md:text-2xl">
-          <CardTitle>Dodaj nowego użytkownika</CardTitle>
+        <CardHeader>
+          <CardTitle className="text-xl font-bold tracking-tight md:text-2xl">
+            Dodaj nowego użytkownika
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <AddCustomerForm />
+          <AddUserAsAdminForm />
         </CardContent>
       </Card>
     </div>

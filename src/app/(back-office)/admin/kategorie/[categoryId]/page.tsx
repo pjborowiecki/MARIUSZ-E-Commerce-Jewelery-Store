@@ -25,7 +25,8 @@ export default async function AdminCategoryPage({
   params,
 }: AdminCategoryPage): Promise<JSX.Element> {
   const session = await auth()
-  if (session?.user.role !== "owner") redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
+  if (session?.user.role !== "administrator")
+    redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
 
   const category = await getCategoryById({ id: params.categoryId })
   if (!category) notFound()

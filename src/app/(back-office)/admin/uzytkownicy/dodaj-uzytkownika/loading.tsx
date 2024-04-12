@@ -1,9 +1,10 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 
-export default function UpdateProductLoading(): JSX.Element {
+// TODO: Check the structure and adjust to changes in the form
+export default function UpdateUserAsAdminLoading(): JSX.Element {
   return (
-    <div className="p-4">
+    <div className="px-2 py-5 sm:pl-14 sm:pr-6">
       <Card className="rounded-md bg-tertiary">
         <CardHeader className="space-y-2">
           <Skeleton className="h-6 w-1/4" />
@@ -50,7 +51,6 @@ export default function UpdateProductLoading(): JSX.Element {
             {/* Images */}
             <div className="mt-2.5 flex w-full flex-col gap-[5px] md:w-4/5 xl:w-2/3">
               <Skeleton className="h-4 w-32" />
-              <Skeleton className="h-24" />
               <Skeleton className="h-6" />
             </div>
           </div>

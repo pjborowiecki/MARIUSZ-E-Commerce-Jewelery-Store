@@ -42,7 +42,7 @@ export default async function ProductsPage({
   searchParams,
 }: ProductsPageProps): Promise<React.JSX.Element> {
   const session = await auth()
-  if (session?.user.role !== "owner") redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
+  if (session?.user.role !== "administrator") redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
 
   const { page, per_page, sort, name, category, from, to } =
     storeProductsSearchParamsSchema.parse(searchParams)
@@ -154,15 +154,7 @@ export default async function ProductsPage({
           </CardHeader>
 
           <CardContent>
-            <React.Suspense
-              fallback={
-                <DataTableSkeleton
-                  columnCount={5}
-                  isNewRowCreatable={true}
-                  isRowsDeletable={true}
-                />
-              }
-            >
+            <React.Suspense fallback={<DataTableSkeleton columnCount={5} />}>
               <ProductsTableShell
                 data={data ? data : []}
                 pageCount={pageCount ? pageCount : 0}

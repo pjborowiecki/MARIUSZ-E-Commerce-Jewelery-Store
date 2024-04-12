@@ -51,7 +51,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default async function AdminPanelPage(): Promise<JSX.Element> {
   const session = await auth()
-  if (session?.user.role !== "owner") redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
+  if (session?.user.role !== "administrator")
+    redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
 
   return (
     <div className="grid flex-1 items-start gap-4 p-5 sm:px-6 sm:py-0 sm:pl-14 md:gap-8 lg:grid-cols-3">

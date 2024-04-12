@@ -106,7 +106,7 @@ export async function Header(): Promise<JSX.Element> {
                 </DropdownMenuItem>
               </DropdownMenuGroup>
 
-              {session?.user.role === "owner" && (
+              {session?.user.role === "administrator" && (
                 <div>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>

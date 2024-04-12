@@ -109,6 +109,7 @@ export async function addCategory(
   rawInput: AddCategoryInput
 ): Promise<"invalid-input" | "exists" | "error" | "success"> {
   try {
+    console.log("RAW INPUT", rawInput)
     const validatedInput = extendedCategorySchema.safeParse(rawInput)
     if (!validatedInput.success) return "invalid-input"
 

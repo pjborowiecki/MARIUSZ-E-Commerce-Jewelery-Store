@@ -26,15 +26,15 @@ interface AwaitedCustomer {
 }
 
 interface CustomersTableShellProps {
-  data: AdaitedCustomer[]
+  data: AwaitedCustomer[]
   pageCount: number
 }
 
+// TODO: Fix the slug issue
 export function CustomersTableShell({
   data,
   pageCount,
 }: CustomersTableShellProps) {
-  // Memoize the columns so they don't re-render on every render
   const columns = React.useMemo<ColumnDef<AwaitedCustomer, unknown>[]>(
     () => [
       {
@@ -84,7 +84,7 @@ export function CustomersTableShell({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
-                  aria-label="Open menu"
+                  aria-label="Zobacz więcej"
                   variant="ghost"
                   className="flex size-8 p-0 data-[state=open]:bg-muted"
                 >
@@ -93,9 +93,7 @@ export function CustomersTableShell({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-[160px]">
                 <DropdownMenuItem asChild>
-                  {/* <Link href={`/dashboard/stores/${storeId}/customers/${slug}`}>
-                    View orders
-                  </Link> */}
+                  <Link href={`/admin/klienci/${slug}`}>Zobacz zamówienia</Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 export default function UpdateProductLoading(): JSX.Element {
   return (
-    <div className="p-4">
+    <div className="px-2 py-5 sm:pl-14 sm:pr-6">
       <Card className="rounded-md bg-tertiary">
         <CardHeader className="space-y-2">
           <Skeleton className="h-6 w-1/4" />

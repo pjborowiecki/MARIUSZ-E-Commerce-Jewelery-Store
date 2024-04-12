@@ -56,7 +56,7 @@ export const productSchema = z.object({
       if (!Array.isArray(val)) return false
       if (val.some((file) => !(file instanceof File))) return false
       return true
-    }, "Nieprawidłowy typ danych")
+    }, "Dane wejściowe muszą być szeregiem elementów typu File")
     .optional()
     .nullable()
     .default(null),
