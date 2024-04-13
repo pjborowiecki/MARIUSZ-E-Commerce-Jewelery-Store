@@ -6,12 +6,12 @@ import { redirect } from "next/navigation"
 import { auth } from "@/auth"
 import type { SearchParams } from "@/types"
 import { endOfDay, startOfDay } from "date-fns"
-import { and, asc, desc, gte, inArray, like, lte, sql } from "drizzle-orm"
+import { and, asc, desc, eq, gte, inArray, like, lte, sql } from "drizzle-orm"
 
 import { env } from "@/env.mjs"
 import { db } from "@/config/db"
 import { DEFAULT_UNAUTHENTICATED_REDIRECT } from "@/config/defaults"
-import { products, type Product } from "@/db/schema"
+import { categories, products, type Product } from "@/db/schema"
 import { storeProductsSearchParamsSchema } from "@/validations/params"
 
 import { cn } from "@/lib/utils"
@@ -42,7 +42,8 @@ export default async function ProductsPage({
   searchParams,
 }: ProductsPageProps): Promise<React.JSX.Element> {
   const session = await auth()
-  if (session?.user.role !== "administrator") redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
+  if (session?.user.role !== "administrator")
+    redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
 
   const { page, per_page, sort, name, category, from, to } =
     storeProductsSearchParamsSchema.parse(searchParams)
@@ -53,7 +54,7 @@ export default async function ProductsPage({
   const fromDay = from ? startOfDay(new Date(from)) : undefined
   const toDay = to ? endOfDay(new Date(to)) : undefined
 
-  const categories = (category?.split(".") as Product["category"][]) ?? []
+  const categoryIds = category?.split(".") ?? []
 
   const [column, order] = (sort?.split(".") as [
     keyof Product | undefined,
@@ -65,7 +66,7 @@ export default async function ProductsPage({
     .select({
       id: products.id,
       name: products.name,
-      category: products.category,
+      category: categories.name,
       status: products.status,
       price: products.price,
       inventory: products.inventory,
@@ -74,11 +75,12 @@ export default async function ProductsPage({
     .from(products)
     .limit(limit)
     .offset(offset)
+    .leftJoin(categories, eq(products.categoryId, categories.id))
     .where(
       and(
         name ? like(products.name, `%${name}%`) : undefined,
-        categories.length > 0
-          ? inArray(products.category, categories)
+        categoryIds.length > 0
+          ? inArray(products.categoryId, categoryIds)
           : undefined,
         fromDay && toDay
           ? and(
@@ -105,8 +107,8 @@ export default async function ProductsPage({
     .where(
       and(
         name ? like(products.name, `%${name}%`) : undefined,
-        categories.length > 0
-          ? inArray(products.category, categories)
+        categoryIds.length > 0
+          ? inArray(products.categoryId, categoryIds)
           : undefined,
         fromDay && toDay
           ? and(

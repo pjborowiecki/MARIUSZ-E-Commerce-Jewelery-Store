@@ -12,8 +12,8 @@ import { useForm } from "react-hook-form"
 
 import { products, type Product } from "@/db/schema"
 import {
-  updateProductFormSchema,
-  type UpdateProductFormInput,
+  updateProductSchema,
+  type UpdateProductInput,
 } from "@/validations/product"
 import { getSubcategories } from "@/data/products"
 

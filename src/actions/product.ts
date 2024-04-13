@@ -18,17 +18,15 @@ import {
   checkIfProductExistsSchema,
   checkIfProductNameTakenSchema,
   deleteProductSchema,
-  extendedProductSchema,
   getProductByIdSchema,
   getProductByNameSchema,
-  updateProductFunctionSchema,
+  productSchema,
   type AddProductInput,
   type CheckIfProductExistsInput,
   type CheckIfProductNameTakenInput,
   type DeleteProductInput,
   type GetProductByIdInput,
   type GetProductByNameInput,
-  type UpdateProductFunctionInput,
 } from "@/validations/product"
 
 export async function getProductById(
@@ -110,7 +108,7 @@ export async function addProduct(
   rawInput: AddProductInput
 ): Promise<"invalid-input" | "exists" | "error" | "success"> {
   try {
-    const validatedInput = extendedProductSchema.safeParse(rawInput)
+    const validatedInput = productSchema.safeParse(rawInput)
     if (!validatedInput.success) return "invalid-input"
 
     noStore()
@@ -194,5 +192,43 @@ export async function updateProduct(
   } catch (error) {
     console.error(error)
     throw new Error("Error updating product")
+  }
+}
+
+export async function filterProducts({ query }: { query: string }) {
+  noStore()
+  try {
+    if (query.length === 0) {
+      return {
+        data: null,
+        error: null,
+      }
+    }
+
+    const categoriesWithProducts = await db.query.categories.findMany({
+      columns: {
+        id: true,
+        name: true,
+      },
+      with: {
+        products: {
+          columns: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+      where: (table, { sql }) => sql`position(${query} in ${table.name}) > 0`,
+    })
+
+    return {
+      data: categoriesWithProducts,
+      error: null,
+    }
+  } catch (error) {
+    return {
+      data: null,
+      error: "Error filtering products",
+    }
   }
 }

@@ -52,9 +52,13 @@ export const customerSearchParamsSchema = searchParamsSchema.extend({
   status: z.string().optional(),
 })
 
-export const productCategoriesSearchParamsSchema = searchParamsSchema.omit({
-  from: true,
-  to: true,
-})
+export const productCategoriesSearchParamsSchema = searchParamsSchema
+  .omit({
+    from: true,
+    to: true,
+  })
+  .extend({
+    name: z.string().optional(),
+  })
 
 export const registeredUsersSearchParamsSchema = searchParamsSchema

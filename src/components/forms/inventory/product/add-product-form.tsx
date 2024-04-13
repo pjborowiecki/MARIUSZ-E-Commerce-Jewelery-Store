@@ -1,23 +1,31 @@
 "use client"
 
 import * as React from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import type { getCategories, getSubcategories } from "@/actions/category"
 import { addProduct } from "@/actions/product"
-import type { FileWithPreview } from "@/types"
+import type { StoredFile } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { generateReactHelpers } from "@uploadthing/react/hooks"
 import { useForm } from "react-hook-form"
+import { toast } from "sonner"
 
-import { products } from "@/db/schema"
-import { productSchema, type AddProductInput } from "@/validations/product"
-import { getSubcategories } from "@/data/products"
+import { addProductSchema, type AddProductInput } from "@/validations/product"
 
-import { useToast } from "@/hooks/use-toast"
-import { cn, isArrayOfFile } from "@/lib/utils"
+// import { useToast } from "@/hooks/use-toast"
+import { useUploadFile } from "@/hooks/use-upload-file"
+import { getErrorMessage } from "@/lib/errors"
+import { cn } from "@/lib/utils"
 
 import { Button, buttonVariants } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import {
   Form,
   FormControl,
@@ -25,7 +33,6 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  UncontrolledFormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import {
@@ -37,142 +44,104 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { FileDialog } from "@/components/file-dialog"
+import { FilesCard } from "@/components/cards/files-card"
+import { FileUploader } from "@/components/file-uploader"
 import { Icons } from "@/components/icons"
-import { Zoom } from "@/components/image-zoom"
-import type { OurFileRouter } from "@/app/api/uploadthing/core"
 
-const { useUploadThing } = generateReactHelpers<OurFileRouter>()
+interface AddProductFormProps {
+  promises: Promise<{
+    categories: Awaited<ReturnType<typeof getCategories>>
+    subcategories: Awaited<ReturnType<typeof getSubcategories>>
+  }>
+}
 
-export function AddProductForm(): JSX.Element {
+export function AddProductForm({ promises }: AddProductFormProps): JSX.Element {
   const router = useRouter()
-  const { toast } = useToast()
-  const [isPending, startTransition] = React.useTransition()
-  const [files, setFiles] = React.useState<FileWithPreview[] | null>(null)
-  const { isUploading, startUpload } = useUploadThing("productImage")
+  const { categories, subcategories } = React.use(promises)
+  const [loading, setLoading] = React.useState(false)
+  const { uploadFiles, progresses, uploadedFiles, isUploading } =
+    useUploadFile("productImage")
 
   const form = useForm<AddProductInput>({
-    resolver: zodResolver(productSchema),
+    resolver: zodResolver(addProductSchema),
     defaultValues: {
       name: "",
       description: "",
-      category: undefined,
-      subcategory: undefined,
       price: "",
       inventory: NaN,
+      categoryId: "",
+      subcategoryId: "",
       images: [],
     },
   })
 
-  const subcategories = getSubcategories(form.watch("category"))
+  function onSubmit(input: AddProductInput) {
+    setLoading(true)
 
-  function onSubmit(formData: AddProductInput) {
-    startTransition(async () => {
-      try {
-        let message = null
-
-        if (isArrayOfFile(formData.images)) {
-          const uploadResults = await startUpload(formData.images)
-          const formattedImages =
-            uploadResults?.map((image) => ({
-              id: image.key,
-              name: image.key.split("_")[1] ?? image.key,
-              url: image.url,
-            })) ?? null
-
-          message = await addProduct({
-            ...formData,
-            images: formattedImages,
-          })
-        } else {
-          message = await addProduct({
-            ...formData,
-          })
-        }
-
-        switch (message) {
-          case "exists":
-            toast({
-              title: "Produt o podanej nazwie już istnieje",
-              description: "Wybierz inną nazwę i spróbuj ponownie",
-              variant: "destructive",
-            })
-            break
-          case "success":
-            toast({
-              title: "Produkt został dodany",
-            })
-            router.push("/admin/produkty")
-            break
-          default:
-            toast({
-              title: "Nie udało się dodać produktu",
-              description: "Spróbuj ponownie",
-              variant: "destructive",
-            })
-        }
-      } catch (error) {
-        console.error(error)
-        toast({
-          title: "Coś poszło nie tak",
-          description: "Spróbuj ponownie",
-          variant: "destructive",
+    toast.promise(
+      uploadFiles(input.images ?? []).then(() => {
+        return addProduct({
+          ...input,
+          images: JSON.stringify(uploadedFiles) as unknown as StoredFile[],
         })
+      }),
+      {
+        loading: "Adding product...",
+        success: () => {
+          form.reset()
+          setLoading(false)
+          return "Product"
+        },
+        error: (err) => {
+          setLoading(false)
+          return getErrorMessage(err)
+        },
       }
-    })
+    )
   }
 
   return (
     <Form {...form}>
       <form
-        className="grid w-full gap-4"
-        onSubmit={(...args) => void form.handleSubmit(onSubmit)(...args)}
+        className="grid w-full max-w-2xl gap-5"
+        onSubmit={form.handleSubmit(onSubmit)}
       >
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
-            <FormItem className="w-full md:w-3/4 xl:w-2/3">
-              <FormLabel>Nazwa</FormLabel>
+            <FormItem>
+              <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input
-                  className="placeholder:text-sm"
-                  type="text"
-                  placeholder="Nazwa produktu"
-                  {...field}
-                />
+                <Input placeholder="Type product name here." {...field} />
               </FormControl>
-              <FormMessage className="pt-2 sm:text-sm" />
+              <FormMessage />
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
           name="description"
           render={({ field }) => (
-            <FormItem className="w-full md:w-4/5 xl:w-2/3">
-              <FormLabel>Opis</FormLabel>
-
-              <FormControl className="min-h-[120px]">
+            <FormItem>
+              <FormLabel>Description</FormLabel>
+              <FormControl>
                 <Textarea
-                  className="placeholder:text-sm"
-                  placeholder="Opis produktu (opcjonalnie)"
+                  placeholder="Type product description here."
                   {...field}
                 />
               </FormControl>
-              <FormMessage className="pt-2 sm:text-sm" />
+              <FormMessage />
             </FormItem>
           )}
         />
-
-        <div className="flex w-full flex-col items-start gap-6 sm:flex-row md:w-4/5 xl:w-2/3">
+        <div className="flex flex-col items-start gap-6 sm:flex-row">
           <FormField
             control={form.control}
-            name="category"
+            name="categoryId"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Kategoria</FormLabel>
+                <FormLabel>Category</FormLabel>
                 <Select
                   value={field.value}
                   onValueChange={(value: typeof field.value) =>
@@ -180,19 +149,21 @@ export function AddProductForm(): JSX.Element {
                   }
                 >
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Wybierz kategorię" />
+                    <SelectTrigger className="capitalize">
+                      <SelectValue placeholder={field.value} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
                     <SelectGroup>
-                      {Object.values(products.category.enumValues).map(
-                        (option) => (
-                          <SelectItem key={option} value={option}>
-                            {option}
-                          </SelectItem>
-                        )
-                      )}
+                      {categories.map((option) => (
+                        <SelectItem
+                          key={option.id}
+                          value={option.id}
+                          className="capitalize"
+                        >
+                          {option.name}
+                        </SelectItem>
+                      ))}
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -200,27 +171,26 @@ export function AddProductForm(): JSX.Element {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
-            name="subcategory"
+            name="subcategoryId"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Podkategoria</FormLabel>
+                <FormLabel>Subcategory</FormLabel>
                 <Select
                   value={field.value?.toString()}
                   onValueChange={field.onChange}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Wybierz podkategorię" />
+                      <SelectValue placeholder="Select a subcategory" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
                     <SelectGroup>
                       {subcategories.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
+                        <SelectItem key={option.id} value={option.id}>
+                          {option.name}
                         </SelectItem>
                       ))}
                     </SelectGroup>
@@ -231,19 +201,16 @@ export function AddProductForm(): JSX.Element {
             )}
           />
         </div>
-
-        <div className="flex w-full flex-col items-start gap-6 sm:flex-row md:w-4/5 xl:w-2/3">
+        <div className="flex flex-col items-start gap-6 sm:flex-row">
           <FormField
             control={form.control}
             name="price"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Cena</FormLabel>
+                <FormLabel>Price</FormLabel>
                 <FormControl>
                   <Input
-                    type="numeric"
-                    inputMode="numeric"
-                    placeholder="Np. 499.99"
+                    placeholder="Type product price here."
                     value={field.value}
                     onChange={field.onChange}
                   />
@@ -257,12 +224,12 @@ export function AddProductForm(): JSX.Element {
             name="inventory"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Dostępność</FormLabel>
+                <FormLabel>Inventory</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
                     inputMode="numeric"
-                    placeholder="Ilość w magazynie"
+                    placeholder="Type product inventory here."
                     value={Number.isNaN(field.value) ? "" : field.value}
                     onChange={(e) => field.onChange(e.target.valueAsNumber)}
                   />
@@ -272,75 +239,91 @@ export function AddProductForm(): JSX.Element {
             )}
           />
         </div>
-
-        <FormField
-          control={form.control}
-          name="images"
-          render={() => (
-            <FormItem className="mt-2.5 flex w-full flex-col gap-[5px] md:w-4/5 xl:w-2/3">
-              <FormLabel>Zdjęcia</FormLabel>
-              {files?.length ? (
-                <div className="flex items-center gap-2">
-                  {files.map((file, i) => (
-                    <Zoom key={i}>
-                      <Image
-                        src={file.preview}
-                        alt={file.name}
-                        className="size-20 shrink-0 rounded-md object-cover object-center"
-                        width={80}
-                        height={80}
-                      />
-                    </Zoom>
-                  ))}
-                </div>
-              ) : null}
-              <FormControl>
-                <FileDialog
-                  setValue={form.setValue}
-                  name="images"
-                  maxFiles={5}
-                  maxSize={1024 * 1024 * 4}
-                  files={files}
-                  setFiles={setFiles}
-                  isUploading={isUploading}
-                  disabled={isPending}
-                />
-              </FormControl>
-              <UncontrolledFormMessage
-                message={form.formState.errors.images?.message}
-              />
-            </FormItem>
-          )}
-        />
-
-        <div className=" flex items-center gap-2 pt-2">
-          <Button
-            disabled={isPending}
-            aria-label="Dodaj produkt"
-            className="w-fit"
-          >
-            {isPending ? (
-              <>
-                <Icons.spinner
-                  className="mr-2 size-4 animate-spin"
-                  aria-hidden="true"
-                />
-                <span aria-hidden="true">Dodawanie...</span>
-              </>
-            ) : (
-              <span>Dodaj</span>
+        <div className="space-y-6">
+          <FormField
+            control={form.control}
+            name="images"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Images</FormLabel>
+                <Select
+                  value={field.value?.toString()}
+                  onValueChange={field.onChange}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a subcategory" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectGroup>
+                      {subcategories.map((option) => (
+                        <SelectItem key={option.id} value={option.id}>
+                          {option.name}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
             )}
-            <span className="sr-only">Dodaj produkt</span>
-          </Button>
-
-          <Link
-            href="/admin/produkty"
-            className={cn(buttonVariants({ variant: "outline" }), "w-fit")}
-            aria-label="anuluj"
-          >
-            Anuluj
-          </Link>
+          />
+          <FormField
+            control={form.control}
+            name="images"
+            render={({ field }) => (
+              <div className="space-y-6">
+                <FormItem className="w-full">
+                  <FormLabel>Images</FormLabel>
+                  <FormControl>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline">Upload files</Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-xl">
+                        <DialogHeader>
+                          <DialogTitle>Upload files</DialogTitle>
+                          <DialogDescription>
+                            Drag and drop your files here or click to browse.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <FileUploader
+                          value={field.value ?? []}
+                          onValueChange={field.onChange}
+                          maxFiles={4}
+                          maxSize={4 * 1024 * 1024}
+                          progresses={progresses}
+                          disabled={isUploading}
+                        />
+                      </DialogContent>
+                    </Dialog>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+                {uploadedFiles.length > 0 ? (
+                  <FilesCard files={uploadedFiles} />
+                ) : null}
+              </div>
+            )}
+          />
         </div>
+        <Button
+          onClick={() =>
+            void form.trigger(["name", "description", "price", "inventory"])
+          }
+          className="w-fit"
+          disabled={loading}
+        >
+          {loading && (
+            <Icons.spinner
+              className="mr-2 size-4 animate-spin"
+              aria-hidden="true"
+            />
+          )}
+          Add Product
+          <span className="sr-only">Add Product</span>
+        </Button>
       </form>
     </Form>
   )

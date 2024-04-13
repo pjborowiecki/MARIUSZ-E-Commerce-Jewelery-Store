@@ -1,3 +1,20 @@
+import * as React from "react"
+import { getCategories } from "@/actions/category"
+import { getFeaturedProducts } from "@/actions/product"
+
+import { StoreFront } from "@/components/store-front/store-front"
+import { StoreFrontSkeleton } from "@/components/store-front/store-front-skeleton"
+
+const productsPromise = getFeaturedProducts()
+const categoriesPromise = getCategories()
+
 export default function LandingPage(): JSX.Element {
-  return <div className="size-full flex-1"></div>
+  return (
+    <React.Suspense fallback={<StoreFrontSkeleton />}>
+      <StoreFront
+        productsPromise={productsPromise}
+        categoriesPromise={categoriesPromise}
+      />
+    </React.Suspense>
+  )
 }

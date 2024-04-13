@@ -5,36 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1708823573223,
-      "tag": "0000_mute_shaman",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1712399841725,
-      "tag": "0001_mature_tony_stark",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1712401047581,
-      "tag": "0002_aberrant_vargas",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1712651928837,
-      "tag": "0003_neat_bruce_banner",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1712843889503,
-      "tag": "0004_fast_lady_ursula",
+      "when": 1712969683644,
+      "tag": "0000_safe_toro",
       "breakpoints": true
     }
   ]

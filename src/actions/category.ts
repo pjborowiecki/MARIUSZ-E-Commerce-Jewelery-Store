@@ -2,8 +2,13 @@
 
 import crypto from "crypto"
 
-import { unstable_noStore as noStore, revalidatePath } from "next/cache"
-import { eq } from "drizzle-orm"
+import {
+  unstable_cache as cache,
+  unstable_noStore as noStore,
+  revalidatePath,
+} from "next/cache"
+import type { SearchParams, StoredFile } from "@/types"
+import { desc, eq } from "drizzle-orm"
 
 import { db } from "@/config/db"
 import {
@@ -13,7 +18,7 @@ import {
   psGetCategoryById,
   psGetCategoryByName,
 } from "@/db/prepared-statements/category"
-import { categories, type Category } from "@/db/schema"
+import { categories, subcategories, type Category } from "@/db/schema"
 import {
   checkIfCategoryExistsSchema,
   checkIfCategoryNameTakenSchema,
@@ -49,6 +54,90 @@ export async function getCategoryById(
   }
 }
 
+export async function getCategoryByName(
+  rawInput: GetCategoryByNameInput
+): Promise<Category | null> {
+  try {
+    const validatedInput = getCategoryByNameSchema.safeParse(rawInput)
+    if (!validatedInput.success) return null
+
+    noStore()
+    const [category] = await psGetCategoryByName.execute({
+      name: validatedInput.data.name,
+    })
+    return category || null
+  } catch (error) {
+    console.error(error)
+    throw new Error("Error getting category by name")
+  }
+}
+
+export async function getCategories() {
+  return await cache(
+    async () => {
+      return db
+        .selectDistinct({
+          id: categories.id,
+          name: categories.name,
+          slug: categories.slug,
+          description: categories.description,
+        })
+        .from(categories)
+        .orderBy(desc(categories.name))
+    },
+    ["categories"],
+    {
+      revalidate: 3600, // every hour
+      tags: ["categories"],
+    }
+  )()
+}
+
+export async function getSubcategories() {
+  return await cache(
+    async () => {
+      return db
+        .selectDistinct({
+          id: subcategories.id,
+          name: subcategories.name,
+          slug: subcategories.slug,
+          description: subcategories.description,
+        })
+        .from(subcategories)
+    },
+    ["subcategories"],
+    {
+      revalidate: 3600, // every hour
+      tags: ["subcategories"],
+    }
+  )()
+}
+
+export async function getSubcategoriesByCategory({
+  categoryId,
+}: {
+  categoryId: string
+}) {
+  return await cache(
+    async () => {
+      return db
+        .selectDistinct({
+          id: subcategories.id,
+          name: subcategories.name,
+          slug: subcategories.slug,
+          description: subcategories.description,
+        })
+        .from(subcategories)
+        .where(eq(subcategories.id, categoryId))
+    },
+    [`subcategories-${categoryId}`],
+    {
+      revalidate: 3600, // every hour
+      tags: [`subcategories-${categoryId}`],
+    }
+  )()
+}
+
 export async function checkIfCategoryNameTaken(
   rawInput: CheckIfCategoryNameTakenInput
 ): Promise<"invalid-input" | boolean> {
@@ -65,24 +154,6 @@ export async function checkIfCategoryNameTaken(
   } catch (error) {
     console.error(error)
     throw new Error("Error checking if category name taken")
-  }
-}
-
-export async function getCategoryByName(
-  rawInput: GetCategoryByNameInput
-): Promise<Category | null> {
-  try {
-    const validatedInput = getCategoryByNameSchema.safeParse(rawInput)
-    if (!validatedInput.success) return null
-
-    noStore()
-    const [category] = await psGetCategoryByName.execute({
-      name: validatedInput.data.name,
-    })
-    return category || null
-  } catch (error) {
-    console.error(error)
-    throw new Error("Error getting category by name")
   }
 }
 

@@ -5,7 +5,7 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 import { auth } from "@/auth"
 import type { SearchParams } from "@/types"
-import { asc, desc, like } from "drizzle-orm"
+import { asc, desc, like, sql } from "drizzle-orm"
 
 import { env } from "@/env.mjs"
 import { db } from "@/config/db"
@@ -60,6 +60,7 @@ export default async function AdminCategoriesPage({
     .select({
       id: categories.id,
       name: categories.name,
+      description: categories.description || null,
       menuItem: categories.menuItem,
       createdAt: categories.createdAt,
     })
@@ -75,11 +76,16 @@ export default async function AdminCategoriesPage({
         : desc(categories.createdAt)
     )
 
-    // TODO FROM HERE
-    const count = await db.select()
+  noStore()
+  const count = await db
+    .select({
+      count: sql<number>`count(${categories.id})`,
+    })
+    .from(categories)
+    .where(name ? like(categories.name, `%${name}%`) : undefined)
+    .then((res) => res[0]?.count ?? 0)
 
-
-  const pageCount = Math.ceil(count  limit)
+  const pageCount = Math.ceil(count / limit)
 
   return (
     <div className="px-2 py-5 sm:pl-14 sm:pr-6">

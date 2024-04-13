@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx"
+import { customAlphabet } from "nanoid"
 import { twMerge } from "tailwind-merge"
 
 import { env } from "@/env.mjs"
@@ -105,7 +106,8 @@ export function translateColumnNamesToPolish(name: string): string {
     inventory: "Dostępność",
     quantity: "Ilość",
     amount: "Wartość",
-    createdAt: "Data",
+    menuItem: "W menu",
+    createdAt: "Data dodania",
   }
 
   return nameTranslations[name] || name
@@ -127,4 +129,11 @@ export function isMacOs() {
   if (typeof window === "undefined") return false
 
   return window.navigator.userAgent.includes("Mac")
+}
+
+export function generateId(length = 16) {
+  return customAlphabet(
+    "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+    length
+  )()
 }

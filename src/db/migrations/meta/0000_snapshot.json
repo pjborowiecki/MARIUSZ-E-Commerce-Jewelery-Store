@@ -1,5 +1,5 @@
 {
-  "id": "02cab3c3-a945-41b4-804f-61ee62d35765",
+  "id": "bb401e45-df63-4601-9246-0bee68eae7c9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -108,18 +108,18 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "varchar(32)",
           "primaryKey": true,
           "notNull": true
         },
-        "street": {
-          "name": "street",
+        "line_1": {
+          "name": "line_1",
           "type": "varchar(128)",
           "primaryKey": false,
           "notNull": true
         },
-        "line2": {
-          "name": "line2",
+        "line_2": {
+          "name": "line_2",
           "type": "varchar(128)",
           "primaryKey": false,
           "notNull": false
@@ -140,15 +140,22 @@
           "name": "country",
           "type": "varchar(128)",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "default": "'Poland'"
         },
-        "createdAt": {
-          "name": "createdAt",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "current_timestamp"
         }
       },
       "indexes": {},
@@ -162,7 +169,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "varchar(32)",
           "primaryKey": true,
           "notNull": true
         },
@@ -192,12 +199,19 @@
           "notNull": true,
           "default": false
         },
-        "createdAt": {
-          "name": "createdAt",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "current_timestamp"
         }
       },
       "indexes": {},
@@ -205,19 +219,96 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "categories": {
+      "name": "categories",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(32)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slug": {
+          "name": "slug",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "menu_item": {
+          "name": "menu_item",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "images": {
+          "name": "images",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'null'::json"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "current_timestamp"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "categories_name_unique": {
+          "name": "categories_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        },
+        "categories_slug_unique": {
+          "name": "categories_slug_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "slug"
+          ]
+        }
+      }
+    },
     "email_preferences": {
       "name": "email_preferences",
       "schema": "",
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "varchar(32)",
           "primaryKey": true,
           "notNull": true
         },
         "user_id": {
           "name": "user_id",
-          "type": "varchar(256)",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
@@ -260,6 +351,13 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "current_timestamp"
         }
       },
       "indexes": {},
@@ -277,12 +375,19 @@
           "primaryKey": true,
           "notNull": true
         },
-        "createdAt": {
-          "name": "createdAt",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "current_timestamp"
         }
       },
       "indexes": {},
@@ -290,13 +395,96 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "notifications": {
+      "name": "notifications",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(32)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token": {
+          "name": "token",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "referred_by": {
+          "name": "referred_by",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "newsletter": {
+          "name": "newsletter",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "marketing": {
+          "name": "marketing",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "current_timestamp"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "notifications_email_unique": {
+          "name": "notifications_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        },
+        "notifications_token_unique": {
+          "name": "notifications_token_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "token"
+          ]
+        }
+      }
+    },
     "orders": {
       "name": "orders",
       "schema": "",
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "varchar(32)",
           "primaryKey": true,
           "notNull": true
         },
@@ -344,33 +532,55 @@
           "primaryKey": false,
           "notNull": false
         },
-        "addressId": {
-          "name": "addressId",
-          "type": "text",
+        "address_id": {
+          "name": "address_id",
+          "type": "varchar(30)",
           "primaryKey": false,
           "notNull": true
         },
-        "createdAt": {
-          "name": "createdAt",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "current_timestamp"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "store_orders_id_idx": {
+          "name": "store_orders_id_idx",
+          "columns": [
+            "id"
+          ],
+          "isUnique": false
+        },
+        "store_orders_address_id_idx": {
+          "name": "store_orders_address_id_idx",
+          "columns": [
+            "address_id"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {
-        "orders_addressId_addresses_id_fk": {
-          "name": "orders_addressId_addresses_id_fk",
+        "orders_address_id_addresses_id_fk": {
+          "name": "orders_address_id_addresses_id_fk",
           "tableFrom": "orders",
           "tableTo": "addresses",
           "columnsFrom": [
-            "addressId"
+            "address_id"
           ],
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -383,7 +593,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "varchar(32)",
           "primaryKey": true,
           "notNull": true
         },
@@ -412,15 +622,30 @@
           "notNull": true,
           "default": false
         },
-        "createdAt": {
-          "name": "createdAt",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "current_timestamp"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "store_payments_id_idx": {
+          "name": "store_payments_id_idx",
+          "columns": [
+            "id"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
@@ -431,7 +656,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "varchar(32)",
           "primaryKey": true,
           "notNull": true
         },
@@ -454,18 +679,12 @@
           "notNull": false,
           "default": "'null'::json"
         },
-        "category": {
-          "name": "category",
-          "type": "product_category",
+        "status": {
+          "name": "status",
+          "type": "product_status",
           "primaryKey": false,
           "notNull": true,
-          "default": "'kolczyki'"
-        },
-        "subcategory": {
-          "name": "subcategory",
-          "type": "varchar(256)",
-          "primaryKey": false,
-          "notNull": false
+          "default": "'roboczy'"
         },
         "tags": {
           "name": "tags",
@@ -488,16 +707,64 @@
           "notNull": true,
           "default": 0
         },
-        "createdAt": {
-          "name": "createdAt",
+        "category_id": {
+          "name": "category_id",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subcategory_id": {
+          "name": "subcategory_id",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "current_timestamp"
         }
       },
-      "indexes": {},
-      "foreignKeys": {},
+      "indexes": {
+        "store_products_category_id_idx": {
+          "name": "store_products_category_id_idx",
+          "columns": [
+            "category_id"
+          ],
+          "isUnique": false
+        },
+        "store_products_subcategory_id_idx": {
+          "name": "store_products_subcategory_id_idx",
+          "columns": [
+            "subcategory_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "products_subcategory_id_subcategories_id_fk": {
+          "name": "products_subcategory_id_subcategories_id_fk",
+          "tableFrom": "products",
+          "tableTo": "subcategories",
+          "columnsFrom": [
+            "subcategory_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
@@ -543,6 +810,104 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "subcategories": {
+      "name": "subcategories",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(32)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slug": {
+          "name": "slug",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "menu_item": {
+          "name": "menu_item",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "category_id": {
+          "name": "category_id",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "current_timestamp"
+        }
+      },
+      "indexes": {
+        "store_subcategories_category_id_idx": {
+          "name": "store_subcategories_category_id_idx",
+          "columns": [
+            "category_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "subcategories_category_id_categories_id_fk": {
+          "name": "subcategories_category_id_categories_id_fk",
+          "tableFrom": "subcategories",
+          "tableTo": "categories",
+          "columnsFrom": [
+            "category_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "subcategories_name_unique": {
+          "name": "subcategories_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        },
+        "subcategories_slug_unique": {
+          "name": "subcategories_slug_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "slug"
+          ]
+        }
+      }
+    },
     "users": {
       "name": "users",
       "schema": "",
@@ -552,6 +917,13 @@
           "type": "text",
           "primaryKey": true,
           "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "user_role",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'klient'"
         },
         "name": {
           "name": "name",
@@ -607,19 +979,19 @@
           "primaryKey": false,
           "notNull": false
         },
-        "store_owner": {
-          "name": "store_owner",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": false
-        },
-        "createdAt": {
-          "name": "createdAt",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "current_timestamp"
         }
       },
       "indexes": {},
@@ -690,11 +1062,25 @@
     "product_category": {
       "name": "product_category",
       "values": {
+        "naszyjniki": "naszyjniki",
         "kolczyki": "kolczyki",
         "pierścionki": "pierścionki",
-        "naszyjniki": "naszyjniki",
-        "łańcuszki": "łańcuszki",
         "inne": "inne"
+      }
+    },
+    "product_status": {
+      "name": "product_status",
+      "values": {
+        "roboczy": "roboczy",
+        "aktywny": "aktywny",
+        "zarchiwizowany": "zarchiwizowany"
+      }
+    },
+    "user_role": {
+      "name": "user_role",
+      "values": {
+        "klient": "klient",
+        "administrator": "administrator"
       }
     }
   },

@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation"
 import { updateCategory } from "@/actions/category"
 import type { FileWithPreview } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Switch } from "@radix-ui/react-switch"
 import { generateReactHelpers } from "@uploadthing/react/hooks"
 import { useForm } from "react-hook-form"
 
@@ -27,7 +26,6 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
   UncontrolledFormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
@@ -39,6 +37,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { FileDialog } from "@/components/file-dialog"
 import { Icons } from "@/components/icons"
@@ -102,25 +101,25 @@ export function UpdateCategoryForm({
           : null
 
         const message = await updateCategory({
-          id: product.id,
+          id: category.id,
           name: formData.name,
           description: formData.description,
           menuItem: formData.menuItem,
-          images: images ?? product.images,
+          images: images ?? category.images,
         })
 
         switch (message) {
           case "success":
             toast({
-              title: "Produkt został zaktualizowany",
+              title: "Kategoria została zaktualizowana",
             })
             setFiles(null)
-            router.push("/admin/produkty")
+            router.push("/admin/kategorie")
             break
           case "not-found":
             toast({
-              title: "Nie znaleziono produktu",
-              description: "Produkt o podanym numerze Id nie istnieje",
+              title: "Nie znaleziono kategorii",
+              description: "Kategoria o podanym numerze Id nie istnieje",
               variant: "destructive",
             })
             break
@@ -132,7 +131,7 @@ export function UpdateCategoryForm({
             break
           default:
             toast({
-              title: "Nie udało się zaktualizować produktu",
+              title: "Nie udało się zaktualizować kategorii",
               description: "Spróbuj ponownie",
               variant: "destructive",
             })
@@ -154,20 +153,19 @@ export function UpdateCategoryForm({
         className="grid w-full gap-4"
         onSubmit={(...args) => void form.handleSubmit(onSubmit)(...args)}
       >
-        <FormItem className="w-full md:w-4/5  xl:w-2/3">
+        <FormItem className="w-full md:w-4/5 xl:w-2/3">
           <FormLabel>Nazwa</FormLabel>
           <FormControl>
             <Input
-              aria-invalid={!!form.formState.errors.name}
               type="text"
               placeholder="Np. kolczyki"
               defaultValue={category.name}
               {...form.register("name")}
             />
-            <UncontrolledFormMessage
-              message={form.formState.errors.name?.message}
-            />
           </FormControl>
+          <UncontrolledFormMessage
+            message={form.formState.errors.name?.message}
+          />
         </FormItem>
 
         <FormField
@@ -176,7 +174,6 @@ export function UpdateCategoryForm({
           render={({ field }) => (
             <FormItem className="w-full md:w-4/5 xl:w-2/3">
               <FormLabel>Opis</FormLabel>
-
               <FormControl className="min-h-[120px]">
                 <Textarea
                   placeholder="Opis kategorii (opcjonalnie)"
@@ -184,7 +181,9 @@ export function UpdateCategoryForm({
                   {...field}
                 />
               </FormControl>
-              <FormMessage className="pt-2 sm:text-sm" />
+              <UncontrolledFormMessage
+                message={form.formState.errors.description?.message}
+              />
             </FormItem>
           )}
         />
@@ -210,17 +209,20 @@ export function UpdateCategoryForm({
           <FormLabel>Zdjęcia</FormLabel>
           {files?.length ? (
             <div className="flex items-center gap-2">
-              {files.map((file, i) => (
-                <Zoom key={i}>
-                  <Image
-                    src={file.preview}
-                    alt={file.name}
-                    className="size-20 shrink-0 rounded-md object-cover object-center"
-                    width={80}
-                    height={80}
-                  />
-                </Zoom>
-              ))}
+              {files.map((file, i) => {
+                console.log(file.preview)
+                return (
+                  <Zoom key={i}>
+                    <Image
+                      src={file.preview}
+                      alt={file.name}
+                      className="size-20 shrink-0 rounded-md object-cover object-center"
+                      width={80}
+                      height={80}
+                    />
+                  </Zoom>
+                )
+              })}
             </div>
           ) : null}
           <FormControl>
@@ -239,6 +241,7 @@ export function UpdateCategoryForm({
             message={form.formState.errors.images?.message}
           />
         </FormItem>
+
         <div className="flex items-center gap-2 pt-2">
           <Button
             disabled={isUpdating}

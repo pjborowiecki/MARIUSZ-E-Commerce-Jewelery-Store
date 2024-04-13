@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { redirect } from "next/navigation"
+import { getCategories, getSubcategories } from "@/actions/category"
 import { auth } from "@/auth"
 
 import { env } from "@/env.mjs"
@@ -19,6 +20,10 @@ export default async function NewProductPage(): Promise<JSX.Element> {
   if (session?.user.role !== "administrator")
     redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
 
+  const promises = Promise.all([getCategories(), getSubcategories()]).then(
+    ([categories, subcategories]) => ({ categories, subcategories })
+  )
+
   return (
     <div className="px-2 py-5 sm:pl-14 sm:pr-6">
       <Card className="rounded-md">
@@ -28,7 +33,7 @@ export default async function NewProductPage(): Promise<JSX.Element> {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <AddProductForm />
+          <AddProductForm promises={promises} />
         </CardContent>
       </Card>
     </div>
