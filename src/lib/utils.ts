@@ -131,7 +131,7 @@ export function isMacOs() {
   return window.navigator.userAgent.includes("Mac")
 }
 
-export function generateId(length = 16) {
+export function generateId(length = 32) {
   return customAlphabet(
     "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
     length

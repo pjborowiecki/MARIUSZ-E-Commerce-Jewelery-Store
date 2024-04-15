@@ -12,8 +12,8 @@ import { useForm } from "react-hook-form"
 
 import { categories, type Category } from "@/db/schema"
 import {
-  updateCategoryFormSchema,
-  type UpdateCategoryFormInput,
+  updateCategorySchema,
+  type UpdateCategoryInput,
 } from "@/validations/category"
 
 import { useToast } from "@/hooks/use-toast"
@@ -39,46 +39,21 @@ import {
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
-import { FileDialog } from "@/components/file-dialog"
 import { Icons } from "@/components/icons"
-import { Zoom } from "@/components/image-zoom"
-import type { OurFileRouter } from "@/app/api/uploadthing/core"
 
 interface UpdateCategoryFormProps {
   category: Category
 }
-
-const { useUploadThing } = generateReactHelpers<OurFileRouter>()
 
 export function UpdateCategoryForm({
   category,
 }: UpdateCategoryFormProps): JSX.Element {
   const router = useRouter()
   const { toast } = useToast()
-  const [files, setFiles] = React.useState<FileWithPreview[] | null>(null)
   const [isUpdating, startUpdateTransition] = React.useTransition()
 
-  React.useEffect(() => {
-    if (category.images && category.images.length > 0) {
-      setFiles(
-        category.images.map((image) => {
-          const file = new File([], image.name, {
-            type: "image",
-          })
-          const fileWithPreview = Object.assign(file, {
-            preview: image.url,
-          })
-
-          return fileWithPreview
-        })
-      )
-    }
-  }, [category])
-
-  const { isUploading, startUpload } = useUploadThing("categoryImage")
-
-  const form = useForm<UpdateCategoryFormInput>({
-    resolver: zodResolver(updateCategoryFormSchema),
+  const form = useForm<UpdateCategoryInput>({
+    resolver: zodResolver(updateCategorySchema),
     defaultValues: {
       name: category.name,
       menuItem: category.menuItem,
@@ -86,28 +61,9 @@ export function UpdateCategoryForm({
     },
   })
 
-  function onSubmit(formData: UpdateCategoryFormInput) {
+  function onSubmit(formData: UpdateCategoryInput) {
     startUpdateTransition(async () => {
       try {
-        const images = isArrayOfFile(formData.images)
-          ? await startUpload(formData.images).then((res) => {
-              const formattedImages = res?.map((image) => ({
-                id: image.key,
-                name: image.key.split("_")[1] ?? image.key,
-                url: image.url,
-              }))
-              return formattedImages ?? null
-            })
-          : null
-
-        const message = await updateCategory({
-          id: category.id,
-          name: formData.name,
-          description: formData.description,
-          menuItem: formData.menuItem,
-          images: images ?? category.images,
-        })
-
         switch (message) {
           case "success":
             toast({
@@ -153,6 +109,8 @@ export function UpdateCategoryForm({
         className="grid w-full gap-4"
         onSubmit={(...args) => void form.handleSubmit(onSubmit)(...args)}
       >
+        <FormItem></FormItem>
+
         <FormItem className="w-full md:w-4/5 xl:w-2/3">
           <FormLabel>Nazwa</FormLabel>
           <FormControl>
@@ -204,43 +162,6 @@ export function UpdateCategoryForm({
             </FormItem>
           )}
         />
-
-        <FormItem className="mt-2.5 flex w-full flex-col gap-[5px] md:w-4/5 xl:w-2/3">
-          <FormLabel>Zdjęcia</FormLabel>
-          {files?.length ? (
-            <div className="flex items-center gap-2">
-              {files.map((file, i) => {
-                console.log(file.preview)
-                return (
-                  <Zoom key={i}>
-                    <Image
-                      src={file.preview}
-                      alt={file.name}
-                      className="size-20 shrink-0 rounded-md object-cover object-center"
-                      width={80}
-                      height={80}
-                    />
-                  </Zoom>
-                )
-              })}
-            </div>
-          ) : null}
-          <FormControl>
-            <FileDialog
-              setValue={form.setValue}
-              name="images"
-              maxFiles={1}
-              maxSize={1024 * 1024 * 4}
-              files={files}
-              setFiles={setFiles}
-              isUploading={isUploading}
-              disabled={isUpdating}
-            />
-          </FormControl>
-          <UncontrolledFormMessage
-            message={form.formState.errors.images?.message}
-          />
-        </FormItem>
 
         <div className="flex items-center gap-2 pt-2">
           <Button

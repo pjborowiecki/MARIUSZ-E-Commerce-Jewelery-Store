@@ -58,7 +58,7 @@ interface AddProductFormProps {
 export function AddProductForm({ promises }: AddProductFormProps): JSX.Element {
   const router = useRouter()
   const { categories, subcategories } = React.use(promises)
-  const [loading, setLoading] = React.useState(false)
+  const [isLoading, setIsLoading] = React.useState(false)
   const { uploadFiles, progresses, uploadedFiles, isUploading } =
     useUploadFile("productImage")
 
@@ -76,7 +76,7 @@ export function AddProductForm({ promises }: AddProductFormProps): JSX.Element {
   })
 
   function onSubmit(input: AddProductInput) {
-    setLoading(true)
+    setIsLoading(true)
 
     toast.promise(
       uploadFiles(input.images ?? []).then(() => {
@@ -89,11 +89,11 @@ export function AddProductForm({ promises }: AddProductFormProps): JSX.Element {
         loading: "Adding product...",
         success: () => {
           form.reset()
-          setLoading(false)
+          setIsLoading(false)
           return "Product"
         },
         error: (err) => {
-          setLoading(false)
+          setIsLoading(false)
           return getErrorMessage(err)
         },
       }
@@ -135,13 +135,14 @@ export function AddProductForm({ promises }: AddProductFormProps): JSX.Element {
             </FormItem>
           )}
         />
-        <div className="flex flex-col items-start gap-6 sm:flex-row">
+
+        <div className="flex w-full flex-col items-start gap-6 sm:flex-row md:w-4/5 xl:w-2/3">
           <FormField
             control={form.control}
             name="categoryId"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Category</FormLabel>
+                <FormLabel>Kategoria</FormLabel>
                 <Select
                   value={field.value}
                   onValueChange={(value: typeof field.value) =>
@@ -171,19 +172,20 @@ export function AddProductForm({ promises }: AddProductFormProps): JSX.Element {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="subcategoryId"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Subcategory</FormLabel>
+                <FormLabel>Podkategoria</FormLabel>
                 <Select
                   value={field.value?.toString()}
                   onValueChange={field.onChange}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a subcategory" />
+                      <SelectValue placeholder="Wybierz podkategorię" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -201,16 +203,19 @@ export function AddProductForm({ promises }: AddProductFormProps): JSX.Element {
             )}
           />
         </div>
-        <div className="flex flex-col items-start gap-6 sm:flex-row">
+
+        <div className="flex w-full flex-col items-start gap-6 sm:flex-row md:w-4/5 xl:w-2/3">
           <FormField
             control={form.control}
             name="price"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Price</FormLabel>
+                <FormLabel>Cena</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Type product price here."
+                    type="number"
+                    inputMode="numeric"
+                    placeholder="Np. 499.99"
                     value={field.value}
                     onChange={field.onChange}
                   />
@@ -219,17 +224,18 @@ export function AddProductForm({ promises }: AddProductFormProps): JSX.Element {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="inventory"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Inventory</FormLabel>
+                <FormLabel>Dostępność</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
                     inputMode="numeric"
-                    placeholder="Type product inventory here."
+                    placeholder="Ilość w magazynie"
                     value={Number.isNaN(field.value) ? "" : field.value}
                     onChange={(e) => field.onChange(e.target.valueAsNumber)}
                   />
@@ -239,91 +245,77 @@ export function AddProductForm({ promises }: AddProductFormProps): JSX.Element {
             )}
           />
         </div>
-        <div className="space-y-6">
-          <FormField
-            control={form.control}
-            name="images"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Images</FormLabel>
-                <Select
-                  value={field.value?.toString()}
-                  onValueChange={field.onChange}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a subcategory" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectGroup>
-                      {subcategories.map((option) => (
-                        <SelectItem key={option.id} value={option.id}>
-                          {option.name}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+
+        <FormField
+          control={form.control}
+          name="images"
+          render={({ field }) => (
+            <div className="space-y-6">
+              <FormItem className="mt-2.5 flex w-full flex-col gap-[5px] md:w-4/5 xl:w-2/3">
+                <FormLabel>Zdjęcia</FormLabel>
+                <FormControl>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline">Dodaj zdjęcia</Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-xl">
+                      <DialogHeader>
+                        <DialogTitle>Dodaj zdjęcia</DialogTitle>
+                        <DialogDescription>
+                          Drag and drop your files here or click to browse.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <FileUploader
+                        value={field.value ?? []}
+                        onValueChange={field.onChange}
+                        maxFiles={5}
+                        maxSize={5 * 1024 * 1024}
+                        progresses={progresses}
+                        disabled={isUploading}
+                      />
+                    </DialogContent>
+                  </Dialog>
+                </FormControl>
                 <FormMessage />
               </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="images"
-            render={({ field }) => (
-              <div className="space-y-6">
-                <FormItem className="w-full">
-                  <FormLabel>Images</FormLabel>
-                  <FormControl>
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button variant="outline">Upload files</Button>
-                      </DialogTrigger>
-                      <DialogContent className="sm:max-w-xl">
-                        <DialogHeader>
-                          <DialogTitle>Upload files</DialogTitle>
-                          <DialogDescription>
-                            Drag and drop your files here or click to browse.
-                          </DialogDescription>
-                        </DialogHeader>
-                        <FileUploader
-                          value={field.value ?? []}
-                          onValueChange={field.onChange}
-                          maxFiles={4}
-                          maxSize={4 * 1024 * 1024}
-                          progresses={progresses}
-                          disabled={isUploading}
-                        />
-                      </DialogContent>
-                    </Dialog>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-                {uploadedFiles.length > 0 ? (
-                  <FilesCard files={uploadedFiles} />
-                ) : null}
-              </div>
-            )}
-          />
-        </div>
-        <Button
-          onClick={() =>
-            void form.trigger(["name", "description", "price", "inventory"])
-          }
-          className="w-fit"
-          disabled={loading}
-        >
-          {loading && (
-            <Icons.spinner
-              className="mr-2 size-4 animate-spin"
-              aria-hidden="true"
-            />
+              {uploadedFiles.length > 0 ? (
+                <FilesCard files={uploadedFiles} />
+              ) : null}
+            </div>
           )}
-          Add Product
-          <span className="sr-only">Add Product</span>
-        </Button>
+        />
+
+        <div className="flex items-center gap-2 pt-2">
+          <Button
+            onClick={() =>
+              void form.trigger(["name", "description", "price", "inventory"])
+            }
+            className="w-fit"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <>
+                <Icons.spinner
+                  className="mr-2 size-4 animate-spin"
+                  aria-hidden="true"
+                />
+                <span aria-hidden="true">Dodawanie...</span>
+              </>
+            ) : (
+              <span>Dodaj</span>
+            )}
+
+            <span className="sr-only">Dodaj produkt</span>
+          </Button>
+
+          <Link
+            href="/admin/produkty"
+            className={cn(buttonVariants({ variant: "outline" }), "w-fit")}
+            aria-label="anuluj"
+          >
+            Anuluj
+          </Link>
+        </div>
       </form>
     </Form>
   )

@@ -1,21 +1,31 @@
 "use client"
 
 import * as React from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { addCategory } from "@/actions/category"
-import type { FileWithPreview } from "@/types"
+import type { StoredFile } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { generateReactHelpers } from "@uploadthing/react/hooks"
 import { useForm } from "react-hook-form"
 
-import { categorySchema, type AddCategoryInput } from "@/validations/category"
+import {
+  addCategorySchema,
+  type AddCategoryInput,
+} from "@/validations/category"
 
 import { useToast } from "@/hooks/use-toast"
-import { cn, isArrayOfFile } from "@/lib/utils"
+import { useUploadFile } from "@/hooks/use-upload-file"
+import { cn } from "@/lib/utils"
 
 import { Button, buttonVariants } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import {
   Form,
   FormControl,
@@ -23,27 +33,23 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  UncontrolledFormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
-import { FileDialog } from "@/components/file-dialog"
+import { FilesCard } from "@/components/cards/files-card"
+import { FileUploader } from "@/components/file-uploader"
 import { Icons } from "@/components/icons"
-import { Zoom } from "@/components/image-zoom"
-import type { OurFileRouter } from "@/app/api/uploadthing/core"
-
-const { useUploadThing } = generateReactHelpers<OurFileRouter>()
 
 export function AddCategoryForm(): JSX.Element {
   const router = useRouter()
   const { toast } = useToast()
   const [isPending, startTransition] = React.useTransition()
-  const [files, setFiles] = React.useState<FileWithPreview[] | null>(null)
-  const { isUploading, startUpload } = useUploadThing("categoryImage")
+  const { uploadFiles, progresses, uploadedFiles, isUploading } =
+    useUploadFile("categoryImage")
 
   const form = useForm<AddCategoryInput>({
-    resolver: zodResolver(categorySchema),
+    resolver: zodResolver(addCategorySchema),
     defaultValues: {
       name: "",
       description: "",
@@ -55,26 +61,17 @@ export function AddCategoryForm(): JSX.Element {
   function onSubmit(formData: AddCategoryInput) {
     startTransition(async () => {
       try {
-        let message = null
-
-        if (isArrayOfFile(formData.images)) {
-          const uploadResults = await startUpload(formData.images)
-          const formattedImages =
-            uploadResults?.map((image) => ({
-              id: image.key,
-              name: image.key.split("_")[1] ?? image.key,
-              url: image.url,
-            })) ?? null
-
-          message = await addCategory({
-            ...formData,
-            images: formattedImages,
+        const message = await uploadFiles(formData.images ?? []).then(() => {
+          return addCategory({
+            name: formData.name.toLowerCase(),
+            description: formData.description,
+            menuItem: formData.menuItem,
+            images:
+              uploadedFiles.length > 0
+                ? (JSON.stringify(uploadedFiles) as unknown as StoredFile[])
+                : null,
           })
-        } else {
-          message = await addCategory({
-            ...formData,
-          })
-        }
+        })
 
         switch (message) {
           case "exists":
@@ -124,7 +121,7 @@ export function AddCategoryForm(): JSX.Element {
               <FormControl>
                 <Input type="text" placeholder="Np. kolczyki" {...field} />
               </FormControl>
-              <FormMessage className="pt-2 sm:text-sm" />
+              <FormMessage className="sm:text-sm" />
             </FormItem>
           )}
         />
@@ -142,7 +139,7 @@ export function AddCategoryForm(): JSX.Element {
                   {...field}
                 />
               </FormControl>
-              <FormMessage className="pt-2 sm:text-sm" />
+              <FormMessage className="sm:text-sm" />
             </FormItem>
           )}
         />
@@ -160,43 +157,50 @@ export function AddCategoryForm(): JSX.Element {
                   aria-readonly
                 />
               </FormControl>
+              <FormMessage className="sm:text-sm" />
             </FormItem>
           )}
         />
 
-        <FormItem className="mt-2.5 flex w-full flex-col gap-[5px] md:w-4/5 xl:w-2/3">
-          <FormLabel>Zdjęcia</FormLabel>
-          {files?.length ? (
-            <div className="flex items-center gap-2">
-              {files.map((file, i) => (
-                <Zoom key={i}>
-                  <Image
-                    src={file.preview}
-                    alt={file.name}
-                    className="size-20 shrink-0 rounded-md object-cover object-center"
-                    width={80}
-                    height={80}
-                  />
-                </Zoom>
-              ))}
+        <FormField
+          control={form.control}
+          name="images"
+          render={({ field }) => (
+            <div className="space-y-6">
+              <FormItem className="mt-2.5 flex w-full flex-col gap-[5px] md:w-4/5 xl:w-2/3">
+                <FormLabel>Zdjęcia</FormLabel>
+                <FormControl>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline">Dodaj zdjęcia</Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-xl">
+                      <DialogHeader>
+                        <DialogTitle>Dodawanie zdjęć</DialogTitle>
+                        <DialogDescription>
+                          Maksymalnie jedno zdjęcie o wielkości do 2MB
+                        </DialogDescription>
+                      </DialogHeader>
+                      <FileUploader
+                        value={field.value ?? []}
+                        onValueChange={field.onChange}
+                        maxFiles={1}
+                        maxSize={2 * 1024 * 1024}
+                        progresses={progresses}
+                        disabled={isUploading}
+                      />
+                    </DialogContent>
+                  </Dialog>
+                </FormControl>
+                <FormMessage className="sm:text-sm" />
+              </FormItem>
+              {uploadedFiles.length > 0 ? (
+                <FilesCard files={uploadedFiles} />
+              ) : null}
             </div>
-          ) : null}
-          <FormControl>
-            <FileDialog
-              setValue={form.setValue}
-              name="images"
-              maxFiles={1}
-              maxSize={1024 * 1024 * 4}
-              files={files}
-              setFiles={setFiles}
-              isUploading={isUploading}
-              disabled={isPending}
-            />
-          </FormControl>
-          <UncontrolledFormMessage
-            message={form.formState.errors.images?.message}
-          />
-        </FormItem>
+          )}
+        />
+
         <div className=" flex items-center gap-2 pt-2">
           <Button
             disabled={isPending}

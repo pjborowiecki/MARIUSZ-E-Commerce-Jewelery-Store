@@ -22,7 +22,7 @@ export const psGetAllCategories = db
 
 export const psDeleteCategoryById = db
   .delete(categories)
-  .where(eq(categories.images, sql.placeholder("id")))
+  .where(eq(categories.id, sql.placeholder("id")))
   .prepare("psDeleteCategoryById")
 
 export const psDeleteAllCategories = db

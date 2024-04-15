@@ -39,7 +39,7 @@ export function Sidebar({ navItems }: SidebarProps): JSX.Element {
                     className={cn(
                       "flex size-9 items-center justify-center rounded-lg text-muted-foreground md:size-8",
                       "transition-colors hover:bg-accent hover:text-foreground",
-                      item.href.includes(String(segment)) &&
+                      item.slug?.startsWith(String(segment)) &&
                         "bg-accent text-accent-foreground"
                     )}
                   >

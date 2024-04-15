@@ -1,7 +1,5 @@
 "use server"
 
-import crypto from "crypto"
-
 import {
   unstable_cache as cache,
   unstable_noStore as noStore,
@@ -20,21 +18,21 @@ import {
 } from "@/db/prepared-statements/category"
 import { categories, subcategories, type Category } from "@/db/schema"
 import {
+  addCategorySchema,
   checkIfCategoryExistsSchema,
   checkIfCategoryNameTakenSchema,
   deleteCategorySchema,
-  extendedCategorySchema,
   getCategoryByIdSchema,
   getCategoryByNameSchema,
-  updateCategoryFunctionSchema,
   type AddCategoryInput,
   type CheckIfCategoryExistsInput,
   type CheckIfCategoryNameTakenInput,
   type DeleteCategoryInput,
   type GetCategoryByIdInput,
   type GetCategoryByNameInput,
-  type UpdateCategoryFunctionInput,
 } from "@/validations/category"
+
+import { generateId, slugify } from "@/lib/utils"
 
 export async function getCategoryById(
   rawInput: GetCategoryByIdInput
@@ -177,16 +175,17 @@ export async function checkIfCategoryExists(
 }
 
 export async function addCategory(
-  rawInput: AddCategoryInput
+  rawInput: Omit<AddCategoryInput, "images"> & {
+    images: StoredFile[] | null
+  }
 ): Promise<"invalid-input" | "exists" | "error" | "success"> {
   try {
-    console.log("RAW INPUT", rawInput)
-    const validatedInput = extendedCategorySchema.safeParse(rawInput)
+    const validatedInput = addCategorySchema.safeParse(rawInput)
     if (!validatedInput.success) return "invalid-input"
 
     noStore()
     const nameTaken = await psCheckIfCategoryNameTaken.execute({
-      name: validatedInput.data.name,
+      name: validatedInput.data.name.toLowerCase(),
     })
     if (nameTaken) return "exists"
 
@@ -194,11 +193,12 @@ export async function addCategory(
     const newCategory = await db
       .insert(categories)
       .values({
-        id: crypto.randomUUID(),
-        name: validatedInput.data.name,
+        id: generateId(),
+        name: validatedInput.data.name.toLowerCase(),
+        slug: slugify(validatedInput.data.name.toLowerCase()),
         description: validatedInput.data.description,
         menuItem: validatedInput.data.menuItem,
-        images: validatedInput.data.images,
+        images: JSON.stringify(rawInput.images) as unknown as StoredFile[],
       })
       .returning()
 
@@ -231,10 +231,10 @@ export async function deleteCategory(
 }
 
 export async function updateCategory(
-  rawInput: UpdateCategoryFunctionInput
+  rawInput: UpdateCategoryInput
 ): Promise<"invalid-input" | "not-found" | "error" | "success"> {
   try {
-    const validatedInput = updateCategoryFunctionSchema.safeParse(rawInput)
+    const validatedInput = updateCategorySchema.safeParse(rawInput)
     if (!validatedInput.success) return "invalid-input"
 
     const exists = await checkIfCategoryExists({ id: validatedInput.data.id })

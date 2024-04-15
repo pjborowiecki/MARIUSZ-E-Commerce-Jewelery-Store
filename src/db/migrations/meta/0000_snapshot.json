@@ -1,5 +1,5 @@
 {
-  "id": "bb401e45-df63-4601-9246-0bee68eae7c9",
+  "id": "fcbccdfb-9151-4283-83fd-1d5b3cfa8488",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -108,7 +108,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar(32)",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
@@ -169,7 +169,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar(32)",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
@@ -225,19 +225,19 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar(32)",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
         "name": {
           "name": "name",
-          "type": "varchar(256)",
+          "type": "varchar(32)",
           "primaryKey": false,
           "notNull": true
         },
         "slug": {
           "name": "slug",
-          "type": "varchar(256)",
+          "type": "varchar(64)",
           "primaryKey": false,
           "notNull": true
         },
@@ -296,13 +296,13 @@
         }
       }
     },
-    "email_preferences": {
-      "name": "email_preferences",
+    "emailPreferences": {
+      "name": "emailPreferences",
       "schema": "",
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar(32)",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
@@ -401,7 +401,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar(32)",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
@@ -484,7 +484,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar(32)",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
@@ -534,7 +534,7 @@
         },
         "address_id": {
           "name": "address_id",
-          "type": "varchar(30)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -593,7 +593,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar(32)",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
@@ -656,7 +656,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar(32)",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
@@ -709,15 +709,15 @@
         },
         "category_id": {
           "name": "category_id",
-          "type": "varchar(32)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "subcategory_id": {
           "name": "subcategory_id",
-          "type": "varchar(32)",
+          "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",
@@ -816,19 +816,19 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar(32)",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
         "name": {
           "name": "name",
-          "type": "varchar(256)",
+          "type": "varchar(32)",
           "primaryKey": false,
           "notNull": true
         },
         "slug": {
           "name": "slug",
-          "type": "varchar(256)",
+          "type": "varchar(64)",
           "primaryKey": false,
           "notNull": true
         },
@@ -847,7 +847,7 @@
         },
         "category_id": {
           "name": "category_id",
-          "type": "varchar(32)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },

@@ -8,7 +8,7 @@ export const categoryIdSchema = z
   .min(1, {
     message: "Id musi mieć przynajmniej 1 znak",
   })
-  .max(512, {
+  .max(32, {
     message: "Id może mieć maksymalnie 512 znaków",
   })
 
@@ -20,7 +20,7 @@ export const categoryNameSchema = z
   .min(3, {
     message: "Nazwa musi składać się z przynajmniej 3 znaków",
   })
-  .max(132, {
+  .max(32, {
     message: "Nazwa może składać się z maksymalnie 32 znaków",
   })
 
@@ -37,23 +37,10 @@ export const categorySchema = z.object({
       invalid_type_error: "dane wejściowe muszą być typu boolean",
     })
     .default(true),
-  images: z
-    .unknown()
-    .refine((val) => {
-      if (!Array.isArray(val)) return false
-      if (val.some((file) => !(file instanceof File))) return false
-      return true
-    }, "Dane wejściowe muszą być szeregiem elementów typu File")
-    .optional()
-    .nullable()
-    .default(null),
+  images: z.array(z.instanceof(File)).optional().nullable().default(null),
 })
 
-export const extendedCategorySchema = categorySchema.extend({
-  images: z
-    .array(z.object({ id: z.string(), name: z.string(), url: z.string() }))
-    .nullable(),
-})
+export const addCategorySchema = categorySchema
 
 export const getCategoryByIdSchema = z.object({
   id: categoryIdSchema,
@@ -63,9 +50,7 @@ export const getCategoryByNameSchema = z.object({
   name: categoryNameSchema,
 })
 
-export const updateCategoryFormSchema = categorySchema
-
-export const updateCategoryFunctionSchema = extendedCategorySchema.extend({
+export const updateCategorySchema = categorySchema.extend({
   id: categoryIdSchema,
 })
 
@@ -89,13 +74,9 @@ export type GetCategoryByIdInput = z.infer<typeof getCategoryByIdSchema>
 
 export type GetCategoryByNameInput = z.infer<typeof getCategoryByNameSchema>
 
-export type AddCategoryInput = z.infer<typeof categorySchema>
+export type AddCategoryInput = z.infer<typeof addCategorySchema>
 
-export type UpdateCategoryFormInput = z.infer<typeof updateCategoryFormSchema>
-
-export type UpdateCategoryFunctionInput = z.infer<
-  typeof updateCategoryFunctionSchema
->
+export type UpdateCategoryInput = z.infer<typeof updateCategorySchema>
 
 export type DeleteCategoryInput = z.infer<typeof deleteCategorySchema>
 

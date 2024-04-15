@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS "accounts" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "addresses" (
-	"id" varchar(32) PRIMARY KEY NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"line_1" varchar(128) NOT NULL,
 	"line_2" varchar(128),
 	"city" varchar(128) NOT NULL,
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS "addresses" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "carts" (
-	"id" varchar(32) PRIMARY KEY NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"payment_intent_id" varchar(256),
 	"client_secret" varchar(256),
 	"items" json DEFAULT 'null'::json,
@@ -53,9 +53,9 @@ CREATE TABLE IF NOT EXISTS "carts" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "categories" (
-	"id" varchar(32) PRIMARY KEY NOT NULL,
-	"name" varchar(256) NOT NULL,
-	"slug" varchar(256) NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
+	"name" varchar(32) NOT NULL,
+	"slug" varchar(64) NOT NULL,
 	"description" text,
 	"menu_item" boolean DEFAULT false NOT NULL,
 	"images" json DEFAULT 'null'::json,
@@ -65,8 +65,8 @@ CREATE TABLE IF NOT EXISTS "categories" (
 	CONSTRAINT "categories_slug_unique" UNIQUE("slug")
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "email_preferences" (
-	"id" varchar(32) PRIMARY KEY NOT NULL,
+CREATE TABLE IF NOT EXISTS "emailPreferences" (
+	"id" text PRIMARY KEY NOT NULL,
 	"user_id" text,
 	"email" varchar(256) NOT NULL,
 	"token" varchar(256) NOT NULL,
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS "newsletterSubscribers" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "notifications" (
-	"id" varchar(32) PRIMARY KEY NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"user_id" text NOT NULL,
 	"email" varchar(256) NOT NULL,
 	"token" varchar(256) NOT NULL,
@@ -98,7 +98,7 @@ CREATE TABLE IF NOT EXISTS "notifications" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "orders" (
-	"id" varchar(32) PRIMARY KEY NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"items" json DEFAULT 'null'::json,
 	"quantity" integer,
 	"amount" numeric(10, 2) DEFAULT '0' NOT NULL,
@@ -106,13 +106,13 @@ CREATE TABLE IF NOT EXISTS "orders" (
 	"stripe_payment_intent_status" varchar(256) NOT NULL,
 	"name" varchar(256),
 	"email" varchar(256),
-	"address_id" varchar(30) NOT NULL,
+	"address_id" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT current_timestamp
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "payments" (
-	"id" varchar(32) PRIMARY KEY NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"stripe_account_id" varchar(256) NOT NULL,
 	"stripe_account_created_at" integer,
 	"stripe_account_expires_at" integer,
@@ -122,7 +122,7 @@ CREATE TABLE IF NOT EXISTS "payments" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "products" (
-	"id" varchar(32) PRIMARY KEY NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"name" varchar(128) NOT NULL,
 	"description" text,
 	"images" json DEFAULT 'null'::json,
@@ -130,8 +130,8 @@ CREATE TABLE IF NOT EXISTS "products" (
 	"tags" json DEFAULT 'null'::json,
 	"price" numeric(10, 2) DEFAULT '0' NOT NULL,
 	"inventory" integer DEFAULT 0 NOT NULL,
-	"category_id" varchar(32) NOT NULL,
-	"subcategory_id" varchar(32),
+	"category_id" text NOT NULL,
+	"subcategory_id" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT current_timestamp
 );
@@ -143,12 +143,12 @@ CREATE TABLE IF NOT EXISTS "sessions" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "subcategories" (
-	"id" varchar(32) PRIMARY KEY NOT NULL,
-	"name" varchar(256) NOT NULL,
-	"slug" varchar(256) NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
+	"name" varchar(32) NOT NULL,
+	"slug" varchar(64) NOT NULL,
 	"description" text,
 	"menu_item" boolean DEFAULT false NOT NULL,
-	"category_id" varchar(32) NOT NULL,
+	"category_id" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT current_timestamp,
 	CONSTRAINT "subcategories_name_unique" UNIQUE("name"),

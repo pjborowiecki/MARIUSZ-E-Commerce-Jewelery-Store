@@ -184,6 +184,7 @@ export const sidebarNavItems = [] satisfies NavItem[]
 export const adminNavItems = [
   {
     title: "Podsumowanie",
+    slug: "podsumowanie",
     href: "/admin",
     icon: "home",
     external: false,
@@ -191,6 +192,7 @@ export const adminNavItems = [
   },
   {
     title: "Zamówienia",
+    slug: "produkty",
     href: "/admin/zamowienia",
     icon: "shoppingCart",
     external: false,
@@ -198,6 +200,7 @@ export const adminNavItems = [
   },
   {
     title: "Produkty",
+    slug: "produkty",
     href: "/admin/produkty",
     icon: "box",
     external: false,
@@ -205,13 +208,23 @@ export const adminNavItems = [
   },
   {
     title: "Kategorie",
+    slug: "kategorie",
     href: "/admin/kategorie",
-    icon: "inventory",
+    icon: "categories",
+    external: false,
+    disabled: false,
+  },
+  {
+    title: "Podkategorie",
+    slug: "podkategorie",
+    href: "/admin/podkategorie",
+    icon: "subcategories",
     external: false,
     disabled: false,
   },
   {
     title: "Tagi",
+    slug: "tagi",
     href: "/admin/tagi",
     icon: "tag",
     external: false,
@@ -219,6 +232,7 @@ export const adminNavItems = [
   },
   {
     title: "Klienci",
+    slug: "klienci",
     href: "/admin/klienci",
     icon: "users",
     external: false,
@@ -226,6 +240,7 @@ export const adminNavItems = [
   },
   {
     title: "Użytkownicy",
+    slug: "uzytkownicy",
     href: "/admin/uzytkownicy",
     icon: "userCog",
     external: false,
@@ -233,6 +248,7 @@ export const adminNavItems = [
   },
   {
     title: "Statystyki",
+    slug: "statystyki",
     href: "/admin/statystyki",
     icon: "barChart",
     external: false,
@@ -240,6 +256,7 @@ export const adminNavItems = [
   },
   {
     title: "Promocje",
+    slug: "promocje",
     href: "/admin/promocje",
     icon: "percent",
     external: false,

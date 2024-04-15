@@ -6,10 +6,10 @@ import { deleteCategory } from "@/actions/category"
 import { deleteProduct } from "@/actions/product"
 import { type ColumnDef } from "@tanstack/react-table"
 
-import { categories, Product, products, type Category } from "@/db/schema"
+import { categories, type Category } from "@/db/schema"
 
 import { useToast } from "@/hooks/use-toast"
-import { formatDate, formatPrice } from "@/lib/utils"
+import { formatDate } from "@/lib/utils"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -207,7 +207,7 @@ export function CategoriesTableShell({
       searchableColumns={[
         {
           id: "name",
-          title: "nazwy kategorii",
+          title: "kategorie",
         },
       ]}
       newRowLink={`/admin/kategorie/dodaj-kategorie`}

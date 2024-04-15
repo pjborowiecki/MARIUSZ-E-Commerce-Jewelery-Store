@@ -17,8 +17,6 @@ import {
 
 import type { CartItem, CheckoutItem } from "@/validations/cart"
 
-import { generateId } from "@/lib/utils"
-
 export const userRoleEnum = pgEnum("user_role", ["klient", "administrator"])
 
 export const productCategoryEnum = pgEnum("product_category", [
@@ -131,9 +129,7 @@ export const newsletterSubscribers = pgTable("newsletterSubscribers", {
 export const products = pgTable(
   "products",
   {
-    id: varchar("id", { length: 32 })
-      .$defaultFn(() => generateId())
-      .primaryKey(),
+    id: text("id").notNull().primaryKey(),
     name: varchar("name", { length: 128 }).notNull(),
     description: text("description"),
     images: json("images").$type<StoredFile[] | null>().default(null),
@@ -141,11 +137,10 @@ export const products = pgTable(
     tags: json("tags").$type<string[] | null>().default(null),
     price: decimal("price", { precision: 10, scale: 2 }).notNull().default("0"),
     inventory: integer("inventory").notNull().default(0),
-    categoryId: varchar("category_id", { length: 32 }).notNull(),
-    subcategoryId: varchar("subcategory_id", { length: 32 }).references(
-      () => subcategories.id,
-      { onDelete: "cascade" }
-    ),
+    categoryId: text("category_id").notNull(),
+    subcategoryId: text("subcategory_id")
+      .notNull()
+      .references(() => subcategories.id, { onDelete: "cascade" }),
     createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { mode: "date" }).default(
       sql`current_timestamp`
@@ -171,11 +166,9 @@ export const productsRelations = relations(products, ({ one }) => ({
 }))
 
 export const categories = pgTable("categories", {
-  id: varchar("id", { length: 32 })
-    .$defaultFn(() => generateId())
-    .primaryKey(),
-  name: varchar("name", { length: 256 }).notNull().unique(),
-  slug: varchar("slug", { length: 256 }).notNull().unique(),
+  id: text("id").notNull().primaryKey(),
+  name: varchar("name", { length: 32 }).notNull().unique(),
+  slug: varchar("slug", { length: 64 }).notNull().unique(),
   description: text("description"),
   menuItem: boolean("menu_item").notNull().default(false),
   images: json("images").$type<StoredFile[] | null>().default(null),
@@ -193,14 +186,12 @@ export const categoriesRelations = relations(categories, ({ many }) => ({
 export const subcategories = pgTable(
   "subcategories",
   {
-    id: varchar("id", { length: 32 })
-      .$defaultFn(() => generateId())
-      .primaryKey(),
-    name: varchar("name", { length: 256 }).notNull().unique(),
-    slug: varchar("slug", { length: 256 }).notNull().unique(),
+    id: text("id").notNull().primaryKey(),
+    name: varchar("name", { length: 32 }).notNull().unique(),
+    slug: varchar("slug", { length: 64 }).notNull().unique(),
     description: text("description"),
     menuItem: boolean("menu_item").notNull().default(false),
-    categoryId: varchar("category_id", { length: 32 })
+    categoryId: text("category_id")
       .references(() => categories.id, { onDelete: "cascade" })
       .notNull(),
     createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
@@ -223,9 +214,7 @@ export const subcategoriesRelations = relations(subcategories, ({ one }) => ({
 }))
 
 export const carts = pgTable("carts", {
-  id: varchar("id", { length: 32 })
-    .$defaultFn(() => generateId())
-    .primaryKey(),
+  id: text("id").notNull().primaryKey(),
   paymentIntentId: varchar("payment_intent_id", { length: 256 }),
   clientSecret: varchar("client_secret", { length: 256 }),
   items: json("items").$type<CartItem[] | null>().default(null),
@@ -237,9 +226,7 @@ export const carts = pgTable("carts", {
 export const orders = pgTable(
   "orders",
   {
-    id: varchar("id", { length: 32 })
-      .$defaultFn(() => generateId())
-      .primaryKey(),
+    id: text("id").notNull().primaryKey(),
     items: json("items").$type<CheckoutItem[] | null>().default(null),
     quantity: integer("quantity"),
     amount: decimal("amount", { precision: 10, scale: 2 })
@@ -253,9 +240,9 @@ export const orders = pgTable(
     }).notNull(),
     name: varchar("name", { length: 256 }),
     email: varchar("email", { length: 256 }),
-    addressId: varchar("address_id", { length: 30 })
-      .references(() => addresses.id, { onDelete: "cascade" })
-      .notNull(),
+    addressId: text("address_id")
+      .notNull()
+      .references(() => addresses.id, { onDelete: "cascade" }),
     createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { mode: "date" }).default(
       sql`current_timestamp`
@@ -270,9 +257,7 @@ export const orders = pgTable(
 export const payments = pgTable(
   "payments",
   {
-    id: varchar("id", { length: 32 })
-      .$defaultFn(() => generateId())
-      .primaryKey(),
+    id: text("id").notNull().primaryKey(),
     stripeAccountId: varchar("stripe_account_id", { length: 256 }).notNull(),
     stripeAccountCreatedAt: integer("stripe_account_created_at"),
     stripeAccountExpiresAt: integer("stripe_account_expires_at"),
@@ -288,9 +273,7 @@ export const payments = pgTable(
 )
 
 export const addresses = pgTable("addresses", {
-  id: varchar("id", { length: 32 })
-    .$defaultFn(() => generateId())
-    .primaryKey(),
+  id: text("id").notNull().primaryKey(),
   line1: varchar("line_1", { length: 128 }).notNull(),
   line2: varchar("line_2", { length: 128 }),
   city: varchar("city", { length: 128 }).notNull(),
@@ -302,10 +285,8 @@ export const addresses = pgTable("addresses", {
   ),
 })
 
-export const emailPreferences = pgTable("email_preferences", {
-  id: varchar("id", { length: 32 })
-    .$defaultFn(() => generateId())
-    .primaryKey(),
+export const emailPreferences = pgTable("emailPreferences", {
+  id: text("id").notNull().primaryKey(),
   userId: text("user_id"),
   email: varchar("email", { length: 256 }).notNull(),
   token: varchar("token", { length: 256 }).notNull(),
@@ -319,9 +300,7 @@ export const emailPreferences = pgTable("email_preferences", {
 })
 
 export const notifications = pgTable("notifications", {
-  id: varchar("id", { length: 32 })
-    .$defaultFn(() => generateId())
-    .primaryKey(),
+  id: text("id").notNull().primaryKey(),
   userId: text("user_id").notNull(),
   email: varchar("email", { length: 256 }).notNull().unique(),
   token: varchar("token", { length: 256 }).notNull().unique(),
