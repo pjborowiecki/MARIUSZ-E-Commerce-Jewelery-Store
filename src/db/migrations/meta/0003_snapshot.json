@@ -1,6 +1,6 @@
 {
-  "id": "28c60e1e-7f3d-413a-8737-c4d66d3870d2",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "b93fe090-1627-4f10-a03a-2d845387d6fa",
+  "prevId": "be5ab778-c37e-42c7-9ec5-cd3e0a9c1262",
   "version": "5",
   "dialect": "pg",
   "tables": {
@@ -885,13 +885,6 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "subcategories_name_unique": {
-          "name": "subcategories_name_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "name"
-          ]
-        },
         "subcategories_slug_unique": {
           "name": "subcategories_slug_unique",
           "nullsNotDistinct": false,

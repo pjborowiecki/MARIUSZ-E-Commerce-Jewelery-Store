@@ -11,7 +11,7 @@ import { AddCategoryForm } from "@/components/forms/inventory/category/add-categ
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
   title: "Dodaj nową kategorię",
-  description: "Dodaj nową kategorię produktów do swojego asortymentu",
+  description: "Dodaj nową kategorię produktów w swoim asortymencie",
 }
 
 export default async function NewCategoryPage(): Promise<JSX.Element> {

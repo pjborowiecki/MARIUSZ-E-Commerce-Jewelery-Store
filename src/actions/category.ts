@@ -6,33 +6,51 @@ import {
   revalidatePath,
 } from "next/cache"
 import type { SearchParams, StoredFile } from "@/types"
-import { desc, eq } from "drizzle-orm"
+import { and, desc, eq, sql } from "drizzle-orm"
 
 import { db } from "@/config/db"
 import {
   psCheckIfCategoryExists,
   psCheckIfCategoryNameTaken,
   psDeleteCategoryById,
+  psDeleteSubcategoryById,
+  psGetAllCategories,
+  psGetAllSubcategories,
   psGetCategoryById,
   psGetCategoryByName,
+  psGetSubcategoryById,
+  psGetSubcategoryByName,
 } from "@/db/prepared-statements/category"
-import { categories, subcategories, type Category } from "@/db/schema"
 import {
-  addCategorySchema,
+  categories,
+  subcategories,
+  type Category,
+  type Subcategory,
+} from "@/db/schema"
+import {
+  addCategoryFunctionSchema,
+  addSubcategorySchema,
   checkIfCategoryExistsSchema,
   checkIfCategoryNameTakenSchema,
   deleteCategorySchema,
+  deleteSubcategorySchema,
   getCategoryByIdSchema,
   getCategoryByNameSchema,
+  getSubcategoryByIdSchema,
+  updateCategorySchema,
   type AddCategoryInput,
+  type AddSubcategoryInput,
   type CheckIfCategoryExistsInput,
   type CheckIfCategoryNameTakenInput,
   type DeleteCategoryInput,
+  type DeleteSubcategoryInput,
   type GetCategoryByIdInput,
   type GetCategoryByNameInput,
+  type GetSubcategoryByIdInput,
+  type UpdateCategoryInput,
 } from "@/validations/category"
 
-import { generateId, slugify } from "@/lib/utils"
+import { generateId } from "@/lib/utils"
 
 export async function getCategoryById(
   rawInput: GetCategoryByIdInput
@@ -49,6 +67,24 @@ export async function getCategoryById(
   } catch (error) {
     console.error(error)
     throw new Error("Error getting category by Id")
+  }
+}
+
+export async function getSubcategoryById(
+  rawInput: GetSubcategoryByIdInput
+): Promise<Subcategory | null> {
+  try {
+    const validatedInput = getSubcategoryByIdSchema.safeParse(rawInput)
+    if (!validatedInput.success) return null
+
+    noStore()
+    const [category] = await psGetSubcategoryById.execute({
+      id: validatedInput.data.id,
+    })
+    return category || null
+  } catch (error) {
+    console.error(error)
+    throw new Error("Error getting subcategory by Id")
   }
 }
 
@@ -70,45 +106,12 @@ export async function getCategoryByName(
   }
 }
 
-export async function getCategories() {
-  return await cache(
-    async () => {
-      return db
-        .selectDistinct({
-          id: categories.id,
-          name: categories.name,
-          slug: categories.slug,
-          description: categories.description,
-        })
-        .from(categories)
-        .orderBy(desc(categories.name))
-    },
-    ["categories"],
-    {
-      revalidate: 3600, // every hour
-      tags: ["categories"],
-    }
-  )()
+export async function getAllCategories(): Promise<Category[]> {
+  return psGetAllCategories.execute()
 }
 
-export async function getSubcategories() {
-  return await cache(
-    async () => {
-      return db
-        .selectDistinct({
-          id: subcategories.id,
-          name: subcategories.name,
-          slug: subcategories.slug,
-          description: subcategories.description,
-        })
-        .from(subcategories)
-    },
-    ["subcategories"],
-    {
-      revalidate: 3600, // every hour
-      tags: ["subcategories"],
-    }
-  )()
+export async function getAllSubcategories(): Promise<Subcategory[]> {
+  return psGetAllSubcategories.execute()
 }
 
 export async function getSubcategoriesByCategory({
@@ -122,7 +125,6 @@ export async function getSubcategoriesByCategory({
         .selectDistinct({
           id: subcategories.id,
           name: subcategories.name,
-          slug: subcategories.slug,
           description: subcategories.description,
         })
         .from(subcategories)
@@ -175,12 +177,10 @@ export async function checkIfCategoryExists(
 }
 
 export async function addCategory(
-  rawInput: Omit<AddCategoryInput, "images"> & {
-    images: StoredFile[] | null
-  }
+  rawInput: AddCategoryInput
 ): Promise<"invalid-input" | "exists" | "error" | "success"> {
   try {
-    const validatedInput = addCategorySchema.safeParse(rawInput)
+    const validatedInput = addCategoryFunctionSchema.safeParse(rawInput)
     if (!validatedInput.success) return "invalid-input"
 
     noStore()
@@ -195,9 +195,8 @@ export async function addCategory(
       .values({
         id: generateId(),
         name: validatedInput.data.name.toLowerCase(),
-        slug: slugify(validatedInput.data.name.toLowerCase()),
         description: validatedInput.data.description,
-        menuItem: validatedInput.data.menuItem,
+        visibility: validatedInput.data.visibility,
         images: JSON.stringify(rawInput.images) as unknown as StoredFile[],
       })
       .returning()
@@ -208,6 +207,46 @@ export async function addCategory(
   } catch (error) {
     console.error(error)
     throw new Error("Error adding category")
+  }
+}
+
+export async function addSubcategory(
+  rawInput: AddSubcategoryInput
+): Promise<"invalid-input" | "exists" | "error" | "success"> {
+  try {
+    const validatedInput = addSubcategorySchema.safeParse(rawInput)
+    if (!validatedInput.success) return "invalid-input"
+
+    noStore()
+    const nameTaken = await db.query.subcategories.findFirst({
+      columns: {
+        id: true,
+        categoryName: true,
+      },
+      where: and(
+        eq(subcategories.name, validatedInput.data.name.toLowerCase()),
+        eq(subcategories.categoryName, validatedInput.data.categoryName)
+      ),
+    })
+    if (nameTaken) return "exists"
+
+    noStore()
+    const newCategory = await db
+      .insert(subcategories)
+      .values({
+        id: generateId(),
+        name: validatedInput.data.name.toLowerCase(),
+        description: validatedInput.data.description,
+        categoryName: validatedInput.data.categoryName,
+      })
+      .returning()
+
+    revalidatePath("/")
+    revalidatePath("/admin/podkategorie")
+    return newCategory ? "success" : "error"
+  } catch (error) {
+    console.error(error)
+    throw new Error("Error adding subcategory")
   }
 }
 
@@ -230,6 +269,25 @@ export async function deleteCategory(
   }
 }
 
+export async function deleteSubcategory(
+  rawInput: DeleteSubcategoryInput
+): Promise<"invalid-input" | "error" | "success"> {
+  try {
+    const validatedInput = deleteSubcategorySchema.safeParse(rawInput)
+    if (!validatedInput.success) return "invalid-input"
+
+    const deleted = await psDeleteSubcategoryById.execute({
+      id: validatedInput.data.id,
+    })
+
+    revalidatePath("/admin/podkategorie")
+    return deleted ? "success" : "error"
+  } catch (error) {
+    console.error(error)
+    throw new Error("Error deleting subcategory")
+  }
+}
+
 export async function updateCategory(
   rawInput: UpdateCategoryInput
 ): Promise<"invalid-input" | "not-found" | "error" | "success"> {
@@ -238,7 +296,7 @@ export async function updateCategory(
     if (!validatedInput.success) return "invalid-input"
 
     const exists = await checkIfCategoryExists({ id: validatedInput.data.id })
-    if (!exists) return "not-found"
+    if (!exists || exists === "invalid-input") return "not-found"
 
     noStore()
     const updatedCategory = await db
@@ -246,8 +304,7 @@ export async function updateCategory(
       .set({
         name: validatedInput.data.name,
         description: validatedInput.data.description,
-        menuItem: validatedInput.data.menuItem,
-        images: validatedInput.data.images,
+        visibility: validatedInput.data.visibility,
       })
       .where(eq(categories.id, validatedInput.data.id))
       .returning()

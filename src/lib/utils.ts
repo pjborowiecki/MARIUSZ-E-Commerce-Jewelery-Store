@@ -1,3 +1,4 @@
+import type { StoredFile } from "@/types"
 import { clsx, type ClassValue } from "clsx"
 import { customAlphabet } from "nanoid"
 import { twMerge } from "tailwind-merge"
@@ -106,7 +107,7 @@ export function translateColumnNamesToPolish(name: string): string {
     inventory: "Dostępność",
     quantity: "Ilość",
     amount: "Wartość",
-    menuItem: "W menu",
+    visibility: "Widoczność",
     createdAt: "Data dodania",
   }
 

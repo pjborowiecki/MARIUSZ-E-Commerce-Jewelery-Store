@@ -1,4 +1,10 @@
 DO $$ BEGIN
+ CREATE TYPE "category_visibility" AS ENUM('widoczna', 'ukryta');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  CREATE TYPE "product_category" AS ENUM('naszyjniki', 'kolczyki', 'pierścionki', 'inne');
 EXCEPTION
  WHEN duplicate_object THEN null;
@@ -57,7 +63,7 @@ CREATE TABLE IF NOT EXISTS "categories" (
 	"name" varchar(32) NOT NULL,
 	"slug" varchar(64) NOT NULL,
 	"description" text,
-	"menu_item" boolean DEFAULT false NOT NULL,
+	"visibility" "category_visibility" DEFAULT 'widoczna' NOT NULL,
 	"images" json DEFAULT 'null'::json,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT current_timestamp,
@@ -147,7 +153,6 @@ CREATE TABLE IF NOT EXISTS "subcategories" (
 	"name" varchar(32) NOT NULL,
 	"slug" varchar(64) NOT NULL,
 	"description" text,
-	"menu_item" boolean DEFAULT false NOT NULL,
 	"category_id" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT current_timestamp,

@@ -1,31 +1,25 @@
 "use client"
 
 import * as React from "react"
+import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { addCategory } from "@/actions/category"
-import type { StoredFile } from "@/types"
+import type { FileWithPreview } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
+import { categories } from "@/db/schema"
 import {
   addCategorySchema,
   type AddCategoryInput,
 } from "@/validations/category"
 
 import { useToast } from "@/hooks/use-toast"
-import { useUploadFile } from "@/hooks/use-upload-file"
-import { cn } from "@/lib/utils"
+import { useUploadThing } from "@/hooks/use-uploadthing"
+import { cn, isArrayOfFile } from "@/lib/utils"
 
 import { Button, buttonVariants } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
 import {
   Form,
   FormControl,
@@ -33,27 +27,35 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  UncontrolledFormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Switch } from "@/components/ui/switch"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { FilesCard } from "@/components/cards/files-card"
-import { FileUploader } from "@/components/file-uploader"
+import { FileDialog } from "@/components/file-dialog"
 import { Icons } from "@/components/icons"
+import { Zoom } from "@/components/image-zoom"
 
 export function AddCategoryForm(): JSX.Element {
   const router = useRouter()
   const { toast } = useToast()
+  const [files, setFiles] = React.useState<FileWithPreview[] | null>(null)
   const [isPending, startTransition] = React.useTransition()
-  const { uploadFiles, progresses, uploadedFiles, isUploading } =
-    useUploadFile("categoryImage")
+  const { isUploading, startUpload } = useUploadThing("categoryImage")
 
   const form = useForm<AddCategoryInput>({
     resolver: zodResolver(addCategorySchema),
     defaultValues: {
       name: "",
       description: "",
-      menuItem: true,
+      visibility: categories.visibility.enumValues[0],
       images: [],
     },
   })
@@ -61,17 +63,31 @@ export function AddCategoryForm(): JSX.Element {
   function onSubmit(formData: AddCategoryInput) {
     startTransition(async () => {
       try {
-        const message = await uploadFiles(formData.images ?? []).then(() => {
-          return addCategory({
-            name: formData.name.toLowerCase(),
+        let message = null
+
+        if (isArrayOfFile(formData.images)) {
+          const uploadResults = await startUpload(formData.images)
+          const formattedImages =
+            uploadResults?.map((image) => ({
+              id: image.key,
+              name: image.key.split("_")[1] ?? image.key,
+              url: image.url,
+            })) ?? null
+
+          message = await addCategory({
+            name: formData.name,
             description: formData.description,
-            menuItem: formData.menuItem,
-            images:
-              uploadedFiles.length > 0
-                ? (JSON.stringify(uploadedFiles) as unknown as StoredFile[])
-                : null,
+            visibility: formData.visibility,
+            images: formattedImages,
           })
-        })
+        } else {
+          message = await addCategory({
+            name: formData.name,
+            description: formData.description,
+            visibility: formData.visibility,
+            images: null,
+          })
+        }
 
         switch (message) {
           case "exists":
@@ -146,17 +162,34 @@ export function AddCategoryForm(): JSX.Element {
 
         <FormField
           control={form.control}
-          name="menuItem"
+          name="visibility"
           render={({ field }) => (
-            <FormItem className="mt-3 flex w-full items-center justify-between rounded-md border px-3 py-2.5 md:w-4/5 xl:w-2/3">
-              <FormLabel>Widoczna w menu</FormLabel>
-              <FormControl className="!my-0">
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                  aria-readonly
-                />
+            <FormItem className="w-full md:w-4/5 xl:w-2/3">
+              <FormLabel>Widoczność w menu</FormLabel>
+              <FormControl>
+                <Select
+                  value={field.value}
+                  onValueChange={(value: typeof field.value) =>
+                    field.onChange(value)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={field.value} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {Object.values(categories.visibility.enumValues).map(
+                        (option) => (
+                          <SelectItem key={option} value={option}>
+                            {option}
+                          </SelectItem>
+                        )
+                      )}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </FormControl>
+
               <FormMessage className="sm:text-sm" />
             </FormItem>
           )}
@@ -165,39 +198,40 @@ export function AddCategoryForm(): JSX.Element {
         <FormField
           control={form.control}
           name="images"
-          render={({ field }) => (
-            <div className="space-y-6">
-              <FormItem className="mt-2.5 flex w-full flex-col gap-[5px] md:w-4/5 xl:w-2/3">
-                <FormLabel>Zdjęcia</FormLabel>
-                <FormControl>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="outline">Dodaj zdjęcia</Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-xl">
-                      <DialogHeader>
-                        <DialogTitle>Dodawanie zdjęć</DialogTitle>
-                        <DialogDescription>
-                          Maksymalnie jedno zdjęcie o wielkości do 2MB
-                        </DialogDescription>
-                      </DialogHeader>
-                      <FileUploader
-                        value={field.value ?? []}
-                        onValueChange={field.onChange}
-                        maxFiles={1}
-                        maxSize={2 * 1024 * 1024}
-                        progresses={progresses}
-                        disabled={isUploading}
+          render={() => (
+            <FormItem className="mt-2.5 flex w-full flex-col gap-[5px] md:w-4/5 xl:w-2/3">
+              <FormLabel>Zdjęcia</FormLabel>
+              {files?.length ? (
+                <div className="flex items-center gap-2">
+                  {files.map((file, i) => (
+                    <Zoom key={i}>
+                      <Image
+                        src={file.preview}
+                        alt={file.name}
+                        className="size-20 shrink-0 rounded-md object-cover object-center"
+                        width={80}
+                        height={80}
                       />
-                    </DialogContent>
-                  </Dialog>
-                </FormControl>
-                <FormMessage className="sm:text-sm" />
-              </FormItem>
-              {uploadedFiles.length > 0 ? (
-                <FilesCard files={uploadedFiles} />
+                    </Zoom>
+                  ))}
+                </div>
               ) : null}
-            </div>
+              <FormControl>
+                <FileDialog
+                  setValue={form.setValue}
+                  name="images"
+                  maxFiles={1}
+                  maxSize={2 * 1024 * 1024}
+                  files={files}
+                  setFiles={setFiles}
+                  isUploading={isUploading}
+                  disabled={isPending}
+                />
+              </FormControl>
+              <UncontrolledFormMessage
+                message={form.formState.errors.images?.message}
+              />
+            </FormItem>
           )}
         />
 

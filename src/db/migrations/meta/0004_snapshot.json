@@ -1,6 +1,6 @@
 {
-  "id": "28c60e1e-7f3d-413a-8737-c4d66d3870d2",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "99f19447-b3d6-49b7-b7be-bb651021958b",
+  "prevId": "b93fe090-1627-4f10-a03a-2d845387d6fa",
   "version": "5",
   "dialect": "pg",
   "tables": {
@@ -235,12 +235,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "slug": {
-          "name": "slug",
-          "type": "varchar(64)",
-          "primaryKey": false,
-          "notNull": true
-        },
         "description": {
           "name": "description",
           "type": "text",
@@ -285,13 +279,6 @@
           "nullsNotDistinct": false,
           "columns": [
             "name"
-          ]
-        },
-        "categories_slug_unique": {
-          "name": "categories_slug_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "slug"
           ]
         }
       }
@@ -826,12 +813,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "slug": {
-          "name": "slug",
-          "type": "varchar(64)",
-          "primaryKey": false,
-          "notNull": true
-        },
         "description": {
           "name": "description",
           "type": "text",
@@ -884,22 +865,7 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "subcategories_name_unique": {
-          "name": "subcategories_name_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "name"
-          ]
-        },
-        "subcategories_slug_unique": {
-          "name": "subcategories_slug_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
-        }
-      }
+      "uniqueConstraints": {}
     },
     "users": {
       "name": "users",

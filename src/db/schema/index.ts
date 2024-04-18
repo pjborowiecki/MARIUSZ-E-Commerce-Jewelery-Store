@@ -32,6 +32,11 @@ export const productStatusEnum = pgEnum("product_status", [
   "zarchiwizowany",
 ])
 
+export const categoryVisibilityEnum = pgEnum("category_visibility", [
+  "widoczna",
+  "ukryta",
+])
+
 export const accounts = pgTable(
   "accounts",
   {
@@ -168,9 +173,10 @@ export const productsRelations = relations(products, ({ one }) => ({
 export const categories = pgTable("categories", {
   id: text("id").notNull().primaryKey(),
   name: varchar("name", { length: 32 }).notNull().unique(),
-  slug: varchar("slug", { length: 64 }).notNull().unique(),
   description: text("description"),
-  menuItem: boolean("menu_item").notNull().default(false),
+  visibility: categoryVisibilityEnum("visibility")
+    .notNull()
+    .default("widoczna"),
   images: json("images").$type<StoredFile[] | null>().default(null),
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "date" }).default(
@@ -183,33 +189,23 @@ export const categoriesRelations = relations(categories, ({ many }) => ({
   subcategories: many(subcategories),
 }))
 
-export const subcategories = pgTable(
-  "subcategories",
-  {
-    id: text("id").notNull().primaryKey(),
-    name: varchar("name", { length: 32 }).notNull().unique(),
-    slug: varchar("slug", { length: 64 }).notNull().unique(),
-    description: text("description"),
-    menuItem: boolean("menu_item").notNull().default(false),
-    categoryId: text("category_id")
-      .references(() => categories.id, { onDelete: "cascade" })
-      .notNull(),
-    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
-    updatedAt: timestamp("updated_at", { mode: "date" }).default(
-      sql`current_timestamp`
-    ),
-  },
-  (table) => ({
-    subcategoriesCategoryIdIdx: index(`store_subcategories_category_id_idx`).on(
-      table.categoryId
-    ),
-  })
-)
+export const subcategories = pgTable("subcategories", {
+  id: text("id").notNull().primaryKey(),
+  name: varchar("name", { length: 32 }).notNull(),
+  description: text("description"),
+  categoryName: text("category_id")
+    .references(() => categories.name, { onDelete: "cascade" })
+    .notNull(),
+  createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { mode: "date" }).default(
+    sql`current_timestamp`
+  ),
+})
 
 export const subcategoriesRelations = relations(subcategories, ({ one }) => ({
   category: one(categories, {
-    fields: [subcategories.categoryId],
-    references: [categories.id],
+    fields: [subcategories.categoryName],
+    references: [categories.name],
   }),
 }))
 

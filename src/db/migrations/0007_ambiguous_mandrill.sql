@@ -1,0 +1,1 @@
+CREATE INDEX IF NOT EXISTS "store_subcategories_category_name_idx" ON "subcategories" ("category_id");

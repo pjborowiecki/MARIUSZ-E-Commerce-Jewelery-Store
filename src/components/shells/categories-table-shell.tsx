@@ -3,15 +3,13 @@
 import * as React from "react"
 import Link from "next/link"
 import { deleteCategory } from "@/actions/category"
-import { deleteProduct } from "@/actions/product"
 import { type ColumnDef } from "@tanstack/react-table"
 
-import { categories, type Category } from "@/db/schema"
+import { type Category } from "@/db/schema"
 
 import { useToast } from "@/hooks/use-toast"
 import { formatDate } from "@/lib/utils"
 
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -26,7 +24,7 @@ import { Icons } from "@/components/icons"
 
 type AwaitedCategory = Pick<
   Category,
-  "id" | "name" | "description" | "menuItem" | "createdAt"
+  "id" | "name" | "visibility" | "createdAt"
 >
 
 interface CategoriesTableShellProps {
@@ -37,7 +35,7 @@ interface CategoriesTableShellProps {
 export function CategoriesTableShell({
   data,
   pageCount,
-}: CategoriesTableShellProps) {
+}: CategoriesTableShellProps): JSX.Element {
   const { toast } = useToast()
   const [isPending, startTransition] = React.useTransition()
   const [selectedRowIds, setSelectedRowIds] = React.useState<string[]>([])
@@ -84,9 +82,9 @@ export function CategoriesTableShell({
         ),
       },
       {
-        accessorKey: "menuItem",
+        accessorKey: "visibility",
         header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="W menu" />
+          <DataTableColumnHeader column={column} title="Widoczność" />
         ),
       },
       {
@@ -164,7 +162,7 @@ export function CategoriesTableShell({
     startTransition(async () => {
       const messages = await Promise.all(
         selectedRowIds.map((id) =>
-          deleteProduct({
+          deleteCategory({
             id,
           }).catch((error) => {
             console.error(error)

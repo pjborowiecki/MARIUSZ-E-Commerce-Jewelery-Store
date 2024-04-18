@@ -1,28 +1,18 @@
 import * as React from "react"
 import type { Metadata } from "next"
 import { unstable_noStore as noStore } from "next/cache"
-import Link from "next/link"
 import { redirect } from "next/navigation"
 import { auth } from "@/auth"
 import type { SearchParams } from "@/types"
-import { asc, desc, like, sql } from "drizzle-orm"
+import { asc, desc, eq, like, sql } from "drizzle-orm"
 
 import { env } from "@/env.mjs"
 import { db } from "@/config/db"
 import { DEFAULT_UNAUTHENTICATED_REDIRECT } from "@/config/defaults"
-import { subcategories, type Subcategory } from "@/db/schema"
+import { categories, subcategories, type Subcategory } from "@/db/schema"
 import { productSubcategoriesSearchParamsSchema } from "@/validations/params"
 
-import { cn } from "@/lib/utils"
-
-import { buttonVariants } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { SubcategoriesTableShell } from "@/components/shells/subcategories-table-shell"
 
@@ -60,8 +50,7 @@ export default async function AdminSubcategoriesPage({
     .select({
       id: subcategories.id,
       name: subcategories.name,
-      slug: subcategories.slug,
-      categoryId: subcategories.categoryId,
+      categoryName: subcategories.categoryName,
       createdAt: subcategories.createdAt,
       updatedAt: subcategories.updatedAt,
     })
@@ -90,44 +79,22 @@ export default async function AdminSubcategoriesPage({
 
   return (
     <div className="px-2 py-5 sm:pl-14 sm:pr-6">
-      {data?.length === 0 ? (
-        <Card className="flex h-[84vh] flex-1 flex-col items-center justify-center rounded-md border-2 border-dashed bg-accent/40 text-center">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold tracking-tight">
-              Brak podkategorii do wyświetlenia
-            </CardTitle>
-            <CardDescription className="text-sm text-muted-foreground">
-              Dodaj pierwszą podkategorię aby wyświetlić listę
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Link
-              href="/admin/podkategorie/dodaj-podkategorie"
-              aria-label="dodaj podkategorię"
-              className={cn(buttonVariants())}
-            >
-              Dodaj podkategorię
-            </Link>
-          </CardContent>
-        </Card>
-      ) : (
-        <Card className="rounded-md">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-xl font-bold tracking-tight md:text-2xl">
-              Podkategorie
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {/* TODO: Update column count */}
-            <React.Suspense fallback={<DataTableSkeleton columnCount={6} />}>
-              <SubcategoriesTableShell
-                data={data ? data : []}
-                pageCount={pageCount ? pageCount : 0}
-              />
-            </React.Suspense>
-          </CardContent>
-        </Card>
-      )}
+      <Card className="rounded-md">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-xl font-bold tracking-tight md:text-2xl">
+            Podkategorie
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {/* TODO: Update column count */}
+          <React.Suspense fallback={<DataTableSkeleton columnCount={6} />}>
+            <SubcategoriesTableShell
+              data={data ? data : []}
+              pageCount={pageCount ? pageCount : 0}
+            />
+          </React.Suspense>
+        </CardContent>
+      </Card>
     </div>
   )
 }

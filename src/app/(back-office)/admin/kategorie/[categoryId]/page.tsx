@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   description: "Zobacz i edytuj dane swojego produktu",
 }
 
-interface AdminCategoryPage {
+interface AdminCategoryPageProps {
   params: {
     categoryId: string
   }
@@ -23,7 +23,7 @@ interface AdminCategoryPage {
 
 export default async function AdminCategoryPage({
   params,
-}: AdminCategoryPage): Promise<JSX.Element> {
+}: AdminCategoryPageProps): Promise<JSX.Element> {
   const session = await auth()
   if (session?.user.role !== "administrator")
     redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)

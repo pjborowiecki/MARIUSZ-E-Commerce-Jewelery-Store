@@ -1,5 +1,7 @@
 import * as z from "zod"
 
+import { categories } from "@/db/schema"
+
 export const categoryIdSchema = z
   .string({
     required_error: "Id produktu jest wymagane",
@@ -31,18 +33,54 @@ export const categorySchema = z.object({
       invalid_type_error: "Dane wejściowe muszą być tekstem",
     })
     .optional(),
-  menuItem: z
-    .boolean({
-      required_error: "Ta informacja jest wymagana",
-      invalid_type_error: "dane wejściowe muszą być typu boolean",
+  visibility: z
+    .enum(categories.visibility.enumValues, {
+      required_error: "To pole jest wymagane",
+      invalid_type_error:
+        "Widoczność musi być jedną z predefiniowanych wartości typu string",
     })
-    .default(true),
-  images: z.array(z.instanceof(File)).optional().nullable().default(null),
+    .default("widoczna"),
+  images: z
+    .unknown()
+    .refine((val) => {
+      if (!Array.isArray(val)) return false
+      if (val.some((file) => !(file instanceof File))) return false
+      return true
+    }, "Dane wejściowe muszą być szeregiem elementów typu File")
+    .optional()
+    .nullable()
+    .default(null),
+})
+
+export const subcategorySchema = z.object({
+  name: categoryNameSchema,
+  description: z
+    .string({
+      invalid_type_error: "Dane wejściowe muszą być tekstem",
+    })
+    .optional(),
+  categoryName: categoryNameSchema,
 })
 
 export const addCategorySchema = categorySchema
 
+export const addSubcategorySchema = subcategorySchema
+
+export const addCategoryFunctionSchema = categorySchema
+  .omit({
+    images: true,
+  })
+  .extend({
+    images: z
+      .array(z.object({ id: z.string(), name: z.string(), url: z.string() }))
+      .nullable(),
+  })
+
 export const getCategoryByIdSchema = z.object({
+  id: categoryIdSchema,
+})
+
+export const getSubcategoryByIdSchema = z.object({
   id: categoryIdSchema,
 })
 
@@ -50,11 +88,22 @@ export const getCategoryByNameSchema = z.object({
   name: categoryNameSchema,
 })
 
-export const updateCategorySchema = categorySchema.extend({
+export const updateCategorySchema = categorySchema
+  .omit({
+    images: true,
+  })
+  .extend({
+    id: categoryIdSchema,
+    images: z
+      .array(z.object({ id: z.string(), name: z.string(), url: z.string() }))
+      .nullable(),
+  })
+
+export const deleteCategorySchema = z.object({
   id: categoryIdSchema,
 })
 
-export const deleteCategorySchema = z.object({
+export const deleteSubcategorySchema = z.object({
   id: categoryIdSchema,
 })
 
@@ -72,13 +121,19 @@ export const checkIfCategoryExistsSchema = z.object({
 
 export type GetCategoryByIdInput = z.infer<typeof getCategoryByIdSchema>
 
+export type GetSubcategoryByIdInput = z.infer<typeof getSubcategoryByIdSchema>
+
 export type GetCategoryByNameInput = z.infer<typeof getCategoryByNameSchema>
 
 export type AddCategoryInput = z.infer<typeof addCategorySchema>
 
+export type AddSubcategoryInput = z.infer<typeof addSubcategorySchema>
+
 export type UpdateCategoryInput = z.infer<typeof updateCategorySchema>
 
 export type DeleteCategoryInput = z.infer<typeof deleteCategorySchema>
+
+export type DeleteSubcategoryInput = z.infer<typeof deleteSubcategorySchema>
 
 export type CheckIfCategoryExistsInput = z.infer<
   typeof checkIfCategoryExistsSchema

@@ -143,31 +143,32 @@ export function AddProductForm({ promises }: AddProductFormProps): JSX.Element {
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel>Kategoria</FormLabel>
-                <Select
-                  value={field.value}
-                  onValueChange={(value: typeof field.value) =>
-                    field.onChange(value)
-                  }
-                >
-                  <FormControl>
+                <FormControl>
+                  <Select
+                    value={field.value}
+                    onValueChange={(value: typeof field.value) =>
+                      field.onChange(value)
+                    }
+                  >
                     <SelectTrigger className="capitalize">
                       <SelectValue placeholder={field.value} />
                     </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectGroup>
-                      {categories.map((option) => (
-                        <SelectItem
-                          key={option.id}
-                          value={option.id}
-                          className="capitalize"
-                        >
-                          {option.name}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+                    <SelectContent>
+                      <SelectGroup>
+                        {categories.map((option) => (
+                          <SelectItem
+                            key={option.id}
+                            value={option.id}
+                            className="capitalize"
+                          >
+                            {option.name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+
                 <FormMessage />
               </FormItem>
             )}

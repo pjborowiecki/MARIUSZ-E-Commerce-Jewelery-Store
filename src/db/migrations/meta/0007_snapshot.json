@@ -1,6 +1,6 @@
 {
-  "id": "28c60e1e-7f3d-413a-8737-c4d66d3870d2",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "e96702d6-3142-4eff-a03c-dcf110f961e6",
+  "prevId": "1f507003-0a84-42cd-bcd9-da464a172515",
   "version": "5",
   "dialect": "pg",
   "tables": {
@@ -235,12 +235,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "slug": {
-          "name": "slug",
-          "type": "varchar(64)",
-          "primaryKey": false,
-          "notNull": true
-        },
         "description": {
           "name": "description",
           "type": "text",
@@ -285,13 +279,6 @@
           "nullsNotDistinct": false,
           "columns": [
             "name"
-          ]
-        },
-        "categories_slug_unique": {
-          "name": "categories_slug_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "slug"
           ]
         }
       }
@@ -826,12 +813,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "slug": {
-          "name": "slug",
-          "type": "varchar(64)",
-          "primaryKey": false,
-          "notNull": true
-        },
         "description": {
           "name": "description",
           "type": "text",
@@ -860,8 +841,8 @@
         }
       },
       "indexes": {
-        "store_subcategories_category_id_idx": {
-          "name": "store_subcategories_category_id_idx",
+        "store_subcategories_category_name_idx": {
+          "name": "store_subcategories_category_name_idx",
           "columns": [
             "category_id"
           ],
@@ -869,37 +850,22 @@
         }
       },
       "foreignKeys": {
-        "subcategories_category_id_categories_id_fk": {
-          "name": "subcategories_category_id_categories_id_fk",
+        "subcategories_category_id_categories_name_fk": {
+          "name": "subcategories_category_id_categories_name_fk",
           "tableFrom": "subcategories",
           "tableTo": "categories",
           "columnsFrom": [
             "category_id"
           ],
           "columnsTo": [
-            "id"
+            "name"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "subcategories_name_unique": {
-          "name": "subcategories_name_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "name"
-          ]
-        },
-        "subcategories_slug_unique": {
-          "name": "subcategories_slug_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
-        }
-      }
+      "uniqueConstraints": {}
     },
     "users": {
       "name": "users",

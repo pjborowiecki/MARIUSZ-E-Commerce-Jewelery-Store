@@ -2,7 +2,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 
 // TODO: Adjust the structure to the form
-export default function UpdateCategoryLoading(): JSX.Element {
+export default function UpdateSubcategoryLoading(): JSX.Element {
   return (
     <div className="px-2 py-5 sm:pl-14 sm:pr-6">
       <Card className="rounded-md bg-tertiary">

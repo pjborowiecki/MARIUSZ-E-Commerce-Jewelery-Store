@@ -51,7 +51,7 @@ export default async function AdminCategoriesPage({
       id: categories.id,
       name: categories.name,
       description: categories.description || null,
-      menuItem: categories.menuItem,
+      visibility: categories.visibility,
       createdAt: categories.createdAt,
     })
     .from(categories)
@@ -86,8 +86,7 @@ export default async function AdminCategoriesPage({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {/* TODO: Update column count */}
-          <React.Suspense fallback={<DataTableSkeleton columnCount={5} />}>
+          <React.Suspense fallback={<DataTableSkeleton columnCount={4} />}>
             <CategoriesTableShell
               data={data ? data : []}
               pageCount={pageCount ? pageCount : 0}

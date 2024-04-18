@@ -1,6 +1,6 @@
 {
-  "id": "28c60e1e-7f3d-413a-8737-c4d66d3870d2",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "f1b43ab1-8295-4b80-b880-167a2fdb71c9",
+  "prevId": "28c60e1e-7f3d-413a-8737-c4d66d3870d2",
   "version": "5",
   "dialect": "pg",
   "tables": {
@@ -251,7 +251,7 @@
           "name": "visibility",
           "type": "category_visibility",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "default": "'widoczna'"
         },
         "images": {
