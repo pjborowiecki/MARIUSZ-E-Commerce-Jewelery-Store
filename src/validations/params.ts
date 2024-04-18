@@ -64,4 +64,6 @@ export const productCategoriesSearchParamsSchema = searchParamsSchema
 export const productSubcategoriesSearchParamsSchema =
   productCategoriesSearchParamsSchema
 
-export const registeredUsersSearchParamsSchema = searchParamsSchema
+export const registeredUsersSearchParamsSchema = searchParamsSchema.extend({
+  email: z.string().optional(),
+})

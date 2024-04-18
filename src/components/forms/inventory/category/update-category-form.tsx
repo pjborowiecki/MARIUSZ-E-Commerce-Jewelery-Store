@@ -107,11 +107,11 @@ export function UpdateCategoryForm({
         })
 
         switch (message) {
-          case "success":
+          case "invalid-input":
             toast({
-              title: "Kategoria została zaktualizowana",
+              title: "Nieprawidłowy typ danych wejściowych",
+              variant: "destructive",
             })
-            router.push("/admin/kategorie")
             break
           case "not-found":
             toast({
@@ -120,11 +120,11 @@ export function UpdateCategoryForm({
               variant: "destructive",
             })
             break
-          case "invalid-input":
+          case "success":
             toast({
-              title: "Nieprawidłowy typ danych wejściowych",
-              variant: "destructive",
+              title: "Kategoria została zaktualizowana",
             })
+            router.push("/admin/kategorie")
             break
           default:
             toast({

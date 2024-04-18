@@ -11,8 +11,8 @@ import { UpdateCategoryForm } from "@/components/forms/inventory/category/update
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
-  title: "Szczegóły produktu",
-  description: "Zobacz i edytuj dane swojego produktu",
+  title: "Szczegóły kategorii",
+  description: "Zobacz i edytuj kategorię produktów",
 }
 
 interface AdminCategoryPageProps {

@@ -99,6 +99,10 @@ export const updateCategorySchema = categorySchema
       .nullable(),
   })
 
+export const updateSubcategorySchema = subcategorySchema.extend({
+  id: categoryIdSchema,
+})
+
 export const deleteCategorySchema = z.object({
   id: categoryIdSchema,
 })
@@ -119,6 +123,10 @@ export const checkIfCategoryExistsSchema = z.object({
   id: categoryIdSchema,
 })
 
+export const checkIfSubcategoryExistsSchema = z.object({
+  id: categoryIdSchema,
+})
+
 export type GetCategoryByIdInput = z.infer<typeof getCategoryByIdSchema>
 
 export type GetSubcategoryByIdInput = z.infer<typeof getSubcategoryByIdSchema>
@@ -131,12 +139,18 @@ export type AddSubcategoryInput = z.infer<typeof addSubcategorySchema>
 
 export type UpdateCategoryInput = z.infer<typeof updateCategorySchema>
 
+export type UpdateSubcategoryInput = z.infer<typeof updateSubcategorySchema>
+
 export type DeleteCategoryInput = z.infer<typeof deleteCategorySchema>
 
 export type DeleteSubcategoryInput = z.infer<typeof deleteSubcategorySchema>
 
 export type CheckIfCategoryExistsInput = z.infer<
   typeof checkIfCategoryExistsSchema
+>
+
+export type CheckIfSubcategoryExistsInput = z.infer<
+  typeof checkIfSubcategoryExistsSchema
 >
 
 export type CheckIfCategoryNameTakenInput = z.infer<

@@ -102,6 +102,7 @@ export function translateColumnNamesToPolish(name: string): string {
     role: "Rola",
     customer: "Klient",
     category: "Kategoria",
+    categoryName: "Kategoria",
     price: "Cena",
     status: "Status płatności",
     inventory: "Dostępność",
@@ -109,6 +110,7 @@ export function translateColumnNamesToPolish(name: string): string {
     amount: "Wartość",
     visibility: "Widoczność",
     createdAt: "Data dodania",
+    updatedAt: "Data modyfikacji",
   }
 
   return nameTranslations[name] || name

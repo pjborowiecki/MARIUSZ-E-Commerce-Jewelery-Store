@@ -1,5 +1,4 @@
 import { type Metadata } from "next"
-import { PathParamsContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime"
 import { notFound, redirect } from "next/navigation"
 import { getSubcategoryById } from "@/actions/category"
 import { auth } from "@/auth"
@@ -12,25 +11,38 @@ import { UpdateSubcategoryForm } from "@/components/forms/inventory/subcategory/
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
-  title: "Szczegóły produktu",
-  description: "Zobacz i edytuj dane swojego produktu",
+  title: "Szczegóły podkategorii",
+  description: "Zobacz i edytuj podkategorię produktów",
 }
 
 interface AdminSubcategoryPageProps {
   params: {
-    categoryId: string
+    subcategoryId: string
   }
 }
 
-export default async function AdminSubcategoryPage(): Promise<JSX.Element> {
+export default async function AdminSubcategoryPage({
+  params,
+}: AdminSubcategoryPageProps): Promise<JSX.Element> {
   const session = await auth()
   if (session?.user.role !== "administrator")
     redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
 
-  const subcategory = await getSubcategoryById({
-    id: PathParamsContext.subcategoryId,
-  })
+  const subcategory = await getSubcategoryById({ id: params.subcategoryId })
   if (!subcategory) notFound()
 
-  return <div className="px-2 py-5 sm:pl-14 sm:pr-6"></div>
+  return (
+    <div className="px-2 py-5 sm:pl-14 sm:pr-6">
+      <Card className="rounded-md">
+        <CardHeader>
+          <CardTitle className="text-xl font-bold tracking-tight md:text-2xl">
+            Szczegóły podkategorii
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <UpdateSubcategoryForm subcategory={subcategory} />
+        </CardContent>
+      </Card>
+    </div>
+  )
 }

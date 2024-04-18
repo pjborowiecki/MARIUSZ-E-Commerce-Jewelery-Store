@@ -6,12 +6,13 @@ import {
   revalidatePath,
 } from "next/cache"
 import type { SearchParams, StoredFile } from "@/types"
-import { and, desc, eq, sql } from "drizzle-orm"
+import { and, eq, not } from "drizzle-orm"
 
 import { db } from "@/config/db"
 import {
   psCheckIfCategoryExists,
   psCheckIfCategoryNameTaken,
+  psCheckIfSubcategoryExists,
   psDeleteCategoryById,
   psDeleteSubcategoryById,
   psGetAllCategories,
@@ -32,22 +33,26 @@ import {
   addSubcategorySchema,
   checkIfCategoryExistsSchema,
   checkIfCategoryNameTakenSchema,
+  checkIfSubcategoryExistsSchema,
   deleteCategorySchema,
   deleteSubcategorySchema,
   getCategoryByIdSchema,
   getCategoryByNameSchema,
   getSubcategoryByIdSchema,
   updateCategorySchema,
+  updateSubcategorySchema,
   type AddCategoryInput,
   type AddSubcategoryInput,
   type CheckIfCategoryExistsInput,
   type CheckIfCategoryNameTakenInput,
+  type CheckIfSubcategoryExistsInput,
   type DeleteCategoryInput,
   type DeleteSubcategoryInput,
   type GetCategoryByIdInput,
   type GetCategoryByNameInput,
   type GetSubcategoryByIdInput,
   type UpdateCategoryInput,
+  type UpdateSubcategoryInput,
 } from "@/validations/category"
 
 import { generateId } from "@/lib/utils"
@@ -107,11 +112,21 @@ export async function getCategoryByName(
 }
 
 export async function getAllCategories(): Promise<Category[]> {
-  return psGetAllCategories.execute()
+  try {
+    return await psGetAllCategories.execute()
+  } catch (error) {
+    console.error(error)
+    throw new Error("Error getting all categories")
+  }
 }
 
 export async function getAllSubcategories(): Promise<Subcategory[]> {
-  return psGetAllSubcategories.execute()
+  try {
+    return await psGetAllSubcategories.execute()
+  } catch (error) {
+    console.error(error)
+    throw new Error("Error getting all subcategories")
+  }
 }
 
 export async function getSubcategoriesByCategory({
@@ -172,7 +187,26 @@ export async function checkIfCategoryExists(
     return exists ? true : false
   } catch (error) {
     console.error(error)
-    throw new Error("Error checking if product exists")
+    throw new Error("Error checking if category exists")
+  }
+}
+
+export async function checkIfSubcategoryExists(
+  rawInput: CheckIfSubcategoryExistsInput
+): Promise<"invalid-input" | boolean> {
+  try {
+    const validatedInput = checkIfSubcategoryExistsSchema.safeParse(rawInput)
+    if (!validatedInput.success) return "invalid-input"
+
+    noStore()
+    const exists = await psCheckIfSubcategoryExists.execute({
+      id: validatedInput.data.id,
+    })
+
+    return exists ? true : false
+  } catch (error) {
+    console.error(error)
+    throw new Error("Error checking if subcategory exists")
   }
 }
 
@@ -315,6 +349,52 @@ export async function updateCategory(
     return updatedCategory ? "success" : "error"
   } catch (error) {
     console.error(error)
-    throw new Error("Error updating product")
+    throw new Error("Error updating category")
+  }
+}
+
+export async function updateSubcategory(
+  rawInput: UpdateSubcategoryInput
+): Promise<"invalid-input" | "not-found" | "exists" | "error" | "success"> {
+  try {
+    const validatedInput = updateSubcategorySchema.safeParse(rawInput)
+    if (!validatedInput.success) return "invalid-input"
+
+    const exists = await checkIfSubcategoryExists({
+      id: validatedInput.data.id,
+    })
+    if (!exists || exists === "invalid-input") return "not-found"
+
+    noStore()
+    const newNameTaken = await db.query.subcategories.findFirst({
+      columns: {
+        id: true,
+        categoryName: true,
+      },
+      where: and(
+        eq(subcategories.name, validatedInput.data.name.toLowerCase()),
+        eq(subcategories.categoryName, validatedInput.data.categoryName),
+        not(eq(subcategories.id, validatedInput.data.id))
+      ),
+    })
+    if (newNameTaken) return "exists"
+
+    noStore()
+    const updatedSubcategory = await db
+      .update(subcategories)
+      .set({
+        name: validatedInput.data.name,
+        description: validatedInput.data.description,
+      })
+      .where(eq(subcategories.id, validatedInput.data.id))
+      .returning()
+
+    revalidatePath("/")
+    revalidatePath("/admin/podkategorie")
+
+    return updatedSubcategory ? "success" : "error"
+  } catch (error) {
+    console.error(error)
+    throw new Error("Error updating subcategory")
   }
 }
