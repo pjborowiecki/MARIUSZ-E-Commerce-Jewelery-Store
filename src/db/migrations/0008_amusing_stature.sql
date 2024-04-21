@@ -1,1 +1,0 @@
-DROP INDEX IF EXISTS "store_subcategories_category_name_idx";

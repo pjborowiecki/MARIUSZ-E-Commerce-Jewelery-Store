@@ -20,7 +20,8 @@ export const productsSearchParamsSchema = searchParamsSchema
 
 export const storeProductsSearchParamsSchema = searchParamsSchema.extend({
   name: z.string().optional(),
-  category: z.string().optional(),
+  categoryName: z.string().optional(),
+  subcategoryName: z.string().optional(),
 })
 
 export const storeSearchParamsSchema = searchParamsSchema

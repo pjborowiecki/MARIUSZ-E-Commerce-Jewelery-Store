@@ -29,7 +29,7 @@ export const userSchema = z.object({
     .enum(users.role.enumValues, {
       required_error: "Rola jest wymagana",
       invalid_type_error:
-        "Rola musi być jedną z predefiniowanych wartości typu string",
+        "Rola musi być jedną z predefiniowanych wartości tekstowych",
     })
     .default("klient"),
   email: emailSchema,

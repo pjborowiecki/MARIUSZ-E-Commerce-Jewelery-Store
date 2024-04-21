@@ -1,6 +1,6 @@
 {
-  "id": "be5ab778-c37e-42c7-9ec5-cd3e0a9c1262",
-  "prevId": "f1b43ab1-8295-4b80-b880-167a2fdb71c9",
+  "id": "85cb6450-cdd5-48e0-973b-082c4ae213a0",
+  "prevId": "aa48e6ae-92ba-47ad-af2d-fd261983e2d2",
   "version": "5",
   "dialect": "pg",
   "tables": {
@@ -235,12 +235,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "slug": {
-          "name": "slug",
-          "type": "varchar(64)",
-          "primaryKey": false,
-          "notNull": true
-        },
         "description": {
           "name": "description",
           "type": "text",
@@ -285,13 +279,6 @@
           "nullsNotDistinct": false,
           "columns": [
             "name"
-          ]
-        },
-        "categories_slug_unique": {
-          "name": "categories_slug_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "slug"
           ]
         }
       }
@@ -662,7 +649,7 @@
         },
         "name": {
           "name": "name",
-          "type": "varchar(128)",
+          "type": "varchar(32)",
           "primaryKey": false,
           "notNull": true
         },
@@ -706,6 +693,12 @@
           "primaryKey": false,
           "notNull": true,
           "default": 0
+        },
+        "subcategory_name": {
+          "name": "subcategory_name",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": false
         },
         "category_id": {
           "name": "category_id",
@@ -751,6 +744,19 @@
         }
       },
       "foreignKeys": {
+        "products_category_id_categories_id_fk": {
+          "name": "products_category_id_categories_id_fk",
+          "tableFrom": "products",
+          "tableTo": "categories",
+          "columnsFrom": [
+            "category_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
         "products_subcategory_id_subcategories_id_fk": {
           "name": "products_subcategory_id_subcategories_id_fk",
           "tableFrom": "products",
@@ -826,20 +832,14 @@
           "primaryKey": false,
           "notNull": true
         },
-        "slug": {
-          "name": "slug",
-          "type": "varchar(64)",
-          "primaryKey": false,
-          "notNull": true
-        },
         "description": {
           "name": "description",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "category_id": {
-          "name": "category_id",
+        "category_name": {
+          "name": "category_name",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -859,47 +859,24 @@
           "default": "current_timestamp"
         }
       },
-      "indexes": {
-        "store_subcategories_category_id_idx": {
-          "name": "store_subcategories_category_id_idx",
-          "columns": [
-            "category_id"
-          ],
-          "isUnique": false
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
-        "subcategories_category_id_categories_id_fk": {
-          "name": "subcategories_category_id_categories_id_fk",
+        "subcategories_category_name_categories_name_fk": {
+          "name": "subcategories_category_name_categories_name_fk",
           "tableFrom": "subcategories",
           "tableTo": "categories",
           "columnsFrom": [
-            "category_id"
+            "category_name"
           ],
           "columnsTo": [
-            "id"
+            "name"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "subcategories_name_unique": {
-          "name": "subcategories_name_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "name"
-          ]
-        },
-        "subcategories_slug_unique": {
-          "name": "subcategories_slug_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
-        }
-      }
+      "uniqueConstraints": {}
     },
     "users": {
       "name": "users",

@@ -61,14 +61,12 @@ CREATE TABLE IF NOT EXISTS "carts" (
 CREATE TABLE IF NOT EXISTS "categories" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" varchar(32) NOT NULL,
-	"slug" varchar(64) NOT NULL,
 	"description" text,
 	"visibility" "category_visibility" DEFAULT 'widoczna' NOT NULL,
 	"images" json DEFAULT 'null'::json,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT current_timestamp,
-	CONSTRAINT "categories_name_unique" UNIQUE("name"),
-	CONSTRAINT "categories_slug_unique" UNIQUE("slug")
+	CONSTRAINT "categories_name_unique" UNIQUE("name")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "emailPreferences" (
@@ -136,6 +134,8 @@ CREATE TABLE IF NOT EXISTS "products" (
 	"tags" json DEFAULT 'null'::json,
 	"price" numeric(10, 2) DEFAULT '0' NOT NULL,
 	"inventory" integer DEFAULT 0 NOT NULL,
+	"category_name" varchar(32) NOT NULL,
+	"subcategory_name" varchar(32) NOT NULL,
 	"category_id" text NOT NULL,
 	"subcategory_id" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
@@ -151,13 +151,10 @@ CREATE TABLE IF NOT EXISTS "sessions" (
 CREATE TABLE IF NOT EXISTS "subcategories" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" varchar(32) NOT NULL,
-	"slug" varchar(64) NOT NULL,
 	"description" text,
-	"category_id" text NOT NULL,
+	"category_name" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT current_timestamp,
-	CONSTRAINT "subcategories_name_unique" UNIQUE("name"),
-	CONSTRAINT "subcategories_slug_unique" UNIQUE("slug")
+	"updated_at" timestamp DEFAULT current_timestamp
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users" (
@@ -189,9 +186,6 @@ CREATE TABLE IF NOT EXISTS "verificationTokens" (
 CREATE INDEX IF NOT EXISTS "store_orders_id_idx" ON "orders" ("id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "store_orders_address_id_idx" ON "orders" ("address_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "store_payments_id_idx" ON "payments" ("id");--> statement-breakpoint
-CREATE INDEX IF NOT EXISTS "store_products_category_id_idx" ON "products" ("category_id");--> statement-breakpoint
-CREATE INDEX IF NOT EXISTS "store_products_subcategory_id_idx" ON "products" ("subcategory_id");--> statement-breakpoint
-CREATE INDEX IF NOT EXISTS "store_subcategories_category_id_idx" ON "subcategories" ("category_id");--> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "accounts" ADD CONSTRAINT "accounts_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
@@ -200,6 +194,24 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "orders" ADD CONSTRAINT "orders_address_id_addresses_id_fk" FOREIGN KEY ("address_id") REFERENCES "addresses"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "products" ADD CONSTRAINT "products_category_name_categories_name_fk" FOREIGN KEY ("category_name") REFERENCES "categories"("name") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "products" ADD CONSTRAINT "products_subcategory_name_subcategories_name_fk" FOREIGN KEY ("subcategory_name") REFERENCES "subcategories"("name") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "products" ADD CONSTRAINT "products_category_id_categories_id_fk" FOREIGN KEY ("category_id") REFERENCES "categories"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -217,7 +229,7 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "subcategories" ADD CONSTRAINT "subcategories_category_id_categories_id_fk" FOREIGN KEY ("category_id") REFERENCES "categories"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "subcategories" ADD CONSTRAINT "subcategories_category_name_categories_name_fk" FOREIGN KEY ("category_name") REFERENCES "categories"("name") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

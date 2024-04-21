@@ -1,5 +1,7 @@
 import * as z from "zod"
 
+import { products } from "@/db/schema"
+
 export const productIdSchema = z
   .string({
     required_error: "Id produktu jest wymagane",
@@ -31,8 +33,19 @@ export const productSchema = z.object({
       invalid_type_error: "Opis musi być tekstem",
     })
     .optional(),
-  categoryId: z.string(),
-  subcategoryId: z.string().optional().nullable(),
+  status: z.enum(products.status.enumValues, {
+    required_error: "Status produktu jest wymagany",
+    invalid_type_error:
+      "Status produktu musi być jedną z predefiniowanych wartości tekstowych",
+  }),
+  categoryName: z.string({
+    invalid_type_error: "Nazwa kategorii musi być tekstem",
+    required_error: "Nazwa kategorii jest wymagana",
+  }),
+  subcategoryName: z.string({
+    invalid_type_error: "Nazwa podkategorii musi być tekstem",
+    required_error: "Nazwa podkategorii jest wymagana",
+  }),
   price: z
     .string({
       required_error: "Cena jest wymagana",
@@ -41,11 +54,35 @@ export const productSchema = z.object({
     .regex(/^\d+(\.\d{1,2})?$/, {
       message: "Nieprawidłowy format. Spróbuj z kropką, np. 120.99",
     }),
-  inventory: z.number().min(0, { message: "Ilość nie może być ujemna" }),
-  images: z.array(z.instanceof(File)).optional().nullable().default(null),
+  inventory: z
+    .number({
+      required_error: "Ilość jest wymagana",
+      invalid_type_error: "Ilość dostępna w magazynie musi być liczbą",
+    })
+    .min(0, { message: "Ilość dostępna w magazynie nie może być ujemna" }),
+  images: z
+    .unknown()
+    .refine((val) => {
+      if (!Array.isArray(val)) return false
+      if (val.some((file) => !(file instanceof File))) return false
+      return true
+    }, "Dane wejściowe muszą być szeregiem elementów typu File")
+    .optional()
+    .nullable()
+    .default(null),
 })
 
 export const addProductSchema = productSchema
+
+export const addProductFunctionSchema = productSchema
+  .omit({
+    images: true,
+  })
+  .extend({
+    images: z
+      .array(z.object({ id: z.string(), name: z.string(), url: z.string() }))
+      .nullable(),
+  })
 
 export const getProductsSchema = z.object({
   page: z.coerce.number().default(1),

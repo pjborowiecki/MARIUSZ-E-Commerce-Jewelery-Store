@@ -113,7 +113,8 @@ export async function getCategoryByName(
 
 export async function getAllCategories(): Promise<Category[]> {
   try {
-    return await psGetAllCategories.execute()
+    const categories = await psGetAllCategories.execute()
+    return categories
   } catch (error) {
     console.error(error)
     throw new Error("Error getting all categories")
@@ -122,7 +123,8 @@ export async function getAllCategories(): Promise<Category[]> {
 
 export async function getAllSubcategories(): Promise<Subcategory[]> {
   try {
-    return await psGetAllSubcategories.execute()
+    const subcategories = await psGetAllSubcategories.execute()
+    return subcategories
   } catch (error) {
     console.error(error)
     throw new Error("Error getting all subcategories")

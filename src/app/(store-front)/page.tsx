@@ -5,16 +5,17 @@ import { getFeaturedProducts } from "@/actions/product"
 import { StoreFront } from "@/components/store-front/store-front"
 import { StoreFrontSkeleton } from "@/components/store-front/store-front-skeleton"
 
-const productsPromise = getFeaturedProducts()
-const categoriesPromise = getCategories()
+// const productsPromise = getFeaturedProducts()
+// const categoriesPromise = getCategories()
 
 export default function LandingPage(): JSX.Element {
   return (
     <React.Suspense fallback={<StoreFrontSkeleton />}>
-      <StoreFront
+      <div>landing page</div>
+      {/* <StoreFront
         productsPromise={productsPromise}
         categoriesPromise={categoriesPromise}
-      />
+      /> */}
     </React.Suspense>
   )
 }

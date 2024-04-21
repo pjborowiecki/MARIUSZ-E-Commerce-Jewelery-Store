@@ -142,7 +142,13 @@ export const products = pgTable(
     tags: json("tags").$type<string[] | null>().default(null),
     price: decimal("price", { precision: 10, scale: 2 }).notNull().default("0"),
     inventory: integer("inventory").notNull().default(0),
-    categoryId: text("category_id").notNull(),
+    categoryName: varchar("name", { length: 32 }).notNull(),
+    subcategoryName: varchar("subcategory_name", { length: 32 }),
+    categoryId: text("category_id")
+      .notNull()
+      .references(() => categories.id, {
+        onDelete: "cascade",
+      }),
     subcategoryId: text("subcategory_id")
       .notNull()
       .references(() => subcategories.id, { onDelete: "cascade" }),
@@ -165,8 +171,8 @@ export const productsRelations = relations(products, ({ one }) => ({
     references: [categories.id],
   }),
   subcategory: one(subcategories, {
-    fields: [products.subcategoryId],
-    references: [subcategories.id],
+    fields: [products.subcategoryId, products.subcategoryName],
+    references: [subcategories.id, subcategories.name],
   }),
 }))
 
@@ -193,7 +199,7 @@ export const subcategories = pgTable("subcategories", {
   id: text("id").notNull().primaryKey(),
   name: varchar("name", { length: 32 }).notNull(),
   description: text("description"),
-  categoryName: text("category_id")
+  categoryName: text("category_name")
     .references(() => categories.name, { onDelete: "cascade" })
     .notNull(),
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),

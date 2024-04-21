@@ -1,12 +1,11 @@
 import * as React from "react"
 import type { Metadata } from "next"
 import { unstable_noStore as noStore } from "next/cache"
-import Link from "next/link"
 import { redirect } from "next/navigation"
 import { auth } from "@/auth"
 import type { SearchParams } from "@/types"
 import { endOfDay, startOfDay } from "date-fns"
-import { and, asc, desc, eq, gte, inArray, like, lte, sql } from "drizzle-orm"
+import { and, asc, desc, eq, gte, like, lte, sql } from "drizzle-orm"
 
 import { env } from "@/env.mjs"
 import { db } from "@/config/db"
@@ -14,16 +13,7 @@ import { DEFAULT_UNAUTHENTICATED_REDIRECT } from "@/config/defaults"
 import { categories, products, type Product } from "@/db/schema"
 import { storeProductsSearchParamsSchema } from "@/validations/params"
 
-import { cn } from "@/lib/utils"
-
-import { buttonVariants } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DateRangePicker } from "@/components/date-range-picker"
 import { ProductsTableShell } from "@/components/shells/products-table-shell"
@@ -45,16 +35,22 @@ export default async function ProductsPage({
   if (session?.user.role !== "administrator")
     redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
 
-  const { page, per_page, sort, name, category, from, to } =
-    storeProductsSearchParamsSchema.parse(searchParams)
+  const {
+    page,
+    per_page,
+    sort,
+    name,
+    categoryName,
+    subcategoryName,
+    from,
+    to,
+  } = storeProductsSearchParamsSchema.parse(searchParams)
 
   const fallbackPage = isNaN(page) || page < 1 ? 1 : page
   const limit = isNaN(per_page) ? 10 : per_page
   const offset = fallbackPage > 0 ? (fallbackPage - 1) * limit : 0
   const fromDay = from ? startOfDay(new Date(from)) : undefined
   const toDay = to ? endOfDay(new Date(to)) : undefined
-
-  const categoryIds = category?.split(".") ?? []
 
   const [column, order] = (sort?.split(".") as [
     keyof Product | undefined,
@@ -66,11 +62,13 @@ export default async function ProductsPage({
     .select({
       id: products.id,
       name: products.name,
-      category: categories.name,
       status: products.status,
       price: products.price,
       inventory: products.inventory,
+      categoryName: products.categoryName,
+      subcategoryName: products.subcategoryName,
       createdAt: products.createdAt,
+      updatedAt: products.updatedAt,
     })
     .from(products)
     .limit(limit)
@@ -79,8 +77,11 @@ export default async function ProductsPage({
     .where(
       and(
         name ? like(products.name, `%${name}%`) : undefined,
-        categoryIds.length > 0
-          ? inArray(products.categoryId, categoryIds)
+        categoryName
+          ? like(products.categoryName, `%${categoryName}%`)
+          : undefined,
+        subcategoryName
+          ? like(products.subcategoryName, `%${subcategoryName}%`)
           : undefined,
         fromDay && toDay
           ? and(
@@ -107,8 +108,11 @@ export default async function ProductsPage({
     .where(
       and(
         name ? like(products.name, `%${name}%`) : undefined,
-        categoryIds.length > 0
-          ? inArray(products.categoryId, categoryIds)
+        categoryName
+          ? like(products.categoryName, `%${categoryName}%`)
+          : undefined,
+        subcategoryName
+          ? like(products.subcategoryName, `%${subcategoryName}%`)
           : undefined,
         fromDay && toDay
           ? and(
@@ -124,47 +128,25 @@ export default async function ProductsPage({
 
   return (
     <div className="px-2 py-5 sm:pl-14 sm:pr-6">
-      {data?.length === 0 ? (
-        <Card className="flex h-[84vh] flex-1 flex-col items-center justify-center rounded-md border-2 border-dashed bg-accent/40 text-center">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold tracking-tight">
-              Brak produktów do wyświetlenia
-            </CardTitle>
-            <CardDescription className="text-sm text-muted-foreground">
-              Dodaj pierwszy produkt aby wyświetlić listę
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Link
-              href="/admin/produkty/dodaj-produkt"
-              aria-label="dodaj produkt"
-              className={cn(buttonVariants())}
-            >
-              Dodaj produkt
-            </Link>
-          </CardContent>
-        </Card>
-      ) : (
-        <Card className="rounded-md">
-          <CardHeader className="space-y-1">
-            <CardTitle className="flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
-              <div className="text-xl font-bold tracking-tight md:text-2xl">
-                Produkty
-              </div>
-              <DateRangePicker align="end" />
-            </CardTitle>
-          </CardHeader>
+      <Card className="rounded-md">
+        <CardHeader className="space-y-1">
+          <CardTitle className="flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
+            <div className="text-xl font-bold tracking-tight md:text-2xl">
+              Produkty
+            </div>
+            <DateRangePicker align="end" />
+          </CardTitle>
+        </CardHeader>
 
-          <CardContent>
-            <React.Suspense fallback={<DataTableSkeleton columnCount={5} />}>
-              <ProductsTableShell
-                data={data ? data : []}
-                pageCount={pageCount ? pageCount : 0}
-              />
-            </React.Suspense>
-          </CardContent>
-        </Card>
-      )}
+        <CardContent>
+          <React.Suspense fallback={<DataTableSkeleton columnCount={5} />}>
+            <ProductsTableShell
+              data={data ? data : []}
+              pageCount={pageCount ? pageCount : 0}
+            />
+          </React.Suspense>
+        </CardContent>
+      </Card>
     </div>
   )
 }

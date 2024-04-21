@@ -1,1 +1,0 @@
-ALTER TABLE "subcategories" DROP CONSTRAINT "subcategories_name_unique";

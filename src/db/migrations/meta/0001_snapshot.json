@@ -1,6 +1,6 @@
 {
-  "id": "f1b43ab1-8295-4b80-b880-167a2fdb71c9",
-  "prevId": "28c60e1e-7f3d-413a-8737-c4d66d3870d2",
+  "id": "aa48e6ae-92ba-47ad-af2d-fd261983e2d2",
+  "prevId": "236edcce-e972-4970-9962-e03dc8123341",
   "version": "5",
   "dialect": "pg",
   "tables": {
@@ -235,12 +235,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "slug": {
-          "name": "slug",
-          "type": "varchar(64)",
-          "primaryKey": false,
-          "notNull": true
-        },
         "description": {
           "name": "description",
           "type": "text",
@@ -251,7 +245,7 @@
           "name": "visibility",
           "type": "category_visibility",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "'widoczna'"
         },
         "images": {
@@ -285,13 +279,6 @@
           "nullsNotDistinct": false,
           "columns": [
             "name"
-          ]
-        },
-        "categories_slug_unique": {
-          "name": "categories_slug_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "slug"
           ]
         }
       }
@@ -707,15 +694,15 @@
           "notNull": true,
           "default": 0
         },
-        "category_id": {
-          "name": "category_id",
-          "type": "text",
+        "category_name": {
+          "name": "category_name",
+          "type": "varchar(32)",
           "primaryKey": false,
           "notNull": true
         },
-        "subcategory_id": {
-          "name": "subcategory_id",
-          "type": "text",
+        "subcategory_name": {
+          "name": "subcategory_name",
+          "type": "varchar(32)",
           "primaryKey": false,
           "notNull": true
         },
@@ -734,32 +721,30 @@
           "default": "current_timestamp"
         }
       },
-      "indexes": {
-        "store_products_category_id_idx": {
-          "name": "store_products_category_id_idx",
-          "columns": [
-            "category_id"
-          ],
-          "isUnique": false
-        },
-        "store_products_subcategory_id_idx": {
-          "name": "store_products_subcategory_id_idx",
-          "columns": [
-            "subcategory_id"
-          ],
-          "isUnique": false
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
-        "products_subcategory_id_subcategories_id_fk": {
-          "name": "products_subcategory_id_subcategories_id_fk",
+        "products_category_name_categories_name_fk": {
+          "name": "products_category_name_categories_name_fk",
+          "tableFrom": "products",
+          "tableTo": "categories",
+          "columnsFrom": [
+            "category_name"
+          ],
+          "columnsTo": [
+            "name"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "products_subcategory_name_subcategories_name_fk": {
+          "name": "products_subcategory_name_subcategories_name_fk",
           "tableFrom": "products",
           "tableTo": "subcategories",
           "columnsFrom": [
-            "subcategory_id"
+            "subcategory_name"
           ],
           "columnsTo": [
-            "id"
+            "name"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
@@ -826,20 +811,14 @@
           "primaryKey": false,
           "notNull": true
         },
-        "slug": {
-          "name": "slug",
-          "type": "varchar(64)",
-          "primaryKey": false,
-          "notNull": true
-        },
         "description": {
           "name": "description",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "category_id": {
-          "name": "category_id",
+        "category_name": {
+          "name": "category_name",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -859,47 +838,24 @@
           "default": "current_timestamp"
         }
       },
-      "indexes": {
-        "store_subcategories_category_id_idx": {
-          "name": "store_subcategories_category_id_idx",
-          "columns": [
-            "category_id"
-          ],
-          "isUnique": false
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
-        "subcategories_category_id_categories_id_fk": {
-          "name": "subcategories_category_id_categories_id_fk",
+        "subcategories_category_name_categories_name_fk": {
+          "name": "subcategories_category_name_categories_name_fk",
           "tableFrom": "subcategories",
           "tableTo": "categories",
           "columnsFrom": [
-            "category_id"
+            "category_name"
           ],
           "columnsTo": [
-            "id"
+            "name"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "subcategories_name_unique": {
-          "name": "subcategories_name_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "name"
-          ]
-        },
-        "subcategories_slug_unique": {
-          "name": "subcategories_slug_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
-        }
-      }
+      "uniqueConstraints": {}
     },
     "users": {
       "name": "users",

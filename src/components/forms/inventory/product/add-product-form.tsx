@@ -1,31 +1,22 @@
 "use client"
 
 import * as React from "react"
+import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import type { getCategories, getSubcategories } from "@/actions/category"
 import { addProduct } from "@/actions/product"
-import type { StoredFile } from "@/types"
+import type { FileWithPreview } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { toast } from "sonner"
 
+import { type Category, type Subcategory } from "@/db/schema/index"
 import { addProductSchema, type AddProductInput } from "@/validations/product"
 
-// import { useToast } from "@/hooks/use-toast"
-import { useUploadFile } from "@/hooks/use-upload-file"
-import { getErrorMessage } from "@/lib/errors"
-import { cn } from "@/lib/utils"
+import { useToast } from "@/hooks/use-toast"
+import { useUploadThing } from "@/hooks/use-uploadthing"
+import { cn, isArrayOfFile } from "@/lib/utils"
 
 import { Button, buttonVariants } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
 import {
   Form,
   FormControl,
@@ -33,6 +24,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  UncontrolledFormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import {
@@ -44,23 +36,28 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { FilesCard } from "@/components/cards/files-card"
-import { FileUploader } from "@/components/file-uploader"
+import { FileDialog } from "@/components/file-dialog"
 import { Icons } from "@/components/icons"
+import { Zoom } from "@/components/image-zoom"
 
 interface AddProductFormProps {
-  promises: Promise<{
-    categories: Awaited<ReturnType<typeof getCategories>>
-    subcategories: Awaited<ReturnType<typeof getSubcategories>>
-  }>
+  categories: Category[]
+  subcategories: Subcategory[]
 }
 
-export function AddProductForm({ promises }: AddProductFormProps): JSX.Element {
+export function AddProductForm({
+  categories,
+  subcategories,
+}: AddProductFormProps): JSX.Element {
   const router = useRouter()
-  const { categories, subcategories } = React.use(promises)
-  const [isLoading, setIsLoading] = React.useState(false)
-  const { uploadFiles, progresses, uploadedFiles, isUploading } =
-    useUploadFile("productImage")
+  const { toast } = useToast()
+  const [files, setFiles] = React.useState<FileWithPreview[] | null>(null)
+  const { isUploading, startUpload } = useUploadThing("categoryImage")
+  const [isPending, startTransition] = React.useTransition()
+
+  const [filteredSubcategories, setFilteredSubcategories] = React.useState<
+    Subcategory[]
+  >([])
 
   const form = useForm<AddProductInput>({
     resolver: zodResolver(addProductSchema),
@@ -69,69 +66,118 @@ export function AddProductForm({ promises }: AddProductFormProps): JSX.Element {
       description: "",
       price: "",
       inventory: NaN,
-      categoryId: "",
-      subcategoryId: "",
       images: [],
     },
   })
 
-  function onSubmit(input: AddProductInput) {
-    setIsLoading(true)
+  function onSubmit(formData: AddProductInput) {
+    startTransition(async () => {
+      try {
+        let message = null
 
-    toast.promise(
-      uploadFiles(input.images ?? []).then(() => {
-        return addProduct({
-          ...input,
-          images: JSON.stringify(uploadedFiles) as unknown as StoredFile[],
+        if (isArrayOfFile(formData.images)) {
+          const uploadResults = await startUpload(formData.images)
+          const formattedImages =
+            uploadResults?.map((image) => ({
+              id: image.key,
+              name: image.key.split("_")[1] ?? image.key,
+              url: image.url,
+            })) ?? null
+
+          message = await addProduct({
+            name: formData.name,
+            description: formData.description,
+            images: formattedImages,
+          })
+        } else {
+          message = await addProduct({
+            name: formData.name,
+            description: formData.description,
+            images: null,
+          })
+        }
+
+        switch (message) {
+          case "exists":
+            toast({
+              title: "Produkt o podanej nazwie już istnieje",
+              description: "Użyj innej nazwy",
+              variant: "destructive",
+            })
+            break
+          case "success":
+            toast({
+              title: "Produkt został dodana",
+            })
+            router.push("/admin/produkty")
+            router.refresh()
+            break
+          default:
+            toast({
+              title: "Błąd przy dodawaniu produktu",
+              description: "Spróbuj ponownie",
+              variant: "destructive",
+            })
+        }
+      } catch (error) {
+        console.error(error)
+        toast({
+          title: "Coś poszło nie tak",
+          description: "Spróbuj ponownie",
+          variant: "destructive",
         })
-      }),
-      {
-        loading: "Adding product...",
-        success: () => {
-          form.reset()
-          setIsLoading(false)
-          return "Product"
-        },
-        error: (err) => {
-          setIsLoading(false)
-          return getErrorMessage(err)
-        },
       }
-    )
+    })
   }
+
+  const selectedCategory = form.watch("categoryName")
+
+  React.useEffect(() => {
+    form.setValue("subcategoryName", "")
+
+    const subcategoriesSubset = subcategories.filter(
+      (subcategory) => subcategory.categoryName === selectedCategory
+    )
+    setFilteredSubcategories(subcategoriesSubset)
+
+    const selectedSubcategoryName = form.getValues("subcategoryName")
+    form.setValue("subcategoryName", selectedSubcategoryName)
+  }, [form, selectedCategory, subcategories])
 
   return (
     <Form {...form}>
       <form
         className="grid w-full max-w-2xl gap-5"
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={(...args) => void form.handleSubmit(onSubmit)(...args)}
       >
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
+            <FormItem className="w-full md:w-4/5 xl:w-2/3">
+              <FormLabel>Nazwa</FormLabel>
               <FormControl>
-                <Input placeholder="Type product name here." {...field} />
+                <Input placeholder="Np. kolczyki pozłacane" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="description"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
+            <FormItem className="w-full md:w-4/5 xl:w-2/3">
+              <FormLabel>Opis</FormLabel>
+
+              <FormControl className="min-h-[120px]">
                 <Textarea
-                  placeholder="Type product description here."
+                  placeholder="Opis produktu (opcjonalnie)"
                   {...field}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="sm:text-sm" />
             </FormItem>
           )}
         />
@@ -139,7 +185,7 @@ export function AddProductForm({ promises }: AddProductFormProps): JSX.Element {
         <div className="flex w-full flex-col items-start gap-6 sm:flex-row md:w-4/5 xl:w-2/3">
           <FormField
             control={form.control}
-            name="categoryId"
+            name="categoryName"
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel>Kategoria</FormLabel>
@@ -149,19 +195,18 @@ export function AddProductForm({ promises }: AddProductFormProps): JSX.Element {
                     onValueChange={(value: typeof field.value) =>
                       field.onChange(value)
                     }
+                    disabled={categories && categories.length === 0}
                   >
-                    <SelectTrigger className="capitalize">
-                      <SelectValue placeholder={field.value} />
+                    <SelectTrigger>
+                      <SelectValue
+                        placeholder={field.value || "Wybierz kategorię"}
+                      />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        {categories.map((option) => (
-                          <SelectItem
-                            key={option.id}
-                            value={option.id}
-                            className="capitalize"
-                          >
-                            {option.name}
+                        {categories?.map((category) => (
+                          <SelectItem key={category.id} value={category.name}>
+                            {category.name}
                           </SelectItem>
                         ))}
                       </SelectGroup>
@@ -169,40 +214,54 @@ export function AddProductForm({ promises }: AddProductFormProps): JSX.Element {
                   </Select>
                 </FormControl>
 
-                <FormMessage />
+                <UncontrolledFormMessage>
+                  {form.formState.errors.categoryName?.message}
+                </UncontrolledFormMessage>
               </FormItem>
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="subcategoryId"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Podkategoria</FormLabel>
-                <Select
-                  value={field.value?.toString()}
-                  onValueChange={field.onChange}
-                >
+          {form.watch("categoryName") && (
+            <FormField
+              control={form.control}
+              name="subcategoryName"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel>Podkategoria</FormLabel>
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Wybierz podkategorię" />
-                    </SelectTrigger>
+                    <Select
+                      value={field.value}
+                      onValueChange={(value: typeof field.value) =>
+                        field.onChange(value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder={field.value || "Wybierz podkategorię"}
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {filteredSubcategories.map((subcategory) => (
+                            <SelectItem
+                              key={subcategory.id}
+                              value={subcategory.name}
+                            >
+                              {subcategory.name}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
                   </FormControl>
-                  <SelectContent>
-                    <SelectGroup>
-                      {subcategories.map((option) => (
-                        <SelectItem key={option.id} value={option.id}>
-                          {option.name}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+
+                  <UncontrolledFormMessage>
+                    {form.formState.errors.subcategoryName?.message}
+                  </UncontrolledFormMessage>
+                </FormItem>
+              )}
+            />
+          )}
         </div>
 
         <div className="flex w-full flex-col items-start gap-6 sm:flex-row md:w-4/5 xl:w-2/3">
@@ -247,54 +306,50 @@ export function AddProductForm({ promises }: AddProductFormProps): JSX.Element {
           />
         </div>
 
+        {/* IMAGES */}
         <FormField
           control={form.control}
           name="images"
-          render={({ field }) => (
-            <div className="space-y-6">
-              <FormItem className="mt-2.5 flex w-full flex-col gap-[5px] md:w-4/5 xl:w-2/3">
-                <FormLabel>Zdjęcia</FormLabel>
-                <FormControl>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="outline">Dodaj zdjęcia</Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-xl">
-                      <DialogHeader>
-                        <DialogTitle>Dodaj zdjęcia</DialogTitle>
-                        <DialogDescription>
-                          Drag and drop your files here or click to browse.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <FileUploader
-                        value={field.value ?? []}
-                        onValueChange={field.onChange}
-                        maxFiles={5}
-                        maxSize={5 * 1024 * 1024}
-                        progresses={progresses}
-                        disabled={isUploading}
+          render={() => (
+            <FormItem className="mt-2.5 flex w-full flex-col gap-[5px] md:w-4/5 xl:w-2/3">
+              <FormLabel>Zdjęcia</FormLabel>
+              {files?.length ? (
+                <div className="flex items-center gap-2">
+                  {files.map((file, i) => (
+                    <Zoom key={i}>
+                      <Image
+                        src={file.preview}
+                        alt={file.name}
+                        className="size-20 shrink-0 rounded-md object-cover object-center"
+                        width={80}
+                        height={80}
                       />
-                    </DialogContent>
-                  </Dialog>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-              {uploadedFiles.length > 0 ? (
-                <FilesCard files={uploadedFiles} />
+                    </Zoom>
+                  ))}
+                </div>
               ) : null}
-            </div>
+              <FormControl>
+                <FileDialog
+                  setValue={form.setValue}
+                  name="images"
+                  maxFiles={4}
+                  maxSize={4 * 1024 * 1024}
+                  files={files}
+                  setFiles={setFiles}
+                  isUploading={isUploading}
+                  disabled={isPending}
+                />
+              </FormControl>
+              <UncontrolledFormMessage
+                message={form.formState.errors.images?.message}
+              />
+            </FormItem>
           )}
         />
 
         <div className="flex items-center gap-2 pt-2">
-          <Button
-            onClick={() =>
-              void form.trigger(["name", "description", "price", "inventory"])
-            }
-            className="w-fit"
-            disabled={isLoading}
-          >
-            {isLoading ? (
+          <Button className="w-fit" disabled={isPending}>
+            {isPending ? (
               <>
                 <Icons.spinner
                   className="mr-2 size-4 animate-spin"

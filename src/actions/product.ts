@@ -1,11 +1,10 @@
 "use server"
 
-import crypto from "crypto"
-
 import { unstable_noStore as noStore, revalidatePath } from "next/cache"
-import { eq } from "drizzle-orm"
+import { and, eq } from "drizzle-orm"
 
 import { db } from "@/config/db"
+import { psGetCategoryByName } from "@/db/prepared-statements/category"
 import {
   psCheckIfProductExists,
   psCheckIfProductNameTaken,
@@ -13,14 +12,14 @@ import {
   psGetProductById,
   psGetProductByName,
 } from "@/db/prepared-statements/product"
-import { products, type Product } from "@/db/schema"
+import { products, subcategories, type Product } from "@/db/schema"
 import {
+  addProductFunctionSchema,
   checkIfProductExistsSchema,
   checkIfProductNameTakenSchema,
   deleteProductSchema,
   getProductByIdSchema,
   getProductByNameSchema,
-  productSchema,
   type AddProductInput,
   type CheckIfProductExistsInput,
   type CheckIfProductNameTakenInput,
@@ -28,6 +27,8 @@ import {
   type GetProductByIdInput,
   type GetProductByNameInput,
 } from "@/validations/product"
+
+import { generateId } from "@/lib/utils"
 
 export async function getProductById(
   rawInput: GetProductByIdInput
@@ -108,7 +109,7 @@ export async function addProduct(
   rawInput: AddProductInput
 ): Promise<"invalid-input" | "exists" | "error" | "success"> {
   try {
-    const validatedInput = productSchema.safeParse(rawInput)
+    const validatedInput = addProductFunctionSchema.safeParse(rawInput)
     if (!validatedInput.success) return "invalid-input"
 
     noStore()
@@ -117,24 +118,47 @@ export async function addProduct(
     })
     if (nameTaken) return "exists"
 
-    noStore()
+    const [category] = await psGetCategoryByName.execute({
+      name: validatedInput.data.categoryName,
+    })
+    if (!category) return "error"
+
+    const subcategory = await db.query.subcategories.findFirst({
+      columns: {
+        id: true,
+        name: true,
+        categoryName: true,
+      },
+      where: and(
+        eq(subcategories.name, validatedInput.data.subcategoryName),
+        eq(subcategories.categoryName, validatedInput.data.categoryName)
+      ),
+    })
+    if (!subcategory) return "error"
+
     const newProduct = await db
       .insert(products)
       .values({
-        id: crypto.randomUUID(),
-        name: validatedInput.data.name,
+        id: generateId(),
+        name: validatedInput.data.name.toLowerCase(),
         description: validatedInput.data.description,
-        category: validatedInput.data.category,
-        subcategory: validatedInput.data.subcategory,
+        categoryName: validatedInput.data.categoryName.toLowerCase(),
+        subcategoryName: validatedInput.data.subcategoryName.toLowerCase(),
+        categoryId: category.id,
+        subcategoryId: subcategory.id,
         price: validatedInput.data.price,
         inventory: validatedInput.data.inventory,
         images: validatedInput.data.images,
       })
       .returning()
 
-    revalidatePath("/")
-    revalidatePath("/admin/produkty")
-    return newProduct ? "success" : "error"
+    if (newProduct) {
+      revalidatePath("/")
+      revalidatePath("/admin/produkty")
+      return "success"
+    } else {
+      return "error"
+    }
   } catch (error) {
     console.error(error)
     throw new Error("Error adding product")

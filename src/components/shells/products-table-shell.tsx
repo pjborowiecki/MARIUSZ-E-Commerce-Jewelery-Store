@@ -25,7 +25,15 @@ import { Icons } from "@/components/icons"
 
 type AwaitedProduct = Pick<
   Product,
-  "id" | "name" | "category" | "status" | "price" | "inventory" | "createdAt"
+  | "id"
+  | "name"
+  | "status"
+  | "categoryName"
+  | "subcategoryName"
+  | "price"
+  | "inventory"
+  | "createdAt"
+  | "updatedAt"
 >
 
 interface ProductsTableShellProps {
@@ -83,24 +91,6 @@ export function ProductsTableShell({
         ),
       },
       {
-        accessorKey: "category",
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Kategoria" />
-        ),
-        cell: ({ cell }) => {
-          const categories = Object.values(products.category.enumValues)
-          const category = cell.getValue() as Product["category"]
-
-          if (!categories.includes(category)) return null
-
-          return (
-            <Badge variant="outline" className="capitalize">
-              {category}
-            </Badge>
-          )
-        },
-      },
-      {
         accessorKey: "status",
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Status" />
@@ -118,6 +108,37 @@ export function ProductsTableShell({
           )
         },
       },
+      {
+        accessorKey: "categoryName",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Kategoria" />
+        ),
+      },
+      {
+        accessorKey: "subcategoryName",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Podkategoria" />
+        ),
+      },
+      // {
+      //   accessorKey: "category",
+      //   header: ({ column }) => (
+      //     <DataTableColumnHeader column={column} title="Kategoria" />
+      //   ),
+      //   cell: ({ cell }) => {
+      //     const categories = Object.values(products.category.enumValues)
+      //     const category = cell.getValue() as Product["category"]
+
+      //     if (!categories.includes(category)) return null
+
+      //     return (
+      //       <Badge variant="outline" className="capitalize">
+      //         {category}
+      //       </Badge>
+      //     )
+      //   },
+      // },
+
       {
         accessorKey: "price",
         header: ({ column }) => (
@@ -246,16 +267,16 @@ export function ProductsTableShell({
       columns={columns}
       data={data}
       pageCount={pageCount}
-      filterableColumns={[
-        {
-          id: "category",
-          title: "Category",
-          options: products.category.enumValues.map((category) => ({
-            label: `${category.charAt(0).toUpperCase()}${category.slice(1)}`,
-            value: category,
-          })),
-        },
-      ]}
+      // filterableColumns={[
+      //   {
+      //     id: "category",
+      //     title: "Category",
+      //     options: products.category.enumValues.map((category) => ({
+      //       label: `${category.charAt(0).toUpperCase()}${category.slice(1)}`,
+      //       value: category,
+      //     })),
+      //   },
+      // ]}
       searchableColumns={[
         {
           id: "name",
