@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1713515783268,
-      "tag": "0000_flowery_preak",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1713516452551,
-      "tag": "0001_aberrant_justice",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1713516940960,
-      "tag": "0002_noisy_firebird",
+      "when": 1713781833677,
+      "tag": "0000_useful_archangel",
       "breakpoints": true
     }
   ]

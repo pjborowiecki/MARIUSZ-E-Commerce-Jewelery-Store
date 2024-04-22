@@ -5,12 +5,12 @@ import { redirect } from "next/navigation"
 import { auth } from "@/auth"
 import type { SearchParams } from "@/types"
 import { endOfDay, startOfDay } from "date-fns"
-import { and, asc, desc, eq, gte, like, lte, sql } from "drizzle-orm"
+import { and, asc, desc, gte, like, lte, sql } from "drizzle-orm"
 
 import { env } from "@/env.mjs"
 import { db } from "@/config/db"
 import { DEFAULT_UNAUTHENTICATED_REDIRECT } from "@/config/defaults"
-import { categories, products, type Product } from "@/db/schema"
+import { products, type Product } from "@/db/schema"
 import { storeProductsSearchParamsSchema } from "@/validations/params"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -62,7 +62,7 @@ export default async function ProductsPage({
     .select({
       id: products.id,
       name: products.name,
-      status: products.status,
+      state: products.state,
       price: products.price,
       inventory: products.inventory,
       categoryName: products.categoryName,
@@ -73,7 +73,6 @@ export default async function ProductsPage({
     .from(products)
     .limit(limit)
     .offset(offset)
-    .leftJoin(categories, eq(products.categoryId, categories.id))
     .where(
       and(
         name ? like(products.name, `%${name}%`) : undefined,

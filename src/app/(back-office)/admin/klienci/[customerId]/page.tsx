@@ -43,7 +43,8 @@ export default async function AdminCustomerPage({
   searchParams,
 }: AdminCustomerPage) {
   const session = await auth()
-  if (session?.user.role !== "administrator") redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
+  if (session?.user.role !== "administrator")
+    redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
 
   const user = await getUserById({ id: params.customerId })
   if (!user) notFound()

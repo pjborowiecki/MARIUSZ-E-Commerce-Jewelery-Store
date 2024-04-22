@@ -33,7 +33,7 @@ export const productSchema = z.object({
       invalid_type_error: "Opis musi być tekstem",
     })
     .optional(),
-  status: z.enum(products.status.enumValues, {
+  state: z.enum(products.state.enumValues, {
     required_error: "Status produktu jest wymagany",
     invalid_type_error:
       "Status produktu musi być jedną z predefiniowanych wartości tekstowych",

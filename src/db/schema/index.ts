@@ -26,7 +26,7 @@ export const productCategoryEnum = pgEnum("product_category", [
   "inne",
 ])
 
-export const productStatusEnum = pgEnum("product_status", [
+export const productStateEnum = pgEnum("product_state", [
   "roboczy",
   "aktywny",
   "zarchiwizowany",
@@ -138,11 +138,11 @@ export const products = pgTable(
     name: varchar("name", { length: 128 }).notNull(),
     description: text("description"),
     images: json("images").$type<StoredFile[] | null>().default(null),
-    status: productStatusEnum("status").notNull().default("roboczy"),
+    state: productStateEnum("state").notNull().default("roboczy"),
     tags: json("tags").$type<string[] | null>().default(null),
     price: decimal("price", { precision: 10, scale: 2 }).notNull().default("0"),
     inventory: integer("inventory").notNull().default(0),
-    categoryName: varchar("name", { length: 32 }).notNull(),
+    categoryName: varchar("category_name", { length: 32 }).notNull(),
     subcategoryName: varchar("subcategory_name", { length: 32 }),
     categoryId: text("category_id")
       .notNull()

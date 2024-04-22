@@ -27,7 +27,7 @@ type AwaitedProduct = Pick<
   Product,
   | "id"
   | "name"
-  | "status"
+  | "state"
   | "categoryName"
   | "subcategoryName"
   | "price"
@@ -91,19 +91,19 @@ export function ProductsTableShell({
         ),
       },
       {
-        accessorKey: "status",
+        accessorKey: "state",
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Status" />
         ),
         cell: ({ cell }) => {
-          const statuses = Object.values(products.status.enumValues)
-          const status = cell.getValue() as Product["status"]
+          const states = Object.values(products.state.enumValues)
+          const state = cell.getValue() as Product["state"]
 
-          if (!statuses.includes(status)) return null
+          if (!states.includes(state)) return null
 
           return (
             <Badge variant="secondary" className="capitalize">
-              {status}
+              {state}
             </Badge>
           )
         },

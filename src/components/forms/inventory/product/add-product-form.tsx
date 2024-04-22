@@ -9,7 +9,7 @@ import type { FileWithPreview } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
-import { type Category, type Subcategory } from "@/db/schema/index"
+import { products, type Category, type Subcategory } from "@/db/schema/index"
 import { addProductSchema, type AddProductInput } from "@/validations/product"
 
 import { useToast } from "@/hooks/use-toast"
@@ -54,7 +54,6 @@ export function AddProductForm({
   const [files, setFiles] = React.useState<FileWithPreview[] | null>(null)
   const { isUploading, startUpload } = useUploadThing("categoryImage")
   const [isPending, startTransition] = React.useTransition()
-
   const [filteredSubcategories, setFilteredSubcategories] = React.useState<
     Subcategory[]
   >([])
@@ -64,6 +63,7 @@ export function AddProductForm({
     defaultValues: {
       name: "",
       description: "",
+      state: "roboczy",
       price: "",
       inventory: NaN,
       images: [],
@@ -87,12 +87,22 @@ export function AddProductForm({
           message = await addProduct({
             name: formData.name,
             description: formData.description,
+            state: formData.state,
+            categoryName: formData.categoryName,
+            subcategoryName: formData.subcategoryName,
+            price: formData.price,
+            inventory: formData.inventory,
             images: formattedImages,
           })
         } else {
           message = await addProduct({
             name: formData.name,
             description: formData.description,
+            state: formData.state,
+            categoryName: formData.categoryName,
+            subcategoryName: formData.subcategoryName,
+            price: formData.price,
+            inventory: formData.inventory,
             images: null,
           })
         }
@@ -107,7 +117,7 @@ export function AddProductForm({
             break
           case "success":
             toast({
-              title: "Produkt został dodana",
+              title: "Produkt został dodany",
             })
             router.push("/admin/produkty")
             router.refresh()
@@ -129,20 +139,6 @@ export function AddProductForm({
       }
     })
   }
-
-  const selectedCategory = form.watch("categoryName")
-
-  React.useEffect(() => {
-    form.setValue("subcategoryName", "")
-
-    const subcategoriesSubset = subcategories.filter(
-      (subcategory) => subcategory.categoryName === selectedCategory
-    )
-    setFilteredSubcategories(subcategoriesSubset)
-
-    const selectedSubcategoryName = form.getValues("subcategoryName")
-    form.setValue("subcategoryName", selectedSubcategoryName)
-  }, [form, selectedCategory, subcategories])
 
   return (
     <Form {...form}>
@@ -182,6 +178,46 @@ export function AddProductForm({
           )}
         />
 
+        <FormField
+          control={form.control}
+          name="state"
+          render={({ field }) => (
+            <FormItem className="w-full md:w-4/5 xl:w-2/3">
+              <FormLabel>Status</FormLabel>
+              <FormControl>
+                <Select
+                  value={field.value}
+                  onValueChange={(value: typeof field.value) =>
+                    field.onChange(value)
+                  }
+                  disabled={categories && categories.length === 0}
+                >
+                  <SelectTrigger>
+                    <SelectValue
+                      placeholder={field.value || "Wybierz kategorię"}
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {Object.values(products.state.enumValues).map(
+                        (option) => (
+                          <SelectItem key={option} value={option}>
+                            {option}
+                          </SelectItem>
+                        )
+                      )}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+
+              <UncontrolledFormMessage>
+                {form.formState.errors.state?.message}
+              </UncontrolledFormMessage>
+            </FormItem>
+          )}
+        />
+
         <div className="flex w-full flex-col items-start gap-6 sm:flex-row md:w-4/5 xl:w-2/3">
           <FormField
             control={form.control}
@@ -192,10 +228,15 @@ export function AddProductForm({
                 <FormControl>
                   <Select
                     value={field.value}
-                    onValueChange={(value: typeof field.value) =>
+                    onValueChange={(value: typeof field.value) => {
+                      const filteredSubcategories = subcategories.filter(
+                        (subcategory) => subcategory.categoryName === value
+                      )
                       field.onChange(value)
-                    }
-                    disabled={categories && categories.length === 0}
+                      setFilteredSubcategories(filteredSubcategories)
+                      form.setValue("subcategoryName", undefined)
+                    }}
+                    disabled={categories?.length === 0}
                   >
                     <SelectTrigger>
                       <SelectValue
@@ -221,47 +262,46 @@ export function AddProductForm({
             )}
           />
 
-          {form.watch("categoryName") && (
-            <FormField
-              control={form.control}
-              name="subcategoryName"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>Podkategoria</FormLabel>
-                  <FormControl>
-                    <Select
-                      value={field.value}
-                      onValueChange={(value: typeof field.value) =>
-                        field.onChange(value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue
-                          placeholder={field.value || "Wybierz podkategorię"}
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {filteredSubcategories.map((subcategory) => (
-                            <SelectItem
-                              key={subcategory.id}
-                              value={subcategory.name}
-                            >
-                              {subcategory.name}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
+          <FormField
+            control={form.control}
+            name="subcategoryName"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Podkategoria</FormLabel>
+                <FormControl>
+                  <Select
+                    value={field.value}
+                    onValueChange={(value: typeof field.value) =>
+                      field.onChange(value)
+                    }
+                    disabled={filteredSubcategories.length === 0}
+                  >
+                    <SelectTrigger>
+                      <SelectValue
+                        placeholder={field.value || "Wybierz podkategorię"}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {filteredSubcategories.map((subcategory) => (
+                          <SelectItem
+                            key={subcategory.id}
+                            value={subcategory.name}
+                          >
+                            {subcategory.name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
 
-                  <UncontrolledFormMessage>
-                    {form.formState.errors.subcategoryName?.message}
-                  </UncontrolledFormMessage>
-                </FormItem>
-              )}
-            />
-          )}
+                <UncontrolledFormMessage>
+                  {form.formState.errors.subcategoryName?.message}
+                </UncontrolledFormMessage>
+              </FormItem>
+            )}
+          />
         </div>
 
         <div className="flex w-full flex-col items-start gap-6 sm:flex-row md:w-4/5 xl:w-2/3">

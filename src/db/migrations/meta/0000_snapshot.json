@@ -1,5 +1,5 @@
 {
-  "id": "236edcce-e972-4970-9962-e03dc8123341",
+  "id": "8405a4d9-5593-4d54-921a-76168fb0623d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -666,9 +666,9 @@
           "notNull": false,
           "default": "'null'::json"
         },
-        "status": {
-          "name": "status",
-          "type": "product_status",
+        "state": {
+          "name": "state",
+          "type": "product_state",
           "primaryKey": false,
           "notNull": true,
           "default": "'roboczy'"
@@ -704,7 +704,7 @@
           "name": "subcategory_name",
           "type": "varchar(32)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "category_id": {
           "name": "category_id",
@@ -733,34 +733,23 @@
           "default": "current_timestamp"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "store_products_category_id_idx": {
+          "name": "store_products_category_id_idx",
+          "columns": [
+            "category_id"
+          ],
+          "isUnique": false
+        },
+        "store_products_subcategory_id_idx": {
+          "name": "store_products_subcategory_id_idx",
+          "columns": [
+            "subcategory_id"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {
-        "products_category_name_categories_name_fk": {
-          "name": "products_category_name_categories_name_fk",
-          "tableFrom": "products",
-          "tableTo": "categories",
-          "columnsFrom": [
-            "category_name"
-          ],
-          "columnsTo": [
-            "name"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "products_subcategory_name_subcategories_name_fk": {
-          "name": "products_subcategory_name_subcategories_name_fk",
-          "tableFrom": "products",
-          "tableTo": "subcategories",
-          "columnsFrom": [
-            "subcategory_name"
-          ],
-          "columnsTo": [
-            "name"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
         "products_category_id_categories_id_fk": {
           "name": "products_category_id_categories_id_fk",
           "tableFrom": "products",
@@ -1062,8 +1051,8 @@
         "inne": "inne"
       }
     },
-    "product_status": {
-      "name": "product_status",
+    "product_state": {
+      "name": "product_state",
       "values": {
         "roboczy": "roboczy",
         "aktywny": "aktywny",

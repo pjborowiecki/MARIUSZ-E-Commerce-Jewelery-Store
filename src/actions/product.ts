@@ -142,6 +142,7 @@ export async function addProduct(
         id: generateId(),
         name: validatedInput.data.name.toLowerCase(),
         description: validatedInput.data.description,
+        state: validatedInput.data.state,
         categoryName: validatedInput.data.categoryName.toLowerCase(),
         subcategoryName: validatedInput.data.subcategoryName.toLowerCase(),
         categoryId: category.id,

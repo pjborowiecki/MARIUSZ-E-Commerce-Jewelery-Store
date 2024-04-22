@@ -11,7 +11,7 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- CREATE TYPE "product_status" AS ENUM('roboczy', 'aktywny', 'zarchiwizowany');
+ CREATE TYPE "product_state" AS ENUM('roboczy', 'aktywny', 'zarchiwizowany');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -130,12 +130,12 @@ CREATE TABLE IF NOT EXISTS "products" (
 	"name" varchar(128) NOT NULL,
 	"description" text,
 	"images" json DEFAULT 'null'::json,
-	"status" "product_status" DEFAULT 'roboczy' NOT NULL,
+	"state" "product_state" DEFAULT 'roboczy' NOT NULL,
 	"tags" json DEFAULT 'null'::json,
 	"price" numeric(10, 2) DEFAULT '0' NOT NULL,
 	"inventory" integer DEFAULT 0 NOT NULL,
 	"category_name" varchar(32) NOT NULL,
-	"subcategory_name" varchar(32) NOT NULL,
+	"subcategory_name" varchar(32),
 	"category_id" text NOT NULL,
 	"subcategory_id" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
@@ -186,6 +186,8 @@ CREATE TABLE IF NOT EXISTS "verificationTokens" (
 CREATE INDEX IF NOT EXISTS "store_orders_id_idx" ON "orders" ("id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "store_orders_address_id_idx" ON "orders" ("address_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "store_payments_id_idx" ON "payments" ("id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "store_products_category_id_idx" ON "products" ("category_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "store_products_subcategory_id_idx" ON "products" ("subcategory_id");--> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "accounts" ADD CONSTRAINT "accounts_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
@@ -194,18 +196,6 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "orders" ADD CONSTRAINT "orders_address_id_addresses_id_fk" FOREIGN KEY ("address_id") REFERENCES "addresses"("id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "products" ADD CONSTRAINT "products_category_name_categories_name_fk" FOREIGN KEY ("category_name") REFERENCES "categories"("name") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "products" ADD CONSTRAINT "products_subcategory_name_subcategories_name_fk" FOREIGN KEY ("subcategory_name") REFERENCES "subcategories"("name") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

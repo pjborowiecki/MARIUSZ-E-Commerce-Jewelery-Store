@@ -37,7 +37,8 @@ export default async function CustomersPage({
   searchParams,
 }: CustomersPageProps): Promise<JSX.Element> {
   const session = await auth()
-  if (session?.user.role !== "administrator") redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
+  if (session?.user.role !== "administrator")
+    redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
 
   const { page, per_page, sort, email, from, to } =
     customersSearchParamsSchema.parse(searchParams)

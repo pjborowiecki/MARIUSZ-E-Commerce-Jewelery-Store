@@ -25,7 +25,8 @@ export default async function AdminProductPage({
   params,
 }: AdminProductPage): Promise<JSX.Element> {
   const session = await auth()
-  if (session?.user.role !== "administrator") redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
+  if (session?.user.role !== "administrator")
+    redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
 
   const product = await getProductById({ id: params.productId })
   if (!product) notFound()
