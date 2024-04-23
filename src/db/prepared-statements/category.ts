@@ -42,13 +42,14 @@ export const psGetAllSubcategories = db
 export const psGetSubcategoriesByCategoryId = db
   .selectDistinct()
   .from(subcategories)
-  .where(eq(subcategories.id, sql.placeholder("id")))
+  .where(eq(subcategories.id, sql.placeholder("categoryId")))
   .prepare("psGetSubcategoriesByCategoryId")
 
-export const psGetSubcategoriesBy = db
+export const psGetSubcategoriesByCategoryName = db
   .selectDistinct()
   .from(subcategories)
-  .where(eq(subcategories.name, sql()))
+  .where(eq(subcategories.name, sql.placeholder("categoryName")))
+  .prepare("psGetSubcategoriesByCategoryName")
 
 export const psDeleteCategoryById = db
   .delete(categories)

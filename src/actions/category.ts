@@ -20,6 +20,7 @@ import {
   psGetCategoryById,
   psGetCategoryByName,
   psGetSubcategoriesByCategoryId,
+  psGetSubcategoriesByCategoryName,
   psGetSubcategoryById,
   psGetSubcategoryByName,
 } from "@/db/prepared-statements/category"
@@ -144,10 +145,10 @@ export async function getSubcategoriesByCategoryId(
       getSubcategoriesByCategoryIdSchema.safeParse(rawInput)
     if (!validatedInput.success) return null
 
-    const subcategoriesByCategoryId = await db
-      .selectDistinct()
-      .from(subcategories)
-      .where(eq(subcategories.id, validatedInput.data.categoryId))
+    const subcategoriesByCategoryId =
+      await psGetSubcategoriesByCategoryId.execute({
+        categoryId: validatedInput.data.id,
+      })
 
     return subcategoriesByCategoryId ? subcategoriesByCategoryId : null
   } catch (error) {
@@ -158,8 +159,18 @@ export async function getSubcategoriesByCategoryId(
 
 export async function getSubcategoriesByCategoryName(
   rawInput: GetSubcategoriesByCategoryNameInput
-) {
+): Promise<Subcategory[] | null> {
   try {
+    const validatedInput =
+      getSubcategoriesByCategoryNameSchema.safeParse(rawInput)
+    if (!validatedInput.success) return null
+
+    const subcategoriesByCategoryName =
+      await psGetSubcategoriesByCategoryName.execute({
+        categoryName: validatedInput.data.name,
+      })
+
+    return subcategoriesByCategoryName ? subcategoriesByCategoryName : null
   } catch (error) {
     console.error(error)
     throw new Error("Error getting subcategories by category name")
