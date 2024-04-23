@@ -40,7 +40,7 @@ export function SignInWithPasswordForm(): JSX.Element {
     },
   })
 
-  function onSubmit(formData: SignInWithPasswordFormInput) {
+  function onSubmit(formData: SignInWithPasswordFormInput): void {
     startTransition(async () => {
       try {
         const message = await signInWithPassword({

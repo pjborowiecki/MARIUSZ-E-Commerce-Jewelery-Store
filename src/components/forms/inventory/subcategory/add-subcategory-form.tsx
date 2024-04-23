@@ -57,7 +57,7 @@ export function AddSubcategoryForm({
     },
   })
 
-  function onSubmit(formData: AddSubcategoryInput) {
+  function onSubmit(formData: AddSubcategoryInput): void {
     startTransition(async () => {
       try {
         const message = await addSubcategory({

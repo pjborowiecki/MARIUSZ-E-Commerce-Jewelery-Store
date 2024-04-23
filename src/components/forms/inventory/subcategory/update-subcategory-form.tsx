@@ -50,7 +50,7 @@ export function UpdateSubcategoryForm({
     },
   })
 
-  function onSubmit(formData: UpdateSubcategoryInput) {
+  function onSubmit(formData: UpdateSubcategoryInput): void {
     startUpdateTransition(async () => {
       try {
         const message = await updateSubcategory({

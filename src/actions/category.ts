@@ -19,6 +19,7 @@ import {
   psGetAllSubcategories,
   psGetCategoryById,
   psGetCategoryByName,
+  psGetSubcategoriesByCategoryId,
   psGetSubcategoryById,
   psGetSubcategoryByName,
 } from "@/db/prepared-statements/category"
@@ -38,6 +39,8 @@ import {
   deleteSubcategorySchema,
   getCategoryByIdSchema,
   getCategoryByNameSchema,
+  getSubcategoriesByCategoryIdSchema,
+  getSubcategoriesByCategoryNameSchema,
   getSubcategoryByIdSchema,
   updateCategorySchema,
   updateSubcategorySchema,
@@ -50,6 +53,8 @@ import {
   type DeleteSubcategoryInput,
   type GetCategoryByIdInput,
   type GetCategoryByNameInput,
+  type GetSubcategoriesByCategoryIdInput,
+  type GetSubcategoriesByCategoryNameInput,
   type GetSubcategoryByIdInput,
   type UpdateCategoryInput,
   type UpdateSubcategoryInput,
@@ -131,28 +136,34 @@ export async function getAllSubcategories(): Promise<Subcategory[]> {
   }
 }
 
-export async function getSubcategoriesByCategory({
-  categoryId,
-}: {
-  categoryId: string
-}) {
-  return await cache(
-    async () => {
-      return db
-        .selectDistinct({
-          id: subcategories.id,
-          name: subcategories.name,
-          description: subcategories.description,
-        })
-        .from(subcategories)
-        .where(eq(subcategories.id, categoryId))
-    },
-    [`subcategories-${categoryId}`],
-    {
-      revalidate: 3600, // every hour
-      tags: [`subcategories-${categoryId}`],
-    }
-  )()
+export async function getSubcategoriesByCategoryId(
+  rawInput: GetSubcategoriesByCategoryIdInput
+): Promise<Subcategory[] | null> {
+  try {
+    const validatedInput =
+      getSubcategoriesByCategoryIdSchema.safeParse(rawInput)
+    if (!validatedInput.success) return null
+
+    const subcategoriesByCategoryId = await db
+      .selectDistinct()
+      .from(subcategories)
+      .where(eq(subcategories.id, validatedInput.data.categoryId))
+
+    return subcategoriesByCategoryId ? subcategoriesByCategoryId : null
+  } catch (error) {
+    console.error(error)
+    throw new Error("Error getting subcategories by category id")
+  }
+}
+
+export async function getSubcategoriesByCategoryName(
+  rawInput: GetSubcategoriesByCategoryNameInput
+) {
+  try {
+  } catch (error) {
+    console.error(error)
+    throw new Error("Error getting subcategories by category name")
+  }
 }
 
 export async function checkIfCategoryNameTaken(
@@ -334,6 +345,7 @@ export async function updateCategory(
     const exists = await checkIfCategoryExists({ id: validatedInput.data.id })
     if (!exists || exists === "invalid-input") return "not-found"
 
+    // TODO: Handle image update
     noStore()
     const updatedCategory = await db
       .update(categories)

@@ -143,7 +143,7 @@ export const products = pgTable(
     price: decimal("price", { precision: 10, scale: 2 }).notNull().default("0"),
     inventory: integer("inventory").notNull().default(0),
     categoryName: varchar("category_name", { length: 32 }).notNull(),
-    subcategoryName: varchar("subcategory_name", { length: 32 }),
+    subcategoryName: varchar("subcategory_name", { length: 32 }).notNull(),
     categoryId: text("category_id")
       .notNull()
       .references(() => categories.id, {

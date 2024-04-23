@@ -11,7 +11,7 @@ export const categoryIdSchema = z
     message: "Id musi mieć przynajmniej 1 znak",
   })
   .max(32, {
-    message: "Id może mieć maksymalnie 512 znaków",
+    message: "Id może mieć maksymalnie 32 znaki",
   })
 
 export const categoryNameSchema = z
@@ -88,6 +88,14 @@ export const getCategoryByNameSchema = z.object({
   name: categoryNameSchema,
 })
 
+export const getSubcategoriesByCategoryId = z.object({
+  categoryName: categoryNameSchema,
+})
+
+export const getSubcategoriesByCategoryName = z.object({
+  categoryId: categoryIdSchema,
+})
+
 export const updateCategorySchema = categorySchema
   .omit({
     images: true,
@@ -132,6 +140,14 @@ export type GetCategoryByIdInput = z.infer<typeof getCategoryByIdSchema>
 export type GetSubcategoryByIdInput = z.infer<typeof getSubcategoryByIdSchema>
 
 export type GetCategoryByNameInput = z.infer<typeof getCategoryByNameSchema>
+
+export type GetSubcategoriesByCategoryIdInput = z.infer<
+  typeof getSubcategoriesByCategoryId
+>
+
+export type GetSubcategoriesByCategoryNameInput = z.infer<
+  typeof getSubcategoriesByCategoryName
+>
 
 export type AddCategoryInput = z.infer<typeof addCategorySchema>
 

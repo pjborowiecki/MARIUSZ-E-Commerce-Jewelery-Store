@@ -54,7 +54,7 @@ export function UpdateUserAsAdminForm({
     },
   })
 
-  function onSubmit(formData: UpdateUserAsAdminInput) {
+  function onSubmit(formData: UpdateUserAsAdminInput): void {
     startUpdateTransition(async () => {
       try {
         const message = await updateUserAsAdmin({

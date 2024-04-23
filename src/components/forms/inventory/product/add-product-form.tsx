@@ -70,7 +70,7 @@ export function AddProductForm({
     },
   })
 
-  function onSubmit(formData: AddProductInput) {
+  function onSubmit(formData: AddProductInput): void {
     startTransition(async () => {
       try {
         let message = null
@@ -234,7 +234,7 @@ export function AddProductForm({
                       )
                       field.onChange(value)
                       setFilteredSubcategories(filteredSubcategories)
-                      form.setValue("subcategoryName", undefined)
+                      form.setValue("subcategoryName", "")
                     }}
                     disabled={categories?.length === 0}
                   >
@@ -372,8 +372,8 @@ export function AddProductForm({
                 <FileDialog
                   setValue={form.setValue}
                   name="images"
-                  maxFiles={4}
-                  maxSize={4 * 1024 * 1024}
+                  maxFiles={5}
+                  maxSize={2 * 1024 * 1024}
                   files={files}
                   setFiles={setFiles}
                   isUploading={isUploading}

@@ -1,0 +1,1 @@
+ALTER TABLE "products" ALTER COLUMN "subcategory_name" SET NOT NULL;

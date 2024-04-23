@@ -84,7 +84,8 @@ export function UpdateCategoryForm({
     },
   })
 
-  function onSubmit(formData: UpdateCategoryInput) {
+  // TODO: Handle image update
+  function onSubmit(formData: UpdateCategoryInput): void {
     startUpdateTransition(async () => {
       try {
         const images = isArrayOfFile(formData.images)

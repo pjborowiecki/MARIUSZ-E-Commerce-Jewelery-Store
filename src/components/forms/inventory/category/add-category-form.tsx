@@ -60,7 +60,7 @@ export function AddCategoryForm(): JSX.Element {
     },
   })
 
-  function onSubmit(formData: AddCategoryInput) {
+  function onSubmit(formData: AddCategoryInput): void {
     startTransition(async () => {
       try {
         let message = null

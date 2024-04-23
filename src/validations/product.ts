@@ -10,8 +10,8 @@ export const productIdSchema = z
   .min(1, {
     message: "Id musi mieć przynajmniej 1 znak",
   })
-  .max(512, {
-    message: "Id może mieć maksymalnie 512 znaków",
+  .max(32, {
+    message: "Id może mieć maksymalnie 32 znaki",
   })
 
 export const productNameSchema = z
@@ -107,15 +107,22 @@ export const getProductInventorySchema = z.object({
   id: productIdSchema,
 })
 
-export const updateProductSchema = productSchema.extend({
-  id: productIdSchema,
-})
+export const updateProductSchema = productSchema
+  .omit({
+    images: true,
+  })
+  .extend({
+    id: productIdSchema,
+    images: z
+      .array(z.object({ id: z.string(), name: z.string(), url: z.string() }))
+      .nullable(),
+  })
 
 export const deleteProductSchema = z.object({
   id: productIdSchema,
 })
 
-export const filterProductSchema = z.object({
+export const filterProductsSchema = z.object({
   query: z.string(),
 })
 
@@ -139,7 +146,7 @@ export type UpdateProductInput = z.infer<typeof updateProductSchema>
 
 export type DeleteProductInput = z.infer<typeof deleteProductSchema>
 
-export type FilterProductInput = z.infer<typeof filterProductSchema>
+export type FilterProductsInput = z.infer<typeof filterProductsSchema>
 
 export type CheckIfProductExistsInput = z.infer<
   typeof checkIfProductExistsSchema

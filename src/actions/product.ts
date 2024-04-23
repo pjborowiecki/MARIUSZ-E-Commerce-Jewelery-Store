@@ -18,14 +18,18 @@ import {
   checkIfProductExistsSchema,
   checkIfProductNameTakenSchema,
   deleteProductSchema,
+  filterProductsSchema,
   getProductByIdSchema,
   getProductByNameSchema,
+  updateProductSchema,
   type AddProductInput,
   type CheckIfProductExistsInput,
   type CheckIfProductNameTakenInput,
   type DeleteProductInput,
+  type FilterProductsInput,
   type GetProductByIdInput,
   type GetProductByNameInput,
+  type UpdateProductInput,
 } from "@/validations/product"
 
 import { generateId } from "@/lib/utils"
@@ -121,7 +125,6 @@ export async function addProduct(
     const [category] = await psGetCategoryByName.execute({
       name: validatedInput.data.categoryName,
     })
-    if (!category) return "error"
 
     const subcategory = await db.query.subcategories.findFirst({
       columns: {
@@ -134,7 +137,8 @@ export async function addProduct(
         eq(subcategories.categoryName, validatedInput.data.categoryName)
       ),
     })
-    if (!subcategory) return "error"
+
+    if (!category || !subcategory) return "error"
 
     const newProduct = await db
       .insert(products)
@@ -186,26 +190,48 @@ export async function deleteProduct(
 }
 
 export async function updateProduct(
-  rawInput: UpdateProductFunctionInput
+  rawInput: UpdateProductInput
 ): Promise<"invalid-input" | "not-found" | "error" | "success"> {
   try {
-    const validatedInput = updateProductFunctionSchema.safeParse(rawInput)
+    const validatedInput = updateProductSchema.safeParse(rawInput)
     if (!validatedInput.success) return "invalid-input"
 
     const exists = await checkIfProductExists({ id: validatedInput.data.id })
     if (!exists || exists === "invalid-input") return "not-found"
 
+    const [category] = await psGetCategoryByName.execute({
+      name: validatedInput.data.categoryName,
+    })
+
+    const subcategory = await db.query.subcategories.findFirst({
+      columns: {
+        id: true,
+        name: true,
+        categoryName: true,
+      },
+      where: and(
+        eq(subcategories.name, validatedInput.data.subcategoryName),
+        eq(subcategories.categoryName, validatedInput.data.categoryName)
+      ),
+    })
+
+    if (!category || !subcategory) return "error"
+
+    // TODO: Handle image update
     noStore()
     const updatedProduct = await db
       .update(products)
       .set({
         name: validatedInput.data.name,
         description: validatedInput.data.description,
-        category: validatedInput.data.category,
-        subcategory: validatedInput.data.subcategory,
+        state: validatedInput.data.state,
+        categoryName: validatedInput.data.categoryName,
+        subcategoryName: validatedInput.data.subcategoryName,
+        categoryId: category.id,
+        subcategoryId: subcategory.id,
         price: validatedInput.data.price,
         inventory: validatedInput.data.inventory,
-        images: validatedInput.data.images,
+        // images: validatedInput.data.images,
       })
       .where(eq(products.id, validatedInput.data.id))
       .returning()
@@ -220,16 +246,19 @@ export async function updateProduct(
   }
 }
 
-export async function filterProducts({ query }: { query: string }) {
-  noStore()
+export async function filterProducts(rawInput: FilterProductsInput) {
   try {
-    if (query.length === 0) {
+    const validatedInput = filterProductsSchema.safeParse(rawInput)
+    if (!validatedInput.success) return "invalid-input"
+
+    if (validatedInput.data.query.length === 0) {
       return {
         data: null,
         error: null,
       }
     }
 
+    noStore()
     const categoriesWithProducts = await db.query.categories.findMany({
       columns: {
         id: true,
@@ -243,7 +272,8 @@ export async function filterProducts({ query }: { query: string }) {
           },
         },
       },
-      where: (table, { sql }) => sql`position(${query} in ${table.name}) > 0`,
+      where: (table, { sql }) =>
+        sql`position(${validatedInput.data.query} in ${table.name}) > 0`,
     })
 
     return {

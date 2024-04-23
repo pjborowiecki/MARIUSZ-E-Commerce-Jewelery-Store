@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { notFound, redirect } from "next/navigation"
+import { getAllCategories, getAllSubcategories } from "@/actions/category"
 import { getProductById } from "@/actions/product"
 import { auth } from "@/auth"
 
@@ -29,7 +30,11 @@ export default async function AdminProductPage({
     redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)
 
   const product = await getProductById({ id: params.productId })
-  if (!product) notFound()
+
+  const categories = await getAllCategories()
+  const subcategories = await getAllSubcategories()
+
+  if (!product || !categories || !subcategories) notFound()
 
   return (
     <div className="px-2 py-5 sm:pl-14 sm:pr-6">
@@ -40,7 +45,11 @@ export default async function AdminProductPage({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <UpdateProductForm product={product} />
+          <UpdateProductForm
+            product={product}
+            categories={categories}
+            subcategories={subcategories}
+          />
         </CardContent>
       </Card>
     </div>
