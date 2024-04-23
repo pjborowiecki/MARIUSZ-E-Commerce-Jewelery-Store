@@ -43,6 +43,7 @@ import {
   getSubcategoriesByCategoryIdSchema,
   getSubcategoriesByCategoryNameSchema,
   getSubcategoryByIdSchema,
+  getSubcategoryByNameSchema,
   updateCategorySchema,
   updateSubcategorySchema,
   type AddCategoryInput,
@@ -57,6 +58,7 @@ import {
   type GetSubcategoriesByCategoryIdInput,
   type GetSubcategoriesByCategoryNameInput,
   type GetSubcategoryByIdInput,
+  type GetSubcategoryByNameInput,
   type UpdateCategoryInput,
   type UpdateSubcategoryInput,
 } from "@/validations/category"
@@ -110,6 +112,7 @@ export async function getCategoryByName(
     const [category] = await psGetCategoryByName.execute({
       name: validatedInput.data.name,
     })
+
     return category || null
   } catch (error) {
     console.error(error)
@@ -117,8 +120,28 @@ export async function getCategoryByName(
   }
 }
 
+export async function getSubcategoryByName(
+  rawInput: GetSubcategoryByNameInput
+): Promise<Subcategory | null> {
+  try {
+    const validatedInput = getSubcategoryByNameSchema.safeParse(rawInput)
+    if (!validatedInput.success) return null
+
+    noStore()
+    const [subcategory] = await psGetSubcategoryByName.execute({
+      name: validatedInput.data.name,
+    })
+
+    return subcategory || null
+  } catch (error) {
+    console.error(error)
+    throw new Error("Error getting subcategory by name")
+  }
+}
+
 export async function getAllCategories(): Promise<Category[]> {
   try {
+    noStore()
     const categories = await psGetAllCategories.execute()
     return categories
   } catch (error) {
@@ -129,6 +152,7 @@ export async function getAllCategories(): Promise<Category[]> {
 
 export async function getAllSubcategories(): Promise<Subcategory[]> {
   try {
+    noStore()
     const subcategories = await psGetAllSubcategories.execute()
     return subcategories
   } catch (error) {
@@ -165,6 +189,7 @@ export async function getSubcategoriesByCategoryName(
       getSubcategoriesByCategoryNameSchema.safeParse(rawInput)
     if (!validatedInput.success) return null
 
+    noStore()
     const subcategoriesByCategoryName =
       await psGetSubcategoriesByCategoryName.execute({
         categoryName: validatedInput.data.name,

@@ -88,12 +88,16 @@ export const getCategoryByNameSchema = z.object({
   name: categoryNameSchema,
 })
 
-export const getSubcategoriesByCategoryId = z.object({
-  categoryName: categoryNameSchema,
+export const getSubcategoryByNameSchema = z.object({
+  name: categoryNameSchema,
 })
 
-export const getSubcategoriesByCategoryName = z.object({
-  categoryId: categoryIdSchema,
+export const getSubcategoriesByCategoryIdSchema = z.object({
+  id: categoryIdSchema,
+})
+
+export const getSubcategoriesByCategoryNameSchema = z.object({
+  name: categoryNameSchema,
 })
 
 export const updateCategorySchema = categorySchema
@@ -141,12 +145,16 @@ export type GetSubcategoryByIdInput = z.infer<typeof getSubcategoryByIdSchema>
 
 export type GetCategoryByNameInput = z.infer<typeof getCategoryByNameSchema>
 
+export type GetSubcategoryByNameInput = z.infer<
+  typeof getSubcategoryByNameSchema
+>
+
 export type GetSubcategoriesByCategoryIdInput = z.infer<
-  typeof getSubcategoriesByCategoryId
+  typeof getSubcategoriesByCategoryIdSchema
 >
 
 export type GetSubcategoriesByCategoryNameInput = z.infer<
-  typeof getSubcategoriesByCategoryName
+  typeof getSubcategoriesByCategoryNameSchema
 >
 
 export type AddCategoryInput = z.infer<typeof addCategorySchema>
