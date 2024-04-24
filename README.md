@@ -54,7 +54,6 @@ Not yet available
 - [x] Postgres database and ORM set up
 - [x] Transactional emails
 - [x] Functional newsletter sign up
-- [x] Functional blog with Contentlayer and MDX
 - [x] Functional and styled landing page with pricing, features, testimonials, and FAQ sections
 - [x] Functional and styled sign in and sign up pages
 - [x] Client-side and Server-side input validation with Zod
