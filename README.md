@@ -59,3 +59,7 @@ Not yet available
 - [x] Client-side and Server-side input validation with Zod
 - [x] Latest Next.js features (app router, server actions, etc.)
 - [x] Rigorous linting and TypeScript type checking
+
+### Note:
+
+This project has been inspired by a fantastic work done by [Sadman Sakib](https://github.com/sadmann7) and countless colaborators for his [Skateshop](https://github.com/sadmann7/skateshop) project, which I highly encourage you to check out. It has been adapted to my own and my client's needs. Most notably, it has been tranformed into a single-vendor e-commerce application.
