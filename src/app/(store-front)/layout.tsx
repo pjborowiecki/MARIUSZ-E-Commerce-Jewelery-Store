@@ -11,9 +11,9 @@ export default function StoreFrontLayout({
   children,
 }: Readonly<StoreFrontLayoutProps>): JSX.Element {
   return (
-    <div className="mx-auto flex size-full min-h-screen max-w-7xl flex-col px-8">
+    <div className="mx-auto flex size-full min-h-screen max-w-7xl flex-col">
       <Header />
-      {children}
+      <main className="flex-1 px-8">{children}</main>
       <Footer />
     </div>
   )

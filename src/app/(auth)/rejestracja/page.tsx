@@ -99,7 +99,7 @@ export default async function SignUpPage(): Promise<JSX.Element> {
             oraz{" "}
             <Link
               aria-label="Polityka prywatnosci"
-              href="/regulamin"
+              href="/regulamin-sklepu"
               className="font-semibold underline-offset-4 transition-all hover:underline"
             >
               regulamin sklepu

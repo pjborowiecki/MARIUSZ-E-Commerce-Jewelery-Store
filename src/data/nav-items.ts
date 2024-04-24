@@ -181,6 +181,72 @@ export const mainNavItems = [
 
 export const sidebarNavItems = [] satisfies NavItem[]
 
+export const footerNavItems = [
+  {
+    title: "O nas",
+    href: "/",
+    subItems: [
+      {
+        title: "Kim jesteśmy",
+        href: "/kim-jestesmy",
+        external: false,
+      },
+      {
+        title: "Nasza misja",
+        href: "/nasza-misja",
+        external: false,
+      },
+      {
+        title: "Kontakt",
+        href: "/kontakt",
+        external: false,
+      },
+    ],
+  },
+  {
+    title: "Formalności",
+    href: "/",
+    subItems: [
+      {
+        title: "Regulamin sklepu",
+        href: "/regulamin-sklepu",
+        external: false,
+      },
+      {
+        title: "Polityka prywatności",
+        href: "/polityka-prywatnosci",
+        external: false,
+      },
+      {
+        title: "Najczęstsze  pytania",
+        href: "/faq",
+        external: false,
+      },
+    ],
+  },
+  {
+    title: "Inne",
+    href: "/",
+    subItems: [
+      {
+        title: "Panel klienta",
+        href: "/panel-klienta",
+        external: false,
+      },
+      {
+        title: "Dostawa i płatności",
+        href: "/dostawa-platnosci",
+        external: false,
+      },
+      {
+        title: "Wymiana i zwroty",
+        href: "/wymiana-zwroty",
+        external: false,
+      },
+    ],
+  },
+] satisfies NavItem[]
+
 export const adminNavItems = [
   {
     title: "Podsumowanie",
