@@ -1,55 +1,36 @@
 # Jubiler Mariusz
 
-#### TODO:
+**Under Construction. Please check back soon**
 
-- Add more fields to product form:
+A full-stack freelance project built for one of my clients in Poland, using NextJS 14 with its latest features (app router, server actions, etc.), TypeScript, Next-Auth, Postgres database hosted with Neon, Drizzle ORM, Stripe, TailwindCSS, and more. This fully-functional project consists of a store front, client's section and an admin dashboard.
 
-  - size
-  - materials
-  - colours
-  - stone
-  - weight
-  - próba
-  - kolekcja
-  - producent
+### Tech Stack:
 
-- [ ] Fix the stripe web hook and a single order page
-- [ ] Translate the date picker
-- [x] Update slugify helper function to remove polish letters
+- TypeScript
+- Next.js 14
+- Next-Auth
+- Postgres (Neon)
+- Drizzle ORM
+- TailwindCSS
+- ShadCn UI
+- Stripe
 
-- [ ] Change Start to Podsumowanie (Analytics, etc.)
+### Features:
 
-- [ ] Update default redirects
-- [ ] Update redirects, depending on user's role (admin vs regular user)
-- [ ] Update runtime to "edge" wherever possible (especially in auth-related components)
-- [ ] Translate transactional emails to Polish
-- [ ] Style transactional emails
-
-- [ ] Add middleware
-- [ ] Add auth and role checks for all dashboard pages
-
-- [ ] Decide on how to handle categories and subcategories
-- [ ] Define Zod validations for Categories and Subcategories
-- [ ] Define database schemas for categories and subcategories
-- [ ] Define database schema for products and tags
-- [ ] Add tags related field to "add product" form
-
-- [ ] Implement getCart() method
-- [ ] Finish the shopping cart sheet
-- [ ] Finish header and navigation (especially on mobile)
-
-- [ ] Implement forms for adding categories and subcategories
-- [ ] Implement forms for editing categories and subcategories
-- [ ] Implement forms for addings and editing tags
-- [ ] Implement forms for adding end editing products
-
-- [ ] Replace static category and subcategory data in the main nav with dynamic data from the database
-
-- [ ] Complete the header search component
-- [ ] Implement client panel pages and related functionality
-
-- [ ] Implement the admin panel and stats
-
-- [ ] Figure out how to handle shipping costs and shipping options
-
-- [ ] Fix the admin sidebar menu problem with Zustand
+- Store front built with TailwindCSS and ShadCN UI
+- Cloud-based, edge-compatible Postgres database (Neon)
+- Latest Next.js features (app router, server actions, etc.)
+- Fully-fledged, role-based Next-Auth authentication, with:
+  - Email verification
+  - OAuth Providers (Google and Facebook)
+  - Password Reset and Update
+- Admin dashboard with the following CRUD functionality:
+  - Managing categories and subcategories
+  - Managing products
+  - Managing orders
+  - Manage users and customers
+- Client's panel with the following functionality:
+  - Viewing and managing orders
+  - Managing user information (shipping addresses, payment methods, emails, etc.)
+- Transactional emails with Resend and React-Eamil
+- Stripe integration
