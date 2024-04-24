@@ -8,8 +8,6 @@ This fully-functional project consists of a store front, additional info pages, 
 > This project is still in active development. See a feature list below to get a better understanding of what has been implemented to date and what is yet to come.
 > Since the store is being developed for a client in Poland, you can expect error messages and information visible to users to be encoded in Polish, however function names and anything else that is not directly related to the client's needs has been written in English and easy to follow.
 
-<br />
-
 #### Live Demo:
 
 Not yet available
@@ -18,9 +16,7 @@ Not yet available
 
 Not yet available
 
-<br />
-
-### Tech Stack:
+## Tech Stack:
 
 - TypeScript
 - Next.js 14
@@ -30,8 +26,6 @@ Not yet available
 - TailwindCSS
 - ShadCn UI
 - Stripe
-
-<br />
 
 ## Features:
 
@@ -46,18 +40,6 @@ Not yet available
   - [x] Managing products
   - [x] Managing orders
   - [x] Managing users and customers data
-- [x] Postgres database and ORM set up
-- [x] Transactional emails
-- [x] Functional newsletter sign up
-- [x] Functional blog with Contentlayer and MDX
-- [x] Functional and styled landing page with pricing, features, testimonials, and FAQ sections
-- [x] Functional and styled sign in and sign up pages
-- [x] Client-side and Server-side input validation with Zod
-- [x] Latest Next.js features (app router, server actions, etc.)
-- [x] Rigorous linting and TypeScript type checking
-
-<br />
-
 - [ ] Client's panel with the followng functionality:
   - [ ] Viewing and managing user information (shipping addresses, payment methods, etc.)
   - [ ] Viewing and managing orders
@@ -68,4 +50,13 @@ Not yet available
 - [ ] Custom loading pages with skeleton loaders
 - [ ] Custom error pages
 - [ ] Blogging functionality with MDX and Markdown
-- [ ] Unit and Integration tests
+- [ ] Unit, integration, and E2E tests
+- [x] Postgres database and ORM set up
+- [x] Transactional emails
+- [x] Functional newsletter sign up
+- [x] Functional blog with Contentlayer and MDX
+- [x] Functional and styled landing page with pricing, features, testimonials, and FAQ sections
+- [x] Functional and styled sign in and sign up pages
+- [x] Client-side and Server-side input validation with Zod
+- [x] Latest Next.js features (app router, server actions, etc.)
+- [x] Rigorous linting and TypeScript type checking
