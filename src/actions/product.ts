@@ -1,7 +1,7 @@
 "use server"
 
 import { unstable_noStore as noStore, revalidatePath } from "next/cache"
-import { and, eq } from "drizzle-orm"
+import { and, count, desc, eq } from "drizzle-orm"
 
 import { db } from "@/config/db"
 import { psGetCategoryByName } from "@/db/prepared-statements/category"
@@ -9,10 +9,15 @@ import {
   psCheckIfProductExists,
   psCheckIfProductNameTaken,
   psDeleteProductById,
+  psGetAllProducts,
+  psGetAllProductsByCategoryId,
+  psGetAllProductsByCategoryName,
   psGetProductById,
   psGetProductByName,
+  psGetProductCountByCategoryId,
+  psGetProductCountByCategoryName,
 } from "@/db/prepared-statements/product"
-import { products, subcategories, type Product } from "@/db/schema"
+import { categories, products, subcategories, type Product } from "@/db/schema"
 import {
   addProductFunctionSchema,
   checkIfProductExistsSchema,
@@ -21,6 +26,8 @@ import {
   filterProductsSchema,
   getProductByIdSchema,
   getProductByNameSchema,
+  getProductCountByCategoryIdSchema,
+  getProductCountByCategoryNameSchema,
   updateProductSchema,
   type AddProductInput,
   type CheckIfProductExistsInput,
@@ -29,6 +36,8 @@ import {
   type FilterProductsInput,
   type GetProductByIdInput,
   type GetProductByNameInput,
+  type GetProductCountByCategoryIdInput,
+  type GetProductCountByCategoryNameInput,
   type UpdateProductInput,
 } from "@/validations/product"
 
@@ -68,6 +77,39 @@ export async function getProductByName(
   } catch (error) {
     console.error(error)
     throw new Error("Error getting product by name")
+  }
+}
+
+export async function getFeaturedProducts(): Promise<Product[]> {
+  try {
+    noStore()
+    const featuredProducts = await db
+      .select({
+        id: products.id,
+        name: products.name,
+        description: products.description,
+        state: products.state,
+        categoryName: products.categoryName,
+        subcategoryName: products.subcategoryName,
+        categoryId: products.categoryId,
+        subcategoryId: products.subcategoryId,
+        tags: products.tags,
+        price: products.price,
+        inventory: products.inventory,
+        images: products.images,
+        createdAt: products.createdAt,
+        updatedAt: products.updatedAt,
+      })
+      .from(products)
+      .limit(10)
+      .leftJoin(categories, eq(products.categoryId, categories.id))
+      .groupBy(products.id, categories.name)
+      .orderBy(desc(products.createdAt), desc(count(products.images)))
+
+    return featuredProducts
+  } catch (error) {
+    console.error(error)
+    throw new Error("Error getting featured products")
   }
 }
 
@@ -285,5 +327,44 @@ export async function filterProducts(rawInput: FilterProductsInput) {
       data: null,
       error: "Error filtering products",
     }
+  }
+}
+
+export async function getProductCountByCategoryName(
+  rawInput: GetProductCountByCategoryNameInput
+): Promise<number> {
+  try {
+    const validatedInput =
+      getProductCountByCategoryNameSchema.safeParse(rawInput)
+    if (!validatedInput.success) return 0
+
+    noStore()
+    const [productCount] = await psGetProductCountByCategoryName.execute({
+      name: validatedInput.data.name,
+    })
+
+    return productCount ? productCount.count : 0
+  } catch (error) {
+    console.error(error)
+    throw new Error("Error getting product count by category name")
+  }
+}
+
+export async function getProductCountByCategoryId(
+  rawInput: GetProductCountByCategoryIdInput
+): Promise<number> {
+  try {
+    const validatedInput = getProductCountByCategoryIdSchema.safeParse(rawInput)
+    if (!validatedInput.success) return 0
+
+    noStore()
+    const [productCount] = await psGetProductCountByCategoryId.execute({
+      id: validatedInput.data.id,
+    })
+
+    return productCount ? productCount.count : 0
+  } catch (error) {
+    console.error(error)
+    throw new Error("Error getting product count by category Id")
   }
 }

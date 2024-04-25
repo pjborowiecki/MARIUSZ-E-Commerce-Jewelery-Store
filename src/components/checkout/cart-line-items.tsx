@@ -24,7 +24,7 @@ export function CartLineItems({
   variant,
   className,
   ...props
-}: CartLineItemsProps) {
+}: Readonly<CartLineItemsProps>) {
   const Comp = isScrollable ? ScrollArea : Slot
   return (
     <Comp className="h-full">

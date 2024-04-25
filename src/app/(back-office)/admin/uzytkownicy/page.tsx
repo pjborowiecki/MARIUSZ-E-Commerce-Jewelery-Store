@@ -30,7 +30,7 @@ interface RegisteredUsersPageProps {
 
 export default async function RegisteredUsersPage({
   searchParams,
-}: RegisteredUsersPageProps): Promise<JSX.Element> {
+}: Readonly<RegisteredUsersPageProps>): Promise<JSX.Element> {
   const session = await auth()
   if (session?.user.role !== "administrator")
     redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)

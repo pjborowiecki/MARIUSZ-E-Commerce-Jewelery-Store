@@ -13,7 +13,7 @@ export function CodeBlock({
   children,
   raw,
   ...props
-}: CodeBlockProps): JSX.Element {
+}: Readonly<CodeBlockProps>): JSX.Element {
   return (
     <>
       <CopyButton value={raw} />

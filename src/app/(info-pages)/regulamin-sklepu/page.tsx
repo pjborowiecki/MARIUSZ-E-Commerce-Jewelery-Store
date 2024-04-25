@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function TermsAndConditionsPage(): JSX.Element {
   return (
-    <div className="px-2 py-5 sm:pl-14 sm:pr-6">
+    <div className="py-5">
       Regulamin sklepu oraz korzystania z usługi (TODO: Strona w budowie)
     </div>
   )

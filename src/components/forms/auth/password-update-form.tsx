@@ -32,7 +32,7 @@ interface PasswordUpdateFormProps {
 
 export function PasswordUpdateForm({
   resetPasswordToken,
-}: PasswordUpdateFormProps): JSX.Element {
+}: Readonly<PasswordUpdateFormProps>): JSX.Element {
   const router = useRouter()
   const { toast } = useToast()
   const [isPending, startTransition] = React.useTransition()

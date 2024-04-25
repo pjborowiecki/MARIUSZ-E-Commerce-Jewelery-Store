@@ -49,7 +49,7 @@ const PaginationLink = ({
   isActive,
   size = "icon",
   ...props
-}: PaginationLinkProps) => (
+}: Readonly<PaginationLinkProps>) => (
   <a
     aria-current={isActive ? "page" : undefined}
     className={cn(

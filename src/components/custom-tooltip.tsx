@@ -21,7 +21,7 @@ export function CustomTooltip({
   text,
   triggerStyles,
   contentStyles,
-}: CustomTooltipProps): JSX.Element {
+}: Readonly<CustomTooltipProps>): JSX.Element {
   return (
     <TooltipProvider>
       <Tooltip>

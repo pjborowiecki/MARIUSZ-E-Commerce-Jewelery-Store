@@ -9,6 +9,6 @@ interface ClientButtonProps extends ButtonProps {}
 export function ClientButton({
   className,
   ...props
-}: ClientButtonProps): JSX.Element {
+}: Readonly<ClientButtonProps>): JSX.Element {
   return <Button className={cn(className)} {...props}></Button>
 }

@@ -19,7 +19,7 @@ interface SidebarProps {
   navItems: NavItem[]
 }
 
-export function Sidebar({ navItems }: SidebarProps): JSX.Element {
+export function Sidebar({ navItems }: Readonly<SidebarProps>): JSX.Element {
   const segment = useSelectedLayoutSegment()
 
   return (

@@ -28,7 +28,7 @@ export function ErrorCard({
   reset,
   className,
   ...props
-}: ErrorCardProps): JSX.Element {
+}: Readonly<ErrorCardProps>): JSX.Element {
   return (
     <Card
       role="alert"

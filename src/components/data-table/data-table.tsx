@@ -51,7 +51,7 @@ export function DataTable<TData, TValue>({
   searchableColumns = [],
   newRowLink,
   deleteRowsAction,
-}: DataTableProps<TData, TValue>) {
+}: Readonly<DataTableProps<TData, TValue>>) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()

@@ -35,7 +35,7 @@ interface SubcategoriesTableShellProps {
 export function SubcategoriesTableShell({
   data,
   pageCount,
-}: SubcategoriesTableShellProps): JSX.Element {
+}: Readonly<SubcategoriesTableShellProps>): JSX.Element {
   const { toast } = useToast()
   const [isPending, startTransition] = React.useTransition()
   const [selectedRowIds, setSelectedRowIds] = React.useState<string[]>([])

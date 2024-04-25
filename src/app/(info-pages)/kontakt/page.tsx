@@ -10,9 +10,5 @@ export const metadata: Metadata = {
 }
 
 export default function ContactPage(): JSX.Element {
-  return (
-    <div className="px-2 py-5 sm:pl-14 sm:pr-6">
-      Kontakt (TODO: Strona w budowie)
-    </div>
-  )
+  return <div className="py-5">Kontakt (TODO: Strona w budowie)</div>
 }

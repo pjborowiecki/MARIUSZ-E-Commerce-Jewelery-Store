@@ -60,7 +60,7 @@ export function UpdateProductForm({
   product,
   categories,
   subcategories,
-}: UpdateProductFormProps): JSX.Element {
+}: Readonly<UpdateProductFormProps>): JSX.Element {
   const router = useRouter()
   const { toast } = useToast()
   const [files, setFiles] = React.useState<FileWithPreview[] | null>(null)

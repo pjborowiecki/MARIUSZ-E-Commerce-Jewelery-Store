@@ -5,7 +5,10 @@ import { CheckIcon, CopyIcon } from "@radix-ui/react-icons"
 
 import { Button, type ButtonProps } from "@/components/ui/button"
 
-export function CopyButton({ value, ...props }: ButtonProps): JSX.Element {
+export function CopyButton({
+  value,
+  ...props
+}: Readonly<ButtonProps>): JSX.Element {
   const [isCopied, setIsCopied] = React.useState(false)
 
   return (

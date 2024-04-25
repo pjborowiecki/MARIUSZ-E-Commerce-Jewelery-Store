@@ -24,9 +24,9 @@ interface MainNavProps {
   items: NavItem[]
 }
 
-export function MainNav({ items }: MainNavProps): JSX.Element {
+export function MainNav({ items }: Readonly<MainNavProps>): JSX.Element {
   return (
-    <div className="hidden items-center gap-12 lg:flex">
+    <div className="hidden w-full items-center gap-12 bg-background lg:flex">
       <Link
         href="/"
         className="text-2xl font-semibold uppercase tracking-tight"

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function FaqPage(): JSX.Element {
   return (
-    <div className="px-2 py-5 sm:pl-14 sm:pr-6">
+    <div className="py-5">
       Najczęściej zadawane pytania (TODO: Stona w budowie)
     </div>
   )

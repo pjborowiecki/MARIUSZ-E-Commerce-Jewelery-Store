@@ -28,7 +28,7 @@ export function DateRangePicker({
   dayCount,
   className,
   ...props
-}: DateRangePickerProps) {
+}: Readonly<DateRangePickerProps>) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()

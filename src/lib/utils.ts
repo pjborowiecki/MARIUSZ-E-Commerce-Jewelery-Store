@@ -82,6 +82,13 @@ export function slugify(str: string): string {
     .replace(/--+/g, "-")
 }
 
+export function toTitleCase(str: string) {
+  return str.replace(
+    /\w\S*/g,
+    (txt) => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase()
+  )
+}
+
 export function translateFilterNamesToPolish(name: string): string {
   const nameTranslations: Record<string, string> = {
     orders: "zamówienia",

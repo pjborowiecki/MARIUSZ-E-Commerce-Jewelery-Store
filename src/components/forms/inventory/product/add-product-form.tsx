@@ -48,7 +48,7 @@ interface AddProductFormProps {
 export function AddProductForm({
   categories,
   subcategories,
-}: AddProductFormProps): JSX.Element {
+}: Readonly<AddProductFormProps>): JSX.Element {
   const router = useRouter()
   const { toast } = useToast()
   const [files, setFiles] = React.useState<FileWithPreview[] | null>(null)

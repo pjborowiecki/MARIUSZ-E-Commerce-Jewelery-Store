@@ -41,7 +41,7 @@ export function OrdersTableShell({
   data,
   pageCount,
   isSearchable = true,
-}: OrdersTableShellProps) {
+}: Readonly<OrdersTableShellProps>) {
   const columns = React.useMemo<ColumnDef<AwaitedOrder, unknown>[]>(
     () => [
       {

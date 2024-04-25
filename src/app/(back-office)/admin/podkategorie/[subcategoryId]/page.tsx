@@ -23,7 +23,7 @@ interface AdminSubcategoryPageProps {
 
 export default async function AdminSubcategoryPage({
   params,
-}: AdminSubcategoryPageProps): Promise<JSX.Element> {
+}: Readonly<AdminSubcategoryPageProps>): Promise<JSX.Element> {
   const session = await auth()
   if (session?.user.role !== "administrator")
     redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)

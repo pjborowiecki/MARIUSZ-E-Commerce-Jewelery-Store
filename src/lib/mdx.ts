@@ -26,7 +26,7 @@ export function generateStaticParams(): Promise<
 
 export function generateMetadata({
   params,
-}: BlogPostParamsProps): Promise<Metadata> {
+}: Readonly<BlogPostParamsProps>): Promise<Metadata> {
   const post = getPostFromParams(params)
   if (!post) return Promise.resolve({})
 

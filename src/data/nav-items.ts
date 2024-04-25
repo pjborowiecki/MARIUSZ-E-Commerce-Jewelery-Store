@@ -230,7 +230,7 @@ export const footerNavItems = [
     subItems: [
       {
         title: "Panel klienta",
-        href: "/panel-klienta",
+        href: "/panel-klienta/ustawienia",
         external: false,
       },
       {
@@ -327,5 +327,38 @@ export const adminNavItems = [
     icon: "percent",
     external: false,
     disabled: false,
+  },
+] satisfies NavItem[]
+
+export const clientSettingsNavItems = [
+  {
+    title: "Dane osobowe",
+    href: "/panel-klienta/ustawienia/dane-osobowe",
+    slug: "dane-osobowe",
+    external: false,
+  },
+  {
+    title: "Adresy wysyłki",
+    href: "/panel-klienta/ustawienia/adresy-wysylki",
+    slug: "adresy-wysylki",
+    external: false,
+  },
+  {
+    title: "Metody płatności",
+    href: "/panel-klienta/ustawienia/metody-platnosci",
+    slug: "metody-platnosci",
+    external: false,
+  },
+  {
+    title: "Zmiana hasła",
+    href: "/panel-klienta/ustawienia/zmiana-hasla",
+    slug: "zmiana-hasla",
+    external: false,
+  },
+  {
+    title: "Usuwanie konta",
+    href: "/panel-klienta/ustawienia/usuwanie-konta",
+    slug: "usuwanie-konta",
+    external: false,
   },
 ] satisfies NavItem[]

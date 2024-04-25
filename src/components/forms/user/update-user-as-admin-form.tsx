@@ -42,7 +42,7 @@ interface UpdateUserAsAdminFormProps {
 
 export function UpdateUserAsAdminForm({
   user,
-}: UpdateUserAsAdminFormProps): JSX.Element {
+}: Readonly<UpdateUserAsAdminFormProps>): JSX.Element {
   const router = useRouter()
   const { toast } = useToast()
   const [isUpdating, startUpdateTransition] = React.useTransition()

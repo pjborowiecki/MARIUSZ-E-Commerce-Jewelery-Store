@@ -22,7 +22,7 @@ interface BackOfficeAdminLayoutProps {
 
 export default async function BackOfficeAdminLayout({
   children,
-}: BackOfficeAdminLayoutProps): Promise<JSX.Element> {
+}: Readonly<BackOfficeAdminLayoutProps>): Promise<JSX.Element> {
   const session = await auth()
   if (session?.user.role !== "administrator")
     redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)

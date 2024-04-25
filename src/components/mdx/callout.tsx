@@ -12,7 +12,7 @@ export function Callout({
   children,
   icon,
   ...props
-}: CalloutProps): JSX.Element {
+}: Readonly<CalloutProps>): JSX.Element {
   return (
     <Alert {...props}>
       {icon && <span className="mr-4 text-2xl">{icon}</span>}

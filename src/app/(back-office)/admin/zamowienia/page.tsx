@@ -37,7 +37,7 @@ interface AdminOrdersPageProps {
 
 export default async function AdminOrdersPage({
   searchParams,
-}: AdminOrdersPageProps): Promise<JSX.Element> {
+}: Readonly<AdminOrdersPageProps>): Promise<JSX.Element> {
   const session = await auth()
   if (session?.user.role !== "administrator")
     redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)

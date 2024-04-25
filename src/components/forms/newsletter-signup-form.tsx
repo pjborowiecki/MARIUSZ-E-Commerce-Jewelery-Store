@@ -75,20 +75,20 @@ export function NewsletterSignUpForm(): JSX.Element {
   return (
     <Form {...form}>
       <form
-        className="flex h-10 w-full  items-center justify-center md:h-12"
+        className="flex h-8 w-full  items-center justify-center md:h-10"
         onSubmit={(...args) => void form.handleSubmit(onSubmit)(...args)}
       >
         <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
-            <FormItem className="relative h-10 w-full space-y-0 md:h-12">
+            <FormItem className="relative h-8 w-full space-y-0 md:h-10">
               <FormLabel className="sr-only">Email</FormLabel>
               <FormControl className="rounded-r-none">
                 <Input
                   type="email"
                   placeholder="jan.kowalski@gmail.com"
-                  className="h-10 placeholder:text-xs md:h-12 md:placeholder:text-sm"
+                  className="h-8 placeholder:text-xs md:h-10 md:placeholder:text-sm"
                   {...field}
                 />
               </FormControl>
@@ -98,7 +98,7 @@ export function NewsletterSignUpForm(): JSX.Element {
         />
 
         <Button
-          className="size-10 rounded-l-none md:size-12"
+          className="size-8 rounded-l-none md:size-10"
           disabled={isPending}
         >
           {isPending ? (

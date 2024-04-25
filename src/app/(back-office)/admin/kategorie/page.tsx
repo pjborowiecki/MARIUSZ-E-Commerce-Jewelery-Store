@@ -28,7 +28,7 @@ interface AdminCategoriesPageProps {
 
 export default async function AdminCategoriesPage({
   searchParams,
-}: AdminCategoriesPageProps): Promise<JSX.Element> {
+}: Readonly<AdminCategoriesPageProps>): Promise<JSX.Element> {
   const session = await auth()
   if (session?.user.role !== "administrator")
     redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)

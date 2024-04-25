@@ -17,7 +17,7 @@ export function MobileNavItem({
   disabled,
   segment,
   setIsOpen,
-}: MobileNavItemProps): JSX.Element {
+}: REadonly<MobileNavItemProps>): JSX.Element {
   return (
     <Link
       href={href}

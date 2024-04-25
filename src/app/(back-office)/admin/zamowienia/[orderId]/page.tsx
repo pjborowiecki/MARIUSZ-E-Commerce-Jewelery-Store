@@ -29,7 +29,9 @@ interface AdminOrderPageProps {
   }
 }
 
-export default async function AdminOrderPage({ params }: AdminOrderPageProps) {
+export default async function AdminOrderPage({
+  params,
+}: Readonly<AdminOrderPageProps>) {
   const session = await auth()
   if (session?.user.role !== "administrator")
     redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)

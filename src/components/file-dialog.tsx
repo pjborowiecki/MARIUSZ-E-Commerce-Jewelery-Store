@@ -27,8 +27,6 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { Icons } from "@/components/icons"
 
-// TODO Your proposed upload exceeds the maximum allowed size, this should trigger toast.error too
-
 interface FileDialogProps<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
@@ -94,10 +92,8 @@ export function FileDialog<TFieldValues extends FieldValues>({
     [maxSize, setFiles, toast]
   )
 
-  // Register files to react-hook-form
   React.useEffect(() => {
     setValue(name, files as PathValue<TFieldValues, Path<TFieldValues>>)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -109,13 +105,11 @@ export function FileDialog<TFieldValues extends FieldValues>({
     disabled,
   })
 
-  // Revoke preview url when component unmounts
   React.useEffect(() => {
     return () => {
       if (!files) return
       files.forEach((file) => URL.revokeObjectURL(file.preview))
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

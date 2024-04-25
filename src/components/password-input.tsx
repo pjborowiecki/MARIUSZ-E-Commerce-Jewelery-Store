@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input, type InputProps } from "@/components/ui/input"
 
-const PasswordInput = React.forwardRef<HTMLInputElement, InputProps>(
+const PasswordInput = React.forwardRef<HTMLInputElement, Readonly<InputProps>>(
   ({ className, ...props }, ref) => {
     const [showPassword, setShowPassword] = React.useState(false)
 

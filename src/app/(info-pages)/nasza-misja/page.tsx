@@ -9,9 +9,5 @@ export const metadata: Metadata = {
 }
 
 export default function OurMissionPage(): JSX.Element {
-  return (
-    <div className="px-2 py-5 sm:pl-14 sm:pr-6">
-      Nasza Misja (TODO: Strona w budowie)
-    </div>
-  )
+  return <div className="py-5">Nasza Misja (TODO: Strona w budowie)</div>
 }

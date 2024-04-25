@@ -29,7 +29,7 @@ interface PasswordUpdatePageProps {
 
 export default async function PasswordUpdatePage({
   searchParams,
-}: PasswordUpdatePageProps): Promise<JSX.Element> {
+}: Readonly<PasswordUpdatePageProps>): Promise<JSX.Element> {
   if (searchParams.token) {
     const user = await getUserByResetPasswordToken({
       token: String(searchParams.token),

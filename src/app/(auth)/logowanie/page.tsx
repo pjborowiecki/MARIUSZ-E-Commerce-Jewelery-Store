@@ -4,10 +4,7 @@ import { redirect } from "next/navigation"
 import { auth } from "@/auth"
 
 import { env } from "@/env.mjs"
-import {
-  DEFAULT_ADMIN_SIGNIN_REDIRECT,
-  DEFAULT_SIGNIN_REDIRECT,
-} from "@/config/defaults"
+import { DEFAULT_SIGNIN_REDIRECT } from "@/config/defaults"
 
 import {
   Card,

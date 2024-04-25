@@ -73,7 +73,9 @@ interface RootLayoutProps {
   children: React.ReactNode
 }
 
-export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
+export default function RootLayout({
+  children,
+}: Readonly<RootLayoutProps>): JSX.Element {
   return (
     <html lang="en" className="overflow-x-hidden overflow-y-scroll">
       <body

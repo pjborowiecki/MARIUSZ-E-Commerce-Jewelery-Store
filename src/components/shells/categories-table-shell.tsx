@@ -35,7 +35,7 @@ interface CategoriesTableShellProps {
 export function CategoriesTableShell({
   data,
   pageCount,
-}: CategoriesTableShellProps): JSX.Element {
+}: Readonly<CategoriesTableShellProps>): JSX.Element {
   const { toast } = useToast()
   const [isPending, startTransition] = React.useTransition()
   const [selectedRowIds, setSelectedRowIds] = React.useState<string[]>([])

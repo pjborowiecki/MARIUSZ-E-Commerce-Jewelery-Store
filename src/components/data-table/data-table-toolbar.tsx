@@ -30,7 +30,7 @@ export function DataTableToolbar<TData>({
   searchableColumns = [],
   newRowLink,
   deleteRowsAction,
-}: DataTableToolbarProps<TData>) {
+}: Readonly<DataTableToolbarProps<TData>>) {
   const isFiltered = table.getState().columnFilters.length > 0
   const [isPending, startTransition] = React.useTransition()
 

@@ -34,7 +34,7 @@ interface CustomersTableShellProps {
 export function CustomersTableShell({
   data,
   pageCount,
-}: CustomersTableShellProps) {
+}: Readonly<CustomersTableShellProps>) {
   const columns = React.useMemo<ColumnDef<AwaitedCustomer, unknown>[]>(
     () => [
       {

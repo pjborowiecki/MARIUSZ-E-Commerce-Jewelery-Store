@@ -1,4 +1,4 @@
-import { eq, sql } from "drizzle-orm"
+import { count, eq, sql } from "drizzle-orm"
 
 import { db } from "@/config/db"
 import { products } from "@/db/schema"
@@ -20,17 +20,35 @@ export const psGetAllProducts = db
   .from(products)
   .prepare("psGetAllProducts")
 
-// TODO
+// TODO (limit, order, etc. Perhaps move to category page to use search props)
 export const psGetAllProductsByCategoryId = db
   .select()
   .from(products)
+  .where(eq(products.categoryId, sql.placeholder("id")))
   .prepare("psGetAllProductsByCategoryId")
 
-// TODO
+// TODO (limit, order, etc. Perhaps mote to category page to use search props)
 export const psGetAllProductsByCategoryName = db
   .select()
   .from(products)
+  .where(eq(products.categoryName, sql.placeholder("name")))
   .prepare("psGetAllProductsByCategoryName")
+
+export const psGetProductCountByCategoryName = db
+  .select({
+    count: count(products.id),
+  })
+  .from(products)
+  .where(eq(products.categoryName, sql.placeholder("name")))
+  .prepare("psGetProductCountByCategoryName")
+
+export const psGetProductCountByCategoryId = db
+  .select({
+    count: count(products.id),
+  })
+  .from(products)
+  .where(eq(products.categoryId, sql.placeholder("id")))
+  .prepare("psGetProductCountByCategoryId")
 
 export const psDeleteProductById = db
   .delete(products)

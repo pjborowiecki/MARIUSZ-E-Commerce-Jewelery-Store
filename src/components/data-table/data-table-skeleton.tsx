@@ -26,7 +26,7 @@ export function DataTableSkeleton({
   showViewOptions = true,
   cellWidths = ["auto"],
   shrinkZero = false,
-}: DataTableSkeletonProps) {
+}: Readonly<DataTableSkeletonProps>) {
   return (
     <div className="w-full space-y-3 overflow-auto">
       <div className="flex w-full items-center justify-between space-x-2 overflow-auto p-1">

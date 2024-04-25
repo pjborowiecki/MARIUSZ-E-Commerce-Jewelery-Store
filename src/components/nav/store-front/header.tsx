@@ -28,7 +28,7 @@ export async function Header(): Promise<JSX.Element> {
   const session = await auth()
 
   return (
-    <header className="sticky top-0 z-50 flex h-20 items-center justify-between px-8">
+    <header className="sticky top-0 z-[50] flex h-20 w-full items-center justify-between bg-background px-8">
       <div className="flex items-center">
         <MainNav items={mainNavItems} />
         <MobileNav
@@ -78,7 +78,7 @@ export async function Header(): Promise<JSX.Element> {
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
                 <DropdownMenuItem asChild className="cursor-pointer">
-                  <Link href="/">
+                  <Link href="/panel-klienta/ustawienia/dane-osobowe">
                     <Icons.settings
                       className="mr-2 size-4 text-foreground/90"
                       aria-hidden="true"
@@ -87,7 +87,7 @@ export async function Header(): Promise<JSX.Element> {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer">
-                  <Link href="/">
+                  <Link href="/panel-klienta/zamowienia">
                     <Icons.package
                       className="mr-2 size-4 text-foreground/90"
                       aria-hidden="true"
@@ -96,7 +96,7 @@ export async function Header(): Promise<JSX.Element> {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer">
-                  <Link href="/">
+                  <Link href="/panel-klienta/ulubione">
                     <Icons.heart
                       className="mr-2 size-4 text-foreground/90"
                       aria-hidden="true"

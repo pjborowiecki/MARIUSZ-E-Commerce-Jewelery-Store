@@ -43,7 +43,7 @@ interface AddSubcategoryFormProps {
 
 export function AddSubcategoryForm({
   categories,
-}: AddSubcategoryFormProps): JSX.Element {
+}: Readonly<AddSubcategoryFormProps>): JSX.Element {
   const router = useRouter()
   const { toast } = useToast()
   const [isPending, startTransition] = React.useTransition()

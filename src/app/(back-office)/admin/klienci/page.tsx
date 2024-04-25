@@ -35,7 +35,7 @@ interface CustomersPageProps {
 
 export default async function CustomersPage({
   searchParams,
-}: CustomersPageProps): Promise<JSX.Element> {
+}: Readonly<CustomersPageProps>): Promise<JSX.Element> {
   const session = await auth()
   if (session?.user.role !== "administrator")
     redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)

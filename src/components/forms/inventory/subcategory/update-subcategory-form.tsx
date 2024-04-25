@@ -35,7 +35,7 @@ interface UpdateSubcategoryFormProps {
 
 export function UpdateSubcategoryForm({
   subcategory,
-}: UpdateSubcategoryFormProps): JSX.Element {
+}: Readonly<UpdateSubcategoryFormProps>): JSX.Element {
   const router = useRouter()
   const { toast } = useToast()
   const [isUpdating, startUpdateTransition] = React.useTransition()

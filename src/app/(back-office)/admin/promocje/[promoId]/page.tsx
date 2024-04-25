@@ -14,7 +14,7 @@ interface AdminPromoPageProps {
 
 export default async function AdminPromoPage({
   params,
-}: AdminPromoPageProps): Promise<JSX.Element> {
+}: Readonly<AdminPromoPageProps>): Promise<JSX.Element> {
   const session = await auth()
   if (session?.user.role !== "administrator")
     redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)

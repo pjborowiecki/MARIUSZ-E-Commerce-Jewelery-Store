@@ -28,7 +28,7 @@ function Shell({
   as: Comp = "section",
   variant,
   ...props
-}: ShellProps) {
+}: Readonly<ShellProps>) {
   return (
     <Comp className={cn(shellVariants({ variant }), className)} {...props} />
   )

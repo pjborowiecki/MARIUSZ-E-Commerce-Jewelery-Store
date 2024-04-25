@@ -1,6 +1,7 @@
 import * as z from "zod"
 
 import { products } from "@/db/schema"
+import { categoryIdSchema, categoryNameSchema } from "@/validations/category"
 
 export const productIdSchema = z
   .string({
@@ -107,6 +108,14 @@ export const getProductInventorySchema = z.object({
   id: productIdSchema,
 })
 
+export const getProductCountByCategoryNameSchema = z.object({
+  name: categoryNameSchema,
+})
+
+export const getProductCountByCategoryIdSchema = z.object({
+  id: categoryIdSchema,
+})
+
 export const updateProductSchema = productSchema
   .omit({
     images: true,
@@ -139,6 +148,14 @@ export type GetProductByIdInput = z.infer<typeof getProductByIdSchema>
 export type GetProductByNameInput = z.infer<typeof getProductByNameSchema>
 
 export type GetProductsInput = z.infer<typeof getProductsSchema>
+
+export type GetProductCountByCategoryNameInput = z.infer<
+  typeof getProductCountByCategoryNameSchema
+>
+
+export type GetProductCountByCategoryIdInput = z.infer<
+  typeof getProductCountByCategoryIdSchema
+>
 
 export type AddProductInput = z.infer<typeof addProductSchema>
 

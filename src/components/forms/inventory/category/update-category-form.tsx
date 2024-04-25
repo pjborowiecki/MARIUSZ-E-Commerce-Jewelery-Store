@@ -49,7 +49,7 @@ interface UpdateCategoryFormProps {
 
 export function UpdateCategoryForm({
   category,
-}: UpdateCategoryFormProps): JSX.Element {
+}: Readonly<UpdateCategoryFormProps>): JSX.Element {
   const router = useRouter()
   const { toast } = useToast()
   const [files, setFiles] = React.useState<FileWithPreview[] | null>(null)

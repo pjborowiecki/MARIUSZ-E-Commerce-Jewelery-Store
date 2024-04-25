@@ -18,7 +18,7 @@ interface SignOutButtonProps {
 export function SignOutButton({
   buttonStyles,
   iconStyles,
-}: SignOutButtonProps): JSX.Element {
+}: Readonly<SignOutButtonProps>): JSX.Element {
   return (
     <Button
       aria-label="Wyloguj się"

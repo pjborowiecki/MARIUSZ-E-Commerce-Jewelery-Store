@@ -7,7 +7,9 @@ interface SmoothScrollProviderProps {
   children: React.ReactNode
 }
 
-export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
+export function SmoothScrollProvider({
+  children,
+}: Readonly<SmoothScrollProviderProps>) {
   return (
     <ReactLenis root options={{ lerp: 0.1, duration: 1.5, syncTouch: true }}>
       {children}

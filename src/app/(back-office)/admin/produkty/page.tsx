@@ -30,7 +30,7 @@ interface ProductsPageProps {
 
 export default async function ProductsPage({
   searchParams,
-}: ProductsPageProps): Promise<React.JSX.Element> {
+}: Readonly<ProductsPageProps>): Promise<React.JSX.Element> {
   const session = await auth()
   if (session?.user.role !== "administrator")
     redirect(DEFAULT_UNAUTHENTICATED_REDIRECT)

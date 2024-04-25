@@ -33,7 +33,7 @@ interface RegisteredUsersTableShellProps {
 export function RegisteredUsersTableShell({
   data,
   pageCount,
-}: RegisteredUsersTableShellProps): JSX.Element {
+}: Readonly<RegisteredUsersTableShellProps>): JSX.Element {
   const { toast } = useToast()
   const [isPending, startTransition] = React.useTransition()
   const [selectedRowIds, setSelectedRowIds] = React.useState<string[]>([])

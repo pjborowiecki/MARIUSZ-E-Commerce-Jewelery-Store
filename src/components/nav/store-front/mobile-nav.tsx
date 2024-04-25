@@ -22,7 +22,7 @@ interface MobileNavProps {
 export function MobileNav({
   mainNavItems,
   sidebarNavItems,
-}: MobileNavProps): JSX.Element {
+}: Readonly<MobileNavProps>): JSX.Element {
   const segment = useSelectedLayoutSegment()
   const [isOpen, setIsOpen] = React.useState<boolean>(false)
 

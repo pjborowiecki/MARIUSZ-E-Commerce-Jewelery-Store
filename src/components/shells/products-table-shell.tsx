@@ -44,7 +44,7 @@ interface ProductsTableShellProps {
 export function ProductsTableShell({
   data,
   pageCount,
-}: ProductsTableShellProps) {
+}: Readonly<ProductsTableShellProps>) {
   const { toast } = useToast()
   const [isPending, startTransition] = React.useTransition()
   const [selectedRowIds, setSelectedRowIds] = React.useState<string[]>([])
