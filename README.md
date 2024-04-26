@@ -6,7 +6,7 @@ This fully-functional jewelery shop consists of a store front, additional info p
 
 <br />
 
-![public/images/screenshots/screenshot_1](./public/images/screenshots/screenshot-1.png)
+![public/images/screenshots/screenshot_1](./public/images/screenshots/screenshot_1.png)
 
 <br />
 
