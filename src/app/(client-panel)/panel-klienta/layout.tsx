@@ -27,7 +27,7 @@ export default async function ClientZoneLayout({
 
   return (
     <div>
-      <div className="mx-auto flex size-full min-h-screen max-w-7xl flex-col">
+      <div className="mx-auto flex size-full min-h-[calc(100vh-20px)] max-w-7xl flex-col">
         <Header />
         <main className="flex-1 border-t">
           <div className="px-8 py-10">{children}</div>

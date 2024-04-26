@@ -137,6 +137,12 @@ dependencies:
   drizzle-orm:
     specifier: ^0.30.9
     version: 0.30.9(@neondatabase/serverless@0.9.1)(@types/react@18.2.79)(react@18.2.0)
+  embla-carousel-autoplay:
+    specifier: ^8.0.2
+    version: 8.0.2(embla-carousel@8.0.2)
+  embla-carousel-react:
+    specifier: ^8.0.2
+    version: 8.0.2(react@18.2.0)
   jsonwebtoken:
     specifier: ^9.0.2
     version: 9.0.2
@@ -5089,6 +5095,36 @@ packages:
 
   /electron-to-chromium@1.4.745:
     resolution: {integrity: sha512-tRbzkaRI5gbUn5DEvF0dV4TQbMZ5CLkWeTAXmpC9IrYT+GE+x76i9p+o3RJ5l9XmdQlI1pPhVtE9uNcJJ0G0EA==}
+
+  /embla-carousel-autoplay@8.0.2(embla-carousel@8.0.2):
+    resolution: {integrity: sha512-31lBigAkHeI4k1767uYcr9Gm2y12mzLpVsi+QRxIWQT8J4AtRoHLOhd8YJFiXf22DbI/j78+IaeJK4lZRlFxUw==}
+    peerDependencies:
+      embla-carousel: 8.0.2
+    dependencies:
+      embla-carousel: 8.0.2
+    dev: false
+
+  /embla-carousel-react@8.0.2(react@18.2.0):
+    resolution: {integrity: sha512-RHe1GKLulOW8EDN+cJgbFbVVfRXcaLT2/89dyVw3ONGgVpZjD19wB87I1LUZ1aCzOSrTccx0PFSQanK4OOfGPA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.1 || ^18.0.0
+    dependencies:
+      embla-carousel: 8.0.2
+      embla-carousel-reactive-utils: 8.0.2(embla-carousel@8.0.2)
+      react: 18.2.0
+    dev: false
+
+  /embla-carousel-reactive-utils@8.0.2(embla-carousel@8.0.2):
+    resolution: {integrity: sha512-nLZqDkQdO0hvOP49/dUwjkkepMnUXgIzhyRuDjwGqswpB4Ibnc5M+w7rSQQAM+uMj0cPaXnYOTlv8XD7I/zVNw==}
+    peerDependencies:
+      embla-carousel: 8.0.2
+    dependencies:
+      embla-carousel: 8.0.2
+    dev: false
+
+  /embla-carousel@8.0.2:
+    resolution: {integrity: sha512-bogsDO8xosuh/l3PxIvA5AMl3+BnRVAse9sDW/60amzj4MbGS5re4WH5eVEXiuH8G1/3G7QUAX2QNr3Yx8z5rA==}
+    dev: false
 
   /emoji-regex@8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}

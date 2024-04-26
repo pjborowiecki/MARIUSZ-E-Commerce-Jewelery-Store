@@ -128,7 +128,7 @@ export default async function SubcategoryPage({
       {/* TODO: Add product cards, style */}
       <section>
         {data.map((product: Product) => (
-          <div key={product.id}>
+          <div key={product.id} className="rounded-md border p-5">
             <h3>{product.name}</h3>
             <p>{product.description}</p>
           </div>

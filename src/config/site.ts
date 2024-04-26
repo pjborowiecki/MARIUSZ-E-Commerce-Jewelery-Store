@@ -10,13 +10,13 @@ const links = {
 }
 
 export const siteConfig = {
-  name: "Mariusz",
+  name: "MM Bijou",
   description:
     "Wyjątkowa biżuteria na każdą okazję. Mariusz to klasa sama w sobie.",
   links,
-  url: "https://mariusz.pl",
+  url: "https://mm_bijou.pl",
   ogImage: links.openGraphImage,
-  author: "pjborowiecki",
+  author: "@pjborowiecki",
   hostingRegion: "fra1",
   keywords: [
     "Biżuteria",
