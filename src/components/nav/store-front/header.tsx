@@ -31,18 +31,15 @@ export async function Header(): Promise<JSX.Element> {
     <header className="sticky top-0 z-[50] flex h-20 w-full items-center justify-between bg-background px-8">
       <div className="flex items-center">
         <MainNav items={mainNavItems} />
-        <MobileNav
-          mainNavItems={mainNavItems}
-          sidebarNavItems={sidebarNavItems}
-        />
+        <MobileNav navItems={mainNavItems} />
       </div>
 
       <div className="flex items-center gap-2">
         <HeaderSearch />
 
-        {/* <CustomTooltip text="Zawartość koszyka"> */}
-        {/* <CartSheet /> */}
-        {/* </CustomTooltip> */}
+        <CustomTooltip text="Zawartość koszyka">
+          <CartSheet />
+        </CustomTooltip>
 
         {session ? (
           <DropdownMenu>

@@ -3,8 +3,8 @@ import Link from "next/link"
 
 import { cn } from "@/lib/utils"
 
-interface MobileNavItemProps extends React.PropsWithChildren {
-  children: React.ReactNode
+interface MobileNavItemProps
+  extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   href: string
   disabled?: boolean
   segment: string
@@ -17,16 +17,20 @@ export function MobileNavItem({
   disabled,
   segment,
   setIsOpen,
-}: REadonly<MobileNavItemProps>): JSX.Element {
+  className,
+  ...props
+}: Readonly<MobileNavItemProps>): JSX.Element {
   return (
     <Link
       href={href}
       className={cn(
-        "text-foreground/70 transition-colors hover:text-foreground",
+        "text-muted-foreground transition-all hover:text-foreground",
         href.includes(segment) && "text-foreground",
-        disabled && "pointer-events-none opacity-60"
+        disabled && "pointer-events-none opacity-60",
+        className
       )}
       onClick={() => setIsOpen(false)}
+      {...props}
     >
       {children}
     </Link>
