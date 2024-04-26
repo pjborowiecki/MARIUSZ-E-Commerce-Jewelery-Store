@@ -15,6 +15,13 @@
       "when": 1713872536276,
       "tag": "0001_demonic_edwin_jarvis",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1714154868257,
+      "tag": "0002_abandoned_spyke",
+      "breakpoints": true
     }
   ]
 }

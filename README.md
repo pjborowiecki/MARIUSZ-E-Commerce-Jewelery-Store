@@ -2,7 +2,13 @@
 
 A full-stack freelance project built for one of my clients in Poland, using [Next.js 14](https://nextjs.org/) with its latest features (app router, server actions, etc.), [TypeScript](https://www.typescriptlang.org/), [Auth.js / Next-Auth v.5](https://authjs.dev/), Postgres database hosted with [Neon](https://neon.tech/), [Drizzle ORM](https://orm.drizzle.team/), [Stripe](https://stripe.com/en-pl), [TailwindCSS](https://tailwindcss.com/), [Resend](https://resend.com), and many more fantastic tools.
 
-This fully-functional project consists of a store front, additional info pages, (such as Terms and Conditions, Privacy Policy, About Us, Mission, Contact, and so on), client's section for viewing orders and managing client's own data (such as payment options, delivery addresses, emails, etc.), and an admin dashboard, with full CRUD functionality for managing products, categories, subcategories, orders, or users. Store front and dashboards are fully responsive and built with best practices for performance, security, and accessibility.
+This fully-functional jewelery shop consists of a store front, additional info pages, (such as Terms and Conditions, Privacy Policy, About Us, Mission, Contact, and so on), client's section for viewing orders and managing client's own data (such as payment options, delivery addresses, emails, etc.), and an admin dashboard, with full CRUD functionality for managing products, categories, subcategories, orders, or users. Store front and dashboards are fully responsive and built with best practices for performance, security, and accessibility.
+
+<br />
+
+![public/images/screenshots/screenshot_1](./public/images/screenshots/screenshot-1.png)
+
+<br />
 
 > **Warning**
 > This project is still in active development. See a feature list below to get a better understanding of what has been implemented to date and what is yet to come.

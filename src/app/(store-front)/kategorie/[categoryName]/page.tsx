@@ -54,6 +54,7 @@ export default async function CategoryPage({
       name: products.name,
       description: products.description,
       state: products.state,
+      importance: products.importance,
       categoryName: products.categoryName,
       subcategoryName: products.subcategoryName,
       categoryId: products.categoryId,

@@ -32,6 +32,11 @@ export const productStateEnum = pgEnum("product_state", [
   "zarchiwizowany",
 ])
 
+export const productImportanceEnum = pgEnum("product_importance", [
+  "wyróżniony",
+  "standardowy",
+])
+
 export const categoryVisibilityEnum = pgEnum("category_visibility", [
   "widoczna",
   "ukryta",
@@ -139,6 +144,9 @@ export const products = pgTable(
     description: text("description"),
     images: json("images").$type<StoredFile[] | null>().default(null),
     state: productStateEnum("state").notNull().default("roboczy"),
+    importance: productImportanceEnum("importance")
+      .notNull()
+      .default("standardowy"),
     tags: json("tags").$type<string[] | null>().default(null),
     price: decimal("price", { precision: 10, scale: 2 }).notNull().default("0"),
     inventory: integer("inventory").notNull().default(0),

@@ -39,6 +39,11 @@ export const productSchema = z.object({
     invalid_type_error:
       "Status produktu musi być jedną z predefiniowanych wartości tekstowych",
   }),
+  importance: z.enum(products.importance.enumValues, {
+    required_error: "Ważność produktu jest wymagana",
+    invalid_type_error:
+      "Ważność produktu musi być jedną z predefiniowanych wartości tekstowych",
+  }),
   categoryName: z.string({
     invalid_type_error: "Nazwa kategorii musi być tekstem",
     required_error: "Nazwa kategorii jest wymagana",

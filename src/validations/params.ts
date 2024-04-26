@@ -30,6 +30,10 @@ export const getProductsSearchParamsSchema = z.object({
   subcategoryName: categoryNameSchema.optional(),
   price_range: z.string().optional().nullable(),
   state: z.enum(products.state.enumValues).optional().default("aktywny"),
+  importance: z
+    .enum(products.importance.enumValues)
+    .optional()
+    .default("standardowy"),
 })
 
 export const storeProductsSearchParamsSchema = searchParamsSchema.extend({

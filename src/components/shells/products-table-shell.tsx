@@ -28,6 +28,7 @@ type AwaitedProduct = Pick<
   | "id"
   | "name"
   | "state"
+  | "importance"
   | "categoryName"
   | "subcategoryName"
   | "price"
@@ -104,6 +105,26 @@ export function ProductsTableShell({
           return (
             <Badge variant="secondary" className="capitalize">
               {state}
+            </Badge>
+          )
+        },
+      },
+      {
+        accessorKey: "importance",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Priorytet" />
+        ),
+        cell: ({ cell }) => {
+          const importanceOptions = Object.values(
+            products.importance.enumValues
+          )
+          const importance = cell.getValue() as Product["importance"]
+
+          if (!importanceOptions.includes(importance)) return null
+
+          return (
+            <Badge variant="secondary" className="capitalize">
+              {importance}
             </Badge>
           )
         },

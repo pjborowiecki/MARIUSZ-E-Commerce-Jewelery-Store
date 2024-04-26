@@ -63,6 +63,7 @@ export default async function ProductsPage({
       id: products.id,
       name: products.name,
       state: products.state,
+      importance: products.importance,
       price: products.price,
       inventory: products.inventory,
       categoryName: products.categoryName,

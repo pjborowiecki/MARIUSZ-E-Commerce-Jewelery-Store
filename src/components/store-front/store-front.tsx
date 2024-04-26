@@ -1,9 +1,8 @@
-import Link from "next/link"
-
 import type { Category, Product } from "@/db/schema/index"
 
-import { CategoryCard } from "@/components/store-front/category-card"
-import { HeroCarousel } from "@/components/store-front/hero-carousel"
+import { CategoriesSection } from "@/components/store-front/sections/categories-section"
+import { FeaturedProductsSection } from "@/components/store-front/sections/featured-products-section"
+import { HeroSection } from "@/components/store-front/sections/hero-section"
 
 interface StoreFrontProps {
   products: Product[]
@@ -14,17 +13,15 @@ export function StoreFront({
   products,
   categories,
 }: Readonly<StoreFrontProps>): JSX.Element {
-  return (
-    <div className="space-y-5">
-      <section className="w-full">
-        <HeroCarousel />
-      </section>
+  const featuredProducts = products.filter(
+    (product) => product.importance === "wyróżniony"
+  )
 
-      <section className="grrid-cols-1 xs:grid-cols-2 grid animate-fade-up gap-4 md:grid-cols-4">
-        {categories.map((category) => (
-          <CategoryCard key={category.name} category={category} />
-        ))}
-      </section>
+  return (
+    <div className="space-y-10">
+      <HeroSection />
+      <CategoriesSection categories={categories} />
+      <FeaturedProductsSection featuredProducts={featuredProducts} />
     </div>
   )
 }

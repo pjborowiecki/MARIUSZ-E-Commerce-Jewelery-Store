@@ -230,7 +230,7 @@ export const footerNavItems = [
     subItems: [
       {
         title: "Panel klienta",
-        href: "/panel-klienta/ustawienia",
+        href: "/panel-klienta/ustawienia/dane-osobowe",
         external: false,
       },
       {
@@ -249,9 +249,9 @@ export const footerNavItems = [
 
 export const adminNavItems = [
   {
-    title: "Podsumowanie",
-    slug: "podsumowanie",
-    href: "/admin",
+    title: "Sklep",
+    slug: "sklep",
+    href: "/",
     icon: "home",
     external: false,
     disabled: false,

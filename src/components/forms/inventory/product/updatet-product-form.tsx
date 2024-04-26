@@ -11,7 +11,6 @@ import { useForm } from "react-hook-form"
 
 import {
   products,
-  subcategories,
   type Category,
   type Product,
   type Subcategory,
@@ -20,7 +19,6 @@ import {
   updateProductSchema,
   type UpdateProductInput,
 } from "@/validations/product"
-import { getSubcategories } from "@/data/products"
 
 import { useToast } from "@/hooks/use-toast"
 import { useUploadThing } from "@/hooks/use-uploadthing"
@@ -101,6 +99,7 @@ export function UpdateProductForm({
       name: product.name,
       description: product.description ?? "",
       state: product.state,
+      importance: product.importance,
       categoryName: product.categoryName,
       subcategoryName: product.subcategoryName,
       price: product.price,
@@ -129,6 +128,7 @@ export function UpdateProductForm({
           name: formData.name,
           description: formData.description,
           state: formData.state,
+          importance: formData.importance,
           categoryName: formData.categoryName,
           subcategoryName: formData.subcategoryName,
           price: formData.price,
@@ -228,45 +228,87 @@ export function UpdateProductForm({
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="state"
-          render={({ field }) => (
-            <FormItem className="w-full md:w-4/5 xl:w-2/3">
-              <FormLabel>Status</FormLabel>
-              <FormControl>
-                <Select
-                  value={field.value}
-                  onValueChange={(value: typeof field.value) =>
-                    field.onChange(value)
-                  }
-                  disabled={categories && categories.length === 0}
-                >
-                  <SelectTrigger>
-                    <SelectValue
-                      placeholder={field.value || "Wybierz kategorię"}
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {Object.values(products.state.enumValues).map(
-                        (option) => (
-                          <SelectItem key={option} value={option}>
-                            {option}
-                          </SelectItem>
-                        )
-                      )}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </FormControl>
+        <div className="flex w-full flex-col items-start gap-6 sm:flex-row md:w-4/5 xl:w-2/3">
+          <FormField
+            control={form.control}
+            name="state"
+            render={({ field }) => (
+              <FormItem className="w-full md:w-4/5 xl:w-2/3">
+                <FormLabel>Status</FormLabel>
+                <FormControl>
+                  <Select
+                    value={field.value}
+                    onValueChange={(value: typeof field.value) =>
+                      field.onChange(value)
+                    }
+                    disabled={categories && categories.length === 0}
+                  >
+                    <SelectTrigger>
+                      <SelectValue
+                        placeholder={field.value || "Wybierz kategorię"}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {Object.values(products.state.enumValues).map(
+                          (option) => (
+                            <SelectItem key={option} value={option}>
+                              {option}
+                            </SelectItem>
+                          )
+                        )}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
 
-              <UncontrolledFormMessage>
-                {form.formState.errors.state?.message}
-              </UncontrolledFormMessage>
-            </FormItem>
-          )}
-        />
+                <UncontrolledFormMessage>
+                  {form.formState.errors.state?.message}
+                </UncontrolledFormMessage>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="importance"
+            render={({ field }) => (
+              <FormItem className="w-full md:w-4/5 xl:w-2/3">
+                <FormLabel>Status</FormLabel>
+                <FormControl>
+                  <Select
+                    value={field.value}
+                    onValueChange={(value: typeof field.value) =>
+                      field.onChange(value)
+                    }
+                    disabled={categories && categories.length === 0}
+                  >
+                    <SelectTrigger>
+                      <SelectValue
+                        placeholder={field.value || "Wybierz priorytet"}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {Object.values(products.importance.enumValues).map(
+                          (option) => (
+                            <SelectItem key={option} value={option}>
+                              {option}
+                            </SelectItem>
+                          )
+                        )}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+
+                <UncontrolledFormMessage>
+                  {form.formState.errors.importance?.message}
+                </UncontrolledFormMessage>
+              </FormItem>
+            )}
+          />
+        </div>
 
         <div className="flex w-full flex-col items-start gap-6 sm:flex-row md:w-4/5 xl:w-2/3">
           <FormField

@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { auth } from "@/auth"
 
-import { mainNavItems, sidebarNavItems } from "@/data/nav-items"
+import { mainNavItems } from "@/data/nav-items"
 
 import { cn } from "@/lib/utils"
 
@@ -34,12 +34,10 @@ export async function Header(): Promise<JSX.Element> {
         <MobileNav navItems={mainNavItems} />
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 transition-all duration-300 ease-in-out">
         <HeaderSearch />
 
-        <CustomTooltip text="Zawartość koszyka">
-          <CartSheet />
-        </CustomTooltip>
+        <CartSheet />
 
         {session ? (
           <DropdownMenu>

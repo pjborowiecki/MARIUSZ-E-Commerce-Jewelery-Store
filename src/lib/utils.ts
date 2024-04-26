@@ -134,6 +134,7 @@ export function translateColumnNamesToPolish(name: string): string {
     price: "Cena",
     status: "Status płatności",
     state: "Status",
+    importance: "Priorytet",
     inventory: "Dostępność",
     quantity: "Ilość",
     amount: "Wartość",
