@@ -85,17 +85,6 @@ export const addProductFunctionSchema = productSchema
       .nullable(),
   })
 
-export const getProductsSchema = z.object({
-  page: z.coerce.number().default(1),
-  per_page: z.coerce.number().default(10),
-  sort: z.string().optional().default("createdAt.desc"),
-  categories: z.string().optional(),
-  subcategories: z.string().optional(),
-  subcategory: z.string().optional(),
-  price_range: z.string().optional().nullable(),
-  active: z.string().optional().default("true"),
-})
-
 export const getProductByIdSchema = z.object({
   id: productIdSchema,
 })

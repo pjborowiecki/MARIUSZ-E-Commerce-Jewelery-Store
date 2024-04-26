@@ -82,6 +82,26 @@ export function slugify(str: string): string {
     .replace(/--+/g, "-")
 }
 
+export function unslugify(str: string): string {
+  const polishCharsReverse: { [key: string]: string } = {
+    a: "ą",
+    c: "ć",
+    e: "ę",
+    l: "ł",
+    n: "ń",
+    o: "ó",
+    s: "ś",
+    z: "ź",
+    z: "ż",
+  }
+
+  return str
+    .replace(/-/g, " ") // Restore whitespace
+    .split("")
+    .map((char) => polishCharsReverse[char] || char)
+    .join("")
+}
+
 export function toTitleCase(str: string) {
   return str.replace(
     /\w\S*/g,

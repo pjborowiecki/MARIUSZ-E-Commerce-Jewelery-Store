@@ -80,6 +80,77 @@ export async function getProductByName(
   }
 }
 
+// TODO
+export async function getAllProducts() {
+  try {
+    console.log("getAllProducts called")
+  } catch (error) {
+    console.error(error)
+    throw new Error("Error getting all products")
+  }
+}
+
+// TODO
+export async function getAllProductsByCategoryName(): Promise<Product[]> {
+  try {
+    const selectedProducts = await db.select().from(products).where(eq())
+
+    return selectedProducts ?? []
+  } catch (error) {
+    console.error(error)
+    throw new Error("Error getting all products by category name")
+  }
+}
+
+// TODO
+export async function getAllProductsByCategoryId() {
+  try {
+    console.log("getAllProductsByCategoryId called")
+  } catch (error) {
+    console.error(error)
+    throw new Error("Error getting all products by category Id")
+  }
+}
+
+export async function getProductCountByCategoryName(
+  rawInput: GetProductCountByCategoryNameInput
+): Promise<number> {
+  try {
+    const validatedInput =
+      getProductCountByCategoryNameSchema.safeParse(rawInput)
+    if (!validatedInput.success) return 0
+
+    noStore()
+    const [productCount] = await psGetProductCountByCategoryName.execute({
+      name: validatedInput.data.name,
+    })
+
+    return productCount ? productCount.count : 0
+  } catch (error) {
+    console.error(error)
+    throw new Error("Error getting product count by category name")
+  }
+}
+
+export async function getProductCountByCategoryId(
+  rawInput: GetProductCountByCategoryIdInput
+): Promise<number> {
+  try {
+    const validatedInput = getProductCountByCategoryIdSchema.safeParse(rawInput)
+    if (!validatedInput.success) return 0
+
+    noStore()
+    const [productCount] = await psGetProductCountByCategoryId.execute({
+      id: validatedInput.data.id,
+    })
+
+    return productCount ? productCount.count : 0
+  } catch (error) {
+    console.error(error)
+    throw new Error("Error getting product count by category Id")
+  }
+}
+
 export async function getFeaturedProducts(): Promise<Product[]> {
   try {
     noStore()
@@ -327,44 +398,5 @@ export async function filterProducts(rawInput: FilterProductsInput) {
       data: null,
       error: "Error filtering products",
     }
-  }
-}
-
-export async function getProductCountByCategoryName(
-  rawInput: GetProductCountByCategoryNameInput
-): Promise<number> {
-  try {
-    const validatedInput =
-      getProductCountByCategoryNameSchema.safeParse(rawInput)
-    if (!validatedInput.success) return 0
-
-    noStore()
-    const [productCount] = await psGetProductCountByCategoryName.execute({
-      name: validatedInput.data.name,
-    })
-
-    return productCount ? productCount.count : 0
-  } catch (error) {
-    console.error(error)
-    throw new Error("Error getting product count by category name")
-  }
-}
-
-export async function getProductCountByCategoryId(
-  rawInput: GetProductCountByCategoryIdInput
-): Promise<number> {
-  try {
-    const validatedInput = getProductCountByCategoryIdSchema.safeParse(rawInput)
-    if (!validatedInput.success) return 0
-
-    noStore()
-    const [productCount] = await psGetProductCountByCategoryId.execute({
-      id: validatedInput.data.id,
-    })
-
-    return productCount ? productCount.count : 0
-  } catch (error) {
-    console.error(error)
-    throw new Error("Error getting product count by category Id")
   }
 }

@@ -1,5 +1,9 @@
 import * as z from "zod"
 
+import { products } from "@/db/schema"
+
+import { categoryNameSchema } from "./category"
+
 export const searchParamsSchema = z.object({
   page: z.coerce.number().default(1),
   per_page: z.coerce.number().default(10),
@@ -17,6 +21,16 @@ export const productsSearchParamsSchema = searchParamsSchema
     price_range: z.string().optional(),
     active: z.string().optional().default("true"),
   })
+
+export const getProductsSearchParamsSchema = z.object({
+  page: z.coerce.number().default(1),
+  per_page: z.coerce.number().default(10),
+  sort: z.string().optional().default("createdAt.desc"),
+  categoryName: categoryNameSchema.optional(),
+  subcategoryName: categoryNameSchema.optional(),
+  price_range: z.string().optional().nullable(),
+  state: z.enum(products.state.enumValues).optional().default("aktywny"),
+})
 
 export const storeProductsSearchParamsSchema = searchParamsSchema.extend({
   name: z.string().optional(),
