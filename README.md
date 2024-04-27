@@ -8,6 +8,10 @@ This fully-functional jewelery shop consists of a store front, additional info p
 
 ![public/images/screenshots/screenshot_1](./public/images/screenshots/screenshot_1.png)
 
+![public/images/screenshots/screenshot_2](./public/images/screenshots/screenshot_2.png)
+
+![public/images/screenshots/screenshot_3](./public/images/screenshots/screenshot_3.png)
+
 <br />
 
 > **Warning**
