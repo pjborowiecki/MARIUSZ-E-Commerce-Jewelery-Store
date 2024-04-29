@@ -8,8 +8,8 @@ const config = {
   extends: [
     "next/core-web-vitals",
     "plugin:@typescript-eslint/recommended-type-checked",
-    "prettier",
     "plugin:tailwindcss/recommended",
+    "prettier",
   ],
   rules: {
     "@typescript-eslint/consistent-type-imports": [

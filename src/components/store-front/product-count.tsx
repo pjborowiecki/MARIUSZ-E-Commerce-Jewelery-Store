@@ -12,7 +12,8 @@ export async function ProductCount({
       variant="secondary"
       className="pointer-events-none w-fit rounded font-medium"
     >
-      {count}
+      {/* TODO: Polish endings */}
+      {count} produktów
     </Badge>
   )
 }

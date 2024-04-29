@@ -8,16 +8,19 @@ import { db } from "@/config/db"
 import { carts, products } from "@/db/schema"
 import type { CartLineItem } from "@/validations/cart"
 
-export async function getCart(): Promise<CartLineItem[]> {
+export async function getCart() {
   const cartId = cookies().get("cartId")?.value
   if (!cartId || isNaN(Number(cartId))) return []
 
-  const cart = await db.query.carts.findFirst({
+  const cartLineItems = await db.query.carts.findFirst({
     columns: {
       items: true,
     },
-    where: eq(carts.id, Number(cartId)),
+    // where: eq(carts.id, Number(cartId)),
   })
 
   return cartLineItems
 }
+
+// TODO: Implement
+export async function addToCart() {}

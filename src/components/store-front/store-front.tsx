@@ -18,7 +18,7 @@ export function StoreFront({
   )
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-10 pb-10">
       <HeroSection />
       <CategoriesSection categories={categories} />
       <FeaturedProductsSection featuredProducts={featuredProducts} />

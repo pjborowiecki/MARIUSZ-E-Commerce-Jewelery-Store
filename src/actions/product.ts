@@ -80,10 +80,15 @@ export async function getProductByName(
   }
 }
 
-// TODO
-export async function getAllProducts() {
+// TODO (prepared statement; sorting)
+export async function getAllActiveProducts(): Promise<Product[]> {
   try {
-    console.log("getAllProducts called")
+    const activeProducts = await db
+      .select()
+      .from(products)
+      .where(eq(products.state, "aktywny"))
+
+    return activeProducts ?? []
   } catch (error) {
     console.error(error)
     throw new Error("Error getting all products")
@@ -347,7 +352,7 @@ export async function updateProduct(
         subcategoryId: subcategory.id,
         price: validatedInput.data.price,
         inventory: validatedInput.data.inventory,
-        // images: validatedInput.data.images,
+        images: validatedInput.data.images,
       })
       .where(eq(products.id, validatedInput.data.id))
       .returning()

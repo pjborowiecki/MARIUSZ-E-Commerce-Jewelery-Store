@@ -11,6 +11,8 @@ import { getProductsSearchParamsSchema } from "@/validations/params"
 
 import { toTitleCase, unslugify } from "@/lib/utils"
 
+import { ProductCard } from "@/components/store-front/product-card"
+
 interface SubcategoryPageProps {
   searchParams: SearchParams
   params: {
@@ -126,13 +128,9 @@ export default async function SubcategoryPage({
         </p>
       </section>
 
-      {/* TODO: Add product cards, style */}
       <section>
         {data.map((product: Product) => (
-          <div key={product.id} className="rounded-md border p-5">
-            <h3>{product.name}</h3>
-            <p>{product.description}</p>
-          </div>
+          <ProductCard key={product.id} product={product} />
         ))}
       </section>
     </div>

@@ -11,6 +11,8 @@ import { getProductsSearchParamsSchema } from "@/validations/params"
 
 import { toTitleCase, unslugify } from "@/lib/utils"
 
+import { ProductCard } from "@/components/store-front/product-card"
+
 interface CategoryPageProps {
   searchParams: SearchParams
   params: {
@@ -124,10 +126,7 @@ export default async function CategoryPage({
       {/* TODO: Add pagination of results */}
       <section className="grid grid-cols-4 gap-5 py-10">
         {data.map((product: Product) => (
-          <div key={product.id} className="rounded-md border p-5">
-            <h3>{product.name}</h3>
-            <p>{product.description}</p>
-          </div>
+          <ProductCard key={product.id} product={product} />
         ))}
       </section>
     </div>

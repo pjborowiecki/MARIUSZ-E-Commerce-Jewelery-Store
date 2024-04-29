@@ -5,7 +5,7 @@ import { products } from "@/db/schema"
 export const cartItemSchema = z.object({
   productId: z.string(),
   quantity: z.number().min(0),
-  subcategory: z.string().optional().nullable(),
+  subcategory: z.string().optional(),
 })
 
 export const checkoutItemSchema = cartItemSchema.extend({
@@ -25,7 +25,7 @@ export const cartLineItemSchema = z.object({
     )
     .optional()
     .nullable(),
-  category: z.enum(products.category.enumValues),
+  category: z.string().optional().nullable(),
   subcategory: z.string().optional().nullable(),
   price: z.string().regex(/^\d+(\.\d{1,2})?$/),
   inventory: z.number().default(0),

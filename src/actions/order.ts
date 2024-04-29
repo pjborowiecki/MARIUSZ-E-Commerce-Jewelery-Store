@@ -52,13 +52,14 @@ export async function getOrderLineItems(
 
     if (!safeParsedItems.success) throw new Error("Error parsing order items")
 
+    // TODO: Check fields
     const lineItems = await db
       .select({
         id: products.id,
         name: products.name,
         images: products.images,
-        category: products.category,
-        subcategory: products.subcategory,
+        categoryName: products.categoryName,
+        subcategoryName: products.subcategoryName,
         price: products.price,
         inventory: products.inventory,
       })

@@ -53,7 +53,9 @@ export function Footer(): JSX.Element {
 
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-8">
         <p className="text-sm text-muted-foreground xl:text-base">
-          <Balancer>&copy; 2024 Mariusz. Wszystkie prawa zastrzeżone.</Balancer>
+          <Balancer>
+            &copy; 2024 MM Bijou. Wszystkie prawa zastrzeżone.
+          </Balancer>
         </p>
         <div className="flex items-center justify-center">
           <ThemeToggle />
