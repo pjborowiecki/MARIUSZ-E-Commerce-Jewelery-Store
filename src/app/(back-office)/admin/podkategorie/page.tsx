@@ -4,7 +4,7 @@ import { unstable_noStore as noStore } from "next/cache"
 import { redirect } from "next/navigation"
 import { auth } from "@/auth"
 import type { SearchParams } from "@/types"
-import { asc, desc, eq, like, sql } from "drizzle-orm"
+import { asc, desc, like, sql } from "drizzle-orm"
 
 import { env } from "@/env.mjs"
 import { db } from "@/config/db"
