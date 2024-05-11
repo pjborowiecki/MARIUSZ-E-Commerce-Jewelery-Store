@@ -8,13 +8,7 @@ import type { Category } from "@/db/schema/index"
 import { cn } from "@/lib/utils"
 
 import { AspectRatio } from "@/components/ui/aspect-ratio"
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { ProductCount } from "@/components/store-front/product-count"
 
@@ -43,7 +37,7 @@ export async function CategoryCard({
             <Image
               src={
                 category.images
-                  ? category.images[0]?.url
+                  ? String(category.images[0]?.url)
                   : "/images/image-placeholder.webp"
               }
               alt={category.name}

@@ -11,7 +11,7 @@ export const passwordSchema = z
     message: "Hasło musi się składać z przynajmniej 8 znaków",
   })
   .max(256, {
-    message: "Hasło nie może mieć więcej ni 256 znaków",
+    message: "Hasło nie może mieć więcej niż 256 znaków",
   })
 
 export const signUpWithPasswordSchema = z

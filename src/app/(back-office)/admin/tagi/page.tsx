@@ -1,11 +1,11 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { redirect } from "next/navigation"
-import { auth } from "@/auth"
 
 import { env } from "@/env.mjs"
 import { DEFAULT_UNAUTHENTICATED_REDIRECT } from "@/config/defaults"
 
+import auth from "@/lib/auth"
 import { cn } from "@/lib/utils"
 
 import { buttonVariants } from "@/components/ui/button"

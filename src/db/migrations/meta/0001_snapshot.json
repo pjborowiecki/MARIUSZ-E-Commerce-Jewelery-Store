@@ -1,10 +1,8 @@
 {
-  "id": "9e3aa689-cb94-4d3e-90f1-e3aafb616ad3",
-  "prevId": "8405a4d9-5593-4d54-921a-76168fb0623d",
-  "version": "5",
-  "dialect": "pg",
+  "version": "6",
+  "dialect": "postgresql",
   "tables": {
-    "accounts": {
+    "public.accounts": {
       "name": "accounts",
       "schema": "",
       "columns": {
@@ -80,15 +78,15 @@
         "accounts_userId_users_id_fk": {
           "name": "accounts_userId_users_id_fk",
           "tableFrom": "accounts",
-          "tableTo": "users",
           "columnsFrom": [
             "userId"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {
@@ -102,7 +100,7 @@
       },
       "uniqueConstraints": {}
     },
-    "addresses": {
+    "public.addresses": {
       "name": "addresses",
       "schema": "",
       "columns": {
@@ -163,7 +161,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "carts": {
+    "public.carts": {
       "name": "carts",
       "schema": "",
       "columns": {
@@ -219,7 +217,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "categories": {
+    "public.categories": {
       "name": "categories",
       "schema": "",
       "columns": {
@@ -276,14 +274,14 @@
       "uniqueConstraints": {
         "categories_name_unique": {
           "name": "categories_name_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "name"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "emailPreferences": {
+    "public.emailPreferences": {
       "name": "emailPreferences",
       "schema": "",
       "columns": {
@@ -352,7 +350,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "newsletterSubscribers": {
+    "public.newsletterSubscribers": {
       "name": "newsletterSubscribers",
       "schema": "",
       "columns": {
@@ -382,7 +380,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "notifications": {
+    "public.notifications": {
       "name": "notifications",
       "schema": "",
       "columns": {
@@ -451,21 +449,21 @@
       "uniqueConstraints": {
         "notifications_email_unique": {
           "name": "notifications_email_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "email"
-          ]
+          ],
+          "nullsNotDistinct": false
         },
         "notifications_token_unique": {
           "name": "notifications_token_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "token"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "orders": {
+    "public.orders": {
       "name": "orders",
       "schema": "",
       "columns": {
@@ -560,21 +558,21 @@
         "orders_address_id_addresses_id_fk": {
           "name": "orders_address_id_addresses_id_fk",
           "tableFrom": "orders",
-          "tableTo": "addresses",
           "columnsFrom": [
             "address_id"
           ],
+          "tableTo": "addresses",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "payments": {
+    "public.payments": {
       "name": "payments",
       "schema": "",
       "columns": {
@@ -637,7 +635,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "products": {
+    "public.products": {
       "name": "products",
       "schema": "",
       "columns": {
@@ -753,34 +751,34 @@
         "products_category_id_categories_id_fk": {
           "name": "products_category_id_categories_id_fk",
           "tableFrom": "products",
-          "tableTo": "categories",
           "columnsFrom": [
             "category_id"
           ],
+          "tableTo": "categories",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         },
         "products_subcategory_id_subcategories_id_fk": {
           "name": "products_subcategory_id_subcategories_id_fk",
           "tableFrom": "products",
-          "tableTo": "subcategories",
           "columnsFrom": [
             "subcategory_id"
           ],
+          "tableTo": "subcategories",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "sessions": {
+    "public.sessions": {
       "name": "sessions",
       "schema": "",
       "columns": {
@@ -808,21 +806,21 @@
         "sessions_userId_users_id_fk": {
           "name": "sessions_userId_users_id_fk",
           "tableFrom": "sessions",
-          "tableTo": "users",
           "columnsFrom": [
             "userId"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "subcategories": {
+    "public.subcategories": {
       "name": "subcategories",
       "schema": "",
       "columns": {
@@ -870,21 +868,21 @@
         "subcategories_category_name_categories_name_fk": {
           "name": "subcategories_category_name_categories_name_fk",
           "tableFrom": "subcategories",
-          "tableTo": "categories",
           "columnsFrom": [
             "category_name"
           ],
+          "tableTo": "categories",
           "columnsTo": [
             "name"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "users": {
+    "public.users": {
       "name": "users",
       "schema": "",
       "columns": {
@@ -976,28 +974,28 @@
       "uniqueConstraints": {
         "users_email_unique": {
           "name": "users_email_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "email"
-          ]
+          ],
+          "nullsNotDistinct": false
         },
         "users_emailVerificationToken_unique": {
           "name": "users_emailVerificationToken_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "emailVerificationToken"
-          ]
+          ],
+          "nullsNotDistinct": false
         },
         "users_resetPasswordToken_unique": {
           "name": "users_resetPasswordToken_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "resetPasswordToken"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "verificationTokens": {
+    "public.verificationTokens": {
       "name": "verificationTokens",
       "schema": "",
       "columns": {
@@ -1035,42 +1033,48 @@
     }
   },
   "enums": {
-    "category_visibility": {
+    "public.category_visibility": {
       "name": "category_visibility",
-      "values": {
-        "widoczna": "widoczna",
-        "ukryta": "ukryta"
-      }
+      "schema": "public",
+      "values": [
+        "widoczna",
+        "ukryta"
+      ]
     },
-    "product_category": {
+    "public.product_category": {
       "name": "product_category",
-      "values": {
-        "naszyjniki": "naszyjniki",
-        "kolczyki": "kolczyki",
-        "pierścionki": "pierścionki",
-        "inne": "inne"
-      }
+      "schema": "public",
+      "values": [
+        "naszyjniki",
+        "kolczyki",
+        "pierścionki",
+        "inne"
+      ]
     },
-    "product_state": {
+    "public.product_state": {
       "name": "product_state",
-      "values": {
-        "roboczy": "roboczy",
-        "aktywny": "aktywny",
-        "zarchiwizowany": "zarchiwizowany"
-      }
+      "schema": "public",
+      "values": [
+        "roboczy",
+        "aktywny",
+        "zarchiwizowany"
+      ]
     },
-    "user_role": {
+    "public.user_role": {
       "name": "user_role",
-      "values": {
-        "klient": "klient",
-        "administrator": "administrator"
-      }
+      "schema": "public",
+      "values": [
+        "klient",
+        "administrator"
+      ]
     }
   },
   "schemas": {},
   "_meta": {
-    "columns": {},
     "schemas": {},
-    "tables": {}
-  }
+    "tables": {},
+    "columns": {}
+  },
+  "id": "9e3aa689-cb94-4d3e-90f1-e3aafb616ad3",
+  "prevId": "8405a4d9-5593-4d54-921a-76168fb0623d"
 }

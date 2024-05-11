@@ -4,9 +4,9 @@ interface ProductCountProps {
   count: number
 }
 
-export async function ProductCount({
+export function ProductCount({
   count,
-}: Readonly<ProductCountProps>): Promise<JSX.Element> {
+}: Readonly<ProductCountProps>): JSX.Element {
   return (
     <Badge
       variant="secondary"

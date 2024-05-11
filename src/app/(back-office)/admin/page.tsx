@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation"
-import { auth } from "@/auth"
 import {
   ChevronLeft,
   ChevronRight,
@@ -12,6 +11,8 @@ import {
 } from "lucide-react"
 
 import { DEFAULT_UNAUTHENTICATED_REDIRECT } from "@/config/defaults"
+
+import auth from "@/lib/auth"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"

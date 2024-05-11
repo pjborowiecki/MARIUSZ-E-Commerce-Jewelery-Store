@@ -2,10 +2,11 @@ import type { Metadata } from "next"
 import { notFound, redirect } from "next/navigation"
 import { getAllCategories, getAllSubcategories } from "@/actions/category"
 import { getProductById } from "@/actions/product"
-import { auth } from "@/auth"
 
 import { env } from "@/env.mjs"
 import { DEFAULT_UNAUTHENTICATED_REDIRECT } from "@/config/defaults"
+
+import auth from "@/lib/auth"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { UpdateProductForm } from "@/components/forms/inventory/product/updatet-product-form"

@@ -1,8 +1,8 @@
 import Link from "next/link"
-import { auth } from "@/auth"
 
 import { mainNavItems } from "@/data/nav-items"
 
+import auth from "@/lib/auth"
 import { cn } from "@/lib/utils"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -28,7 +28,7 @@ export async function Header(): Promise<JSX.Element> {
   const session = await auth()
 
   return (
-    <header className="sticky top-0 z-[50] flex h-20 w-full items-center justify-between bg-background px-8">
+    <header className="sticky top-0 z-50 flex h-20 w-full items-center justify-between bg-background px-8">
       <div className="flex items-center">
         <MainNav items={mainNavItems} />
         <MobileNav navItems={mainNavItems} />

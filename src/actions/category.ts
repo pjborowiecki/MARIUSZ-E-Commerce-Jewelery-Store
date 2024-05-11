@@ -1,11 +1,7 @@
 "use server"
 
-import {
-  unstable_cache as cache,
-  unstable_noStore as noStore,
-  revalidatePath,
-} from "next/cache"
-import type { SearchParams, StoredFile } from "@/types"
+import { unstable_noStore as noStore, revalidatePath } from "next/cache"
+import type { StoredFile } from "@/types"
 import { and, eq, not } from "drizzle-orm"
 
 import { db } from "@/config/db"

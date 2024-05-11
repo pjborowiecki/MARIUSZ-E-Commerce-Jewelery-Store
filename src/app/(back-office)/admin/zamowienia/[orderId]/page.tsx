@@ -2,11 +2,11 @@ import { type Metadata } from "next"
 import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 import { getOrderById, getOrderLineItems } from "@/actions/order"
-import { auth } from "@/auth"
 
 import { env } from "@/env.mjs"
 import { DEFAULT_UNAUTHENTICATED_REDIRECT } from "@/config/defaults"
 
+import auth from "@/lib/auth"
 import { formatId, formatPrice } from "@/lib/utils"
 
 import {

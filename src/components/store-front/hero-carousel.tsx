@@ -12,8 +12,6 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from "@/components/ui/carousel"
 
 export function HeroCarousel(): JSX.Element {
@@ -35,7 +33,7 @@ export function HeroCarousel(): JSX.Element {
                   <Image
                     src={item.src}
                     fill
-                    className="h-full w-full object-cover"
+                    className="size-full object-cover"
                     alt={`hero carousel item ${index}`}
                   />
                 </AspectRatio>

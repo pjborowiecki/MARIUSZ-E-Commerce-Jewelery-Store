@@ -1,10 +1,11 @@
 import type { Metadata } from "next"
 import { notFound, redirect } from "next/navigation"
 import { getUserById } from "@/actions/user"
-import { auth } from "@/auth"
 
 import { env } from "@/env.mjs"
 import { DEFAULT_UNAUTHENTICATED_REDIRECT } from "@/config/defaults"
+
+import auth from "@/lib/auth"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { UpdateUserAsAdminForm } from "@/components/forms/user/update-user-as-admin-form"

@@ -1,7 +1,6 @@
 import * as React from "react"
 import type { Metadata } from "next"
 import { redirect } from "next/navigation"
-import { auth } from "@/auth"
 import type { SearchParams } from "@/types"
 import { endOfDay, startOfDay } from "date-fns"
 import { and, asc, desc, gte, like, lte, sql } from "drizzle-orm"
@@ -11,6 +10,8 @@ import { db } from "@/config/db"
 import { DEFAULT_UNAUTHENTICATED_REDIRECT } from "@/config/defaults"
 import { orders } from "@/db/schema"
 import { customersSearchParamsSchema } from "@/validations/params"
+
+import auth from "@/lib/auth"
 
 import {
   Card,

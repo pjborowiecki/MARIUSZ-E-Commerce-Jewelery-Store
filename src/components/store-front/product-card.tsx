@@ -3,12 +3,12 @@
 import * as React from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { addToCart } from "@/actions/cart"
+// import { addToCart } from "@/actions/cart"
 import { AspectRatio } from "@radix-ui/react-aspect-ratio"
 
 import type { Product } from "@/db/schema"
 
-import { useToast } from "@/hooks/use-toast"
+// import { useToast } from "@/hooks/use-toast"
 import { cn, formatPrice } from "@/lib/utils"
 
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -34,11 +34,11 @@ export function ProductCard({
   product,
   variant = "default",
   isAddedToCart = false,
-  onSwitch,
+  // onSwitch,
   className,
   ...props
 }: Readonly<ProductCardProps>): JSX.Element {
-  const { toast } = useToast()
+  // const { toast } = useToast()
   const [isUpdatePending, startUpdateTransition] = React.useTransition()
 
   console.log(product)
@@ -131,10 +131,10 @@ export function ProductCard({
             aria-label={isAddedToCart ? "Usuń z koszyka" : "Dodaj do koszyka"}
             size="sm"
             className="h-8 w-full rounded-sm"
-            onClick={async () => {
-              startUpdateTransition(async () => {})
-              await onSwitch?.()
-            }}
+            // onClick={async () => {
+            //   startUpdateTransition(async () => {})
+            //   await onSwitch?.()
+            // }}
             disabled={isUpdatePending}
           >
             {isUpdatePending ? (

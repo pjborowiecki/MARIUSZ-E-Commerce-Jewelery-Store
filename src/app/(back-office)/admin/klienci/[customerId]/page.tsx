@@ -3,7 +3,6 @@ import type { Metadata } from "next"
 import { unstable_noStore as noStore } from "next/cache"
 import { notFound, redirect } from "next/navigation"
 import { getUserById } from "@/actions/user"
-import { auth } from "@/auth"
 import type { SearchParams } from "@/types"
 import { endOfDay, startOfDay } from "date-fns"
 import { and, asc, desc, eq, gte, inArray, lte, sql } from "drizzle-orm"
@@ -13,6 +12,8 @@ import { db } from "@/config/db"
 import { DEFAULT_UNAUTHENTICATED_REDIRECT } from "@/config/defaults"
 import { orders, type Order } from "@/db/schema"
 import { customerSearchParamsSchema } from "@/validations/params"
+
+import auth from "@/lib/auth"
 
 import {
   Card,

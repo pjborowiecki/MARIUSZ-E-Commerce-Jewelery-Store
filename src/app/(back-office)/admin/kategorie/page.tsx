@@ -2,7 +2,6 @@ import * as React from "react"
 import type { Metadata } from "next"
 import { unstable_noStore as noStore } from "next/cache"
 import { redirect } from "next/navigation"
-import { auth } from "@/auth"
 import type { SearchParams } from "@/types"
 import { asc, desc, like, sql } from "drizzle-orm"
 
@@ -11,6 +10,8 @@ import { db } from "@/config/db"
 import { DEFAULT_UNAUTHENTICATED_REDIRECT } from "@/config/defaults"
 import { categories, type Category } from "@/db/schema"
 import { productCategoriesSearchParamsSchema } from "@/validations/params"
+
+import auth from "@/lib/auth"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"

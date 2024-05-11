@@ -1,11 +1,12 @@
 import * as React from "react"
 import type { Metadata } from "next"
 import { redirect } from "next/navigation"
-import { auth } from "@/auth"
 
 import { env } from "@/env.mjs"
 import { DEFAULT_UNAUTHENTICATED_REDIRECT } from "@/config/defaults"
 import { adminNavItems } from "@/data/nav-items"
+
+import auth from "@/lib/auth"
 
 import { Header } from "@/components/nav/back-office/header"
 import { Sidebar } from "@/components/nav/back-office/sidebar"

@@ -1,10 +1,11 @@
 import type { Metadata } from "next"
 import { redirect } from "next/navigation"
 import { getAllCategories } from "@/actions/category"
-import { auth } from "@/auth"
 
 import { env } from "@/env.mjs"
 import { DEFAULT_UNAUTHENTICATED_REDIRECT } from "@/config/defaults"
+
+import auth from "@/lib/auth"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { AddSubcategoryForm } from "@/components/forms/inventory/subcategory/add-subcategory-form"
