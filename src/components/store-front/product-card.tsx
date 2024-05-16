@@ -125,6 +125,18 @@ export function ProductCard({
               <Icons.eyeOpen className="size-4" aria-hidden="true" />
               <span className="sr-only">Podgląd</span>
             </Link>
+
+            <Button variant="outline" size="icon" className="size-8 shrink-0">
+              <Icons.heart className="size-4" aria-hidden="true" />
+              <span className="sr-only">Dodaj do ulubionych</span>
+            </Button>
+
+            <Button variant="outline" size="icon" className="size-8 shrink-0">
+              <Icons.share className="size-4" aria-hidden="true" />
+              <span className="sr-only">
+                Udostępnij w mediach społecznościowych
+              </span>
+            </Button>
           </div>
         ) : (
           <Button

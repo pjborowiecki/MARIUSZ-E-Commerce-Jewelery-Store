@@ -15,7 +15,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { CartLineItems } from "@/components/checkout/cart-line-items"
-import { CustomTooltip } from "@/components/custom-tooltip"
 import { Icons } from "@/components/icons"
 
 export async function CartSheet(): Promise<JSX.Element> {

@@ -1,15 +1,29 @@
 import * as z from "zod"
 
+export const cartIdSchema = z
+  .string({
+    required_error: "Id koszyka jest wymagane",
+    invalid_type_error: "Dane wejściowe muszą być tekstem",
+  })
+  .max(128, {
+    message: "Id nie może mieć więcej niż 128 znaków",
+  })
+
 export const cartItemSchema = z.object({
   productId: z.string(),
   quantity: z.number().min(0),
-  subcategory: z.string().optional(),
+  subcategoryName: z.string().optional().nullable(),
+})
+
+export const getCartItemsSchema = z.object({
+  cartId: cartIdSchema.optional(),
 })
 
 export const checkoutItemSchema = cartItemSchema.extend({
   price: z.number(),
 })
 
+// TODO: Might need to update to reflect new db schema
 export const cartLineItemSchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -23,8 +37,8 @@ export const cartLineItemSchema = z.object({
     )
     .optional()
     .nullable(),
-  category: z.string().optional().nullable(),
-  subcategory: z.string().optional().nullable(),
+  categoryName: z.string().optional().nullable(),
+  subcategoryName: z.string().optional().nullable(),
   price: z.string().regex(/^\d+(\.\d{1,2})?$/),
   inventory: z.number().default(0),
   quantity: z.number(),
@@ -42,9 +56,17 @@ export const updateCartItemSchema = z.object({
   quantity: z.number().min(0).default(1),
 })
 
+export const addToCartSchema = cartItemSchema
+
 export type CartItem = z.infer<typeof cartItemSchema>
 export type CheckoutItem = z.infer<typeof checkoutItemSchema>
 export type CartLineItem = z.infer<typeof cartLineItemSchema>
+
+export type GetCartItemsInput = z.infer<typeof getCartItemsSchema>
+
+export type UpdateCartItemsInput = z.infer<typeof updateCartItemSchema>
+
 export type DeleteCartItemInput = z.infer<typeof deleteCartItemSchema>
 export type DeleteCartItemsInput = z.infer<typeof deleteCartItemsSchema>
-export type UpdateCartItemInput = z.infer<typeof updateCartItemSchema>
+
+export type AddToCartInput = z.infer<typeof addToCartSchema>

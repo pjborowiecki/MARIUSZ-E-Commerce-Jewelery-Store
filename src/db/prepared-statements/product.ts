@@ -77,4 +77,13 @@ export const psCheckIfProductExists = db.query.products
   })
   .prepare("psCheckIfProductExists")
 
+export const psCheckIfProductInStock = db.query.products
+  .findFirst({
+    columns: {
+      inventory: true,
+    },
+    where: eq(products.id, sql.placeholder("id")),
+  })
+  .prepare("psCheckIfProductInStock")
+
 //   TODO: Get products by TagId, TagName, TagsIds, TagNames (array of arguments?)

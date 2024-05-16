@@ -35,7 +35,7 @@ export const {
       return token
     },
     session({ session, token }) {
-      session.user.role = token.role
+      session.user.role = token.role as "klient" | "administrator"
       return session
     },
     async signIn({ user, account }) {
