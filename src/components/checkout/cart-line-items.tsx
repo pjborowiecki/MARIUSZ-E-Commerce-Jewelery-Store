@@ -19,13 +19,14 @@ interface CartLineItemsProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export function CartLineItems({
   items,
-  isScrollable,
-  isEditable,
-  variant,
+  isScrollable = true,
+  isEditable = true,
+  variant = "default",
   className,
   ...props
 }: Readonly<CartLineItemsProps>) {
   const Comp = isScrollable ? ScrollArea : Slot
+
   return (
     <Comp className="h-full">
       <div
@@ -36,7 +37,22 @@ export function CartLineItems({
         )}
         {...props}
       >
-        TODO
+        {items.map((item) => (
+          <div key={item.id} className="space-y-3">
+            <div
+              className={cn(
+                "flex items-start justify-between gap-4",
+                isEditable && "xs:flex-row flex-col"
+              )}
+            >
+              <div></div>
+              {isEditable ? (
+                <UpdateCart cartLineItem={item} />
+              ) : ()}
+            </div>
+            {variant === "default" ?? <Separator />}
+          </div>
+        ))}
       </div>
     </Comp>
   )

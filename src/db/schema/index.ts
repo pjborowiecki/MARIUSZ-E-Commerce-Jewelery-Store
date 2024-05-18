@@ -224,7 +224,7 @@ export const subcategoriesRelations = relations(subcategories, ({ one }) => ({
 }))
 
 export const carts = pgTable("carts", {
-  id: text("id").notNull().primaryKey(),
+  id: varchar("id", { length: 128 }).notNull().primaryKey(),
   paymentIntentId: varchar("payment_intent_id", { length: 256 }),
   clientSecret: varchar("client_secret", { length: 256 }),
   items: json("items").$type<CartItem[] | null>().default(null),

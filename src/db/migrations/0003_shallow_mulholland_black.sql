@@ -1,0 +1,1 @@
+ALTER TABLE "carts" ALTER COLUMN "id" SET DATA TYPE varchar(128);

@@ -5,9 +5,9 @@ import { cookies } from "next/headers"
 import { asc, eq, inArray } from "drizzle-orm"
 
 import { db } from "@/config/db"
-import { psGetCartById } from "@/db/prepared-statements/cart"
+import { psDeleteCartById, psGetCartById } from "@/db/prepared-statements/cart"
 import { psCheckIfProductInStock } from "@/db/prepared-statements/product"
-import { carts, categories, products, subcategories } from "@/db/schema"
+import { carts, products } from "@/db/schema"
 import {
   addToCartSchema,
   deleteCartItemSchema,
@@ -22,6 +22,8 @@ import {
   type GetCartItemsInput,
   type UpdateCartItemInput,
 } from "@/validations/cart"
+
+import { generateId } from "@/lib/utils"
 
 export async function getCart(): Promise<CartLineItem[]> {
   try {
@@ -64,7 +66,7 @@ export async function getCart(): Promise<CartLineItem[]> {
         })
       })
 
-    return cartLineItems
+    return cartLineItems ?? []
   } catch (error) {
     console.error(error)
     return []
@@ -77,7 +79,7 @@ export async function deleteCartItem(
 ): Promise<"invalid-input" | "error" | "success"> {
   try {
     const validatedInput = deleteCartItemSchema.safeParse(rawInput)
-    if (!validatedInput.success) throw new Error("Invalid input")
+    if (!validatedInput.success) return "invalid-input"
 
     const cartId = cookies().get("cartId")?.value
     if (!cartId) return "error"
@@ -108,14 +110,15 @@ export async function deleteCartItem(
   }
 }
 
-// TODO: Implement
+// TODO: Check return types, especially for errors
 export async function addToCart(
   rawInput: AddToCartInput
-): Promise<"invalid-input" | "out-of-stock"> {
+): Promise<"invalid-input" | "out-of-stock" | "error" | CartItem[]> {
   try {
     const validatedInput = addToCartSchema.safeParse(rawInput)
-    if (!validatedInput.success) throw new Error("Invalid input")
+    if (!validatedInput.success) return "invalid-input"
 
+    noStore()
     const product = await psCheckIfProductInStock.execute({
       id: validatedInput.data.productId,
     })
@@ -123,36 +126,104 @@ export async function addToCart(
     if (!product || product.inventory < validatedInput.data.quantity)
       return "out-of-stock"
 
-    // TODO: FIX THIS!
+    const cartId = cookies().get("cartId")?.value
 
-    const cookieStore = cookies()
-
-    const cartId = cookieStore().get("cartId")?.value
     if (!cartId) {
+      noStore()
       const cart = await db
         .insert(carts)
         .values({
-          items: [validatedInput.data],
+          id: generateId(128),
+          items: [
+            {
+              productId: validatedInput.data.productId,
+              quantity: validatedInput.data.quantity,
+            },
+          ],
         })
         .returning({ insertedId: carts.id })
 
-      cookieStore.set("cartId", String(cart[0]?.insertedId))
-
+      cookies().set("cartId", String(cart[0]?.insertedId))
       revalidatePath("/")
+
+      // return [
+      //   {
+      //     productId: validatedInput.data.productId,
+      //     quantity: validatedInput.data.quantity,
+      //   },
+      // ]
     }
+
+    //** Handling expired carts */
+    noStore()
+    const cart = await psGetCartById.execute({ cartId })
+    if (!cart) {
+      cookies().set({
+        name: "cartId",
+        value: "",
+        expires: new Date(0),
+      })
+
+      await psDeleteCartById.execute({ cartId })
+      return "error"
+    }
+
+    //** Deleting carts on cart sheet close and creating new ones on cart sheet open */
+    if (cart.closed) {
+      await psDeleteCartById.execute({ cartId })
+
+      const newCart = await db.insert(carts).values({
+        items: [validatedInput.data],
+      })
+    }
+
+    //* */
+    const cartItem = cart.items?.find(
+      (item) => item.productId === validatedInput.data.productId
+    )
+
+    if (cartItem) {
+      cartItem.quantity += validatedInput.data.quantity
+    } else {
+      cart.items?.push(validatedInput.data)
+    }
+
+    await db
+      .update(carts)
+      .set({
+        items: cart.items,
+      })
+      .where(eq(carts.id, cartId))
+
+    revalidatePath("/")
+    return cart.items
   } catch (error) {
     console.error(error)
     throw new Error("Error adding to cart")
   }
 }
 
-// TODO: Implement
-export async function deleteCart() {}
+// TODO: Check return types, especially for errors
+export async function deleteCart(): Promise<"error" | "success"> {
+  try {
+    const cartId = cookies().get("cartId")?.value
+    if (!cartId) return "error"
 
-// TODO: Implement
+    noStore()
+    const deletedCart = await psDeleteCartById.execute({ cartId })
+
+    revalidatePath("/")
+    return deletedCart ? "success" : "error"
+  } catch (error) {
+    console.error(error)
+    throw new Error("Error deleting cart")
+  }
+}
+
+// TODO: Check return types, especially for errors
 export async function updateCartItem(
   rawInput: UpdateCartItemInput
-): Promise<"invalid-input" | "error"> {
+): Promise<"invalid-input" | "error" | CartItem[]> {
   try {
     const validatedInput = updateCartItemSchema.safeParse(rawInput)
     if (!validatedInput.success) return "invalid-input"
@@ -161,21 +232,39 @@ export async function updateCartItem(
     if (!cartId) return "error"
 
     const cart = await psGetCartById.execute({ cartId })
-    if (!cart) return "error"
+    if (!cart || !cart.items) return "error"
 
     const cartItem = cart.items?.find(
       (item) => item.productId === validatedInput.data.productId
     )
+    if (!cartItem) return "error"
 
-    // TODO: change
-    return "invalid-input"
+    if (validatedInput.data.quantity === 0) {
+      cart.items =
+        cart.items?.filter(
+          (item) => item.productId !== validatedInput.data.productId
+        ) ?? []
+    } else {
+      cartItem.quantity = validatedInput.data.quantity
+    }
+
+    const updatedCart = await db
+      .update(carts)
+      .set({
+        items: cart.items,
+      })
+      .where(eq(carts.id, cartId))
+      .returning()
+
+    revalidatePath("/")
+    return updatedCart ? cart.items : []
   } catch (error) {
     console.error(error)
     throw new Error("Error updating cart item")
   }
 }
 
-// TODO: FIX THIS FUNCTION
+// TODO: Check return types, especially for errors
 export async function getCartItems(
   rawInput: GetCartItemsInput
 ): Promise<"invalid-input" | CartItem[]> {
@@ -183,12 +272,14 @@ export async function getCartItems(
     const validatedInput = getCartItemsSchema.safeParse(rawInput)
     if (!validatedInput.success) return "invalid-input"
 
+    if (!validatedInput.data.cartId) return []
+
     noStore()
     const cart = await psGetCartById.execute({
       cartId: validatedInput.data.cartId,
     })
 
-    return cart ? cart.items : []
+    return cart?.items ?? []
   } catch (error) {
     console.error(error)
     throw new Error("Error getting cart items")
