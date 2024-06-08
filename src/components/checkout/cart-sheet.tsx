@@ -101,7 +101,18 @@ export async function CartSheet(): Promise<JSX.Element> {
               Twój koszyk jest pusty
             </p>
 
-            {/*  */}
+            <SheetTrigger asChild>
+              <Link
+                href="/produkty"
+                aria-label="Wybierz i dodaj produkty by kontynuować"
+                className={cn(
+                  buttonVariants({ variant: "link", size: "sm" }),
+                  "text-sm text-muted-foreground"
+                )}
+              >
+                Wybierz i dodaj produkty by kontynuować
+              </Link>
+            </SheetTrigger>
           </div>
         )}
       </SheetContent>

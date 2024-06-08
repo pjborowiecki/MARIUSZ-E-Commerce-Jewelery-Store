@@ -1,16 +1,17 @@
 "use client"
 
 import * as React from "react"
-import { useRouter } from "next/navigation"
 import { addToCart } from "@/actions/cart"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { MinusIcon, PlusIcon } from "lucide-react"
 import { useForm } from "react-hook-form"
 
-import { UpdateCartItemInput, updateCartItemSchema } from "@/validations/cart"
+import {
+  updateCartItemSchema,
+  type UpdateCartItemInput,
+} from "@/validations/cart"
 
 import { useToast } from "@/hooks/use-toast"
-import { showErrorToast } from "@/lib/errors"
 import { cn } from "@/lib/utils"
 
 import { Button } from "@/components/ui/button"
@@ -33,10 +34,8 @@ export function AddToCartForm({
   productId,
 }: Readonly<AddToCartFormProps>): JSX.Element {
   const id = React.useId()
-  const router = useRouter()
   const { toast } = useToast()
-  const [isAddingToCart, setIsAddingToCart] = React.useState(false)
-  const [isBuyingNow, setIsBuyingNow] = React.useState(false)
+  const [isPending, startTransition] = React.useTransition()
 
   const form = useForm<UpdateCartItemInput>({
     resolver: zodResolver(updateCartItemSchema),
@@ -45,27 +44,51 @@ export function AddToCartForm({
     },
   })
 
-  async function onSubmit(data: UpdateCartItemInput) {
-    setIsAddingToCart(true)
-    //    const { error } = await addToCart({
-    //      productId,
-    //      quantity: data.quantity,
-    //    })
+  function onSubmit(formData: UpdateCartItemInput): void {
+    startTransition(async () => {
+      try {
+        const message = await addToCart({
+          productId,
+          quantity: formData.quantity,
+        })
 
-    //    if (error) {
-    //      showErrorToast(error)
-    //      return
-    //    }
-
-    toast({ title: "Produkt dodany do koszyka" })
-    setIsAddingToCart(false)
+        switch (message) {
+          case "success":
+            toast({
+              title: "Produkt dodano do koszyka",
+            })
+            break
+          case "out-of-stock":
+            toast({
+              title: "Produkt nie jest dostępny",
+              description:
+                "Przepraszamy, wybrany produkt nie jest już dostępny",
+              variant: "destructive",
+            })
+            break
+          default:
+            toast({
+              title: "Przepraszamy, coś poszło nie tak",
+              description: "Spróbuj ponownie lub skontaktuj się z nami",
+              variant: "destructive",
+            })
+        }
+      } catch (error) {
+        console.error(error)
+        toast({
+          title: "Przepraszamy, coś poszło nie tak",
+          description: "Spróbuj ponownie lub skontaktuj się z nami",
+          variant: "destructive",
+        })
+      }
+    })
   }
 
   return (
     <Form {...form}>
       <form
         className={cn("flex max-w-[260px] gap-4")}
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={(...args) => void form.handleSubmit(onSubmit)(...args)}
       >
         <div className="flex items-center">
           <Button
@@ -80,7 +103,7 @@ export function AddToCartForm({
                 Math.max(0, form.getValues("quantity") - 1)
               )
             }
-            disabled={isAddingToCart}
+            disabled={isPending}
           >
             <MinusIcon className="size-3" aria-hidden="true" />
             <span className="sr-only">Zmniejsz ilość o jeden</span>
@@ -119,7 +142,7 @@ export function AddToCartForm({
             onClick={() =>
               form.setValue("quantity", form.getValues("quantity") + 1)
             }
-            disabled={isAddingToCart}
+            disabled={isPending}
           >
             <PlusIcon className="size-3" aria-hidden="true" />
             <span className="sr-only">Zwiększ ilość o jeden</span>
@@ -131,9 +154,9 @@ export function AddToCartForm({
             type="submit"
             size="sm"
             className="w-full rounded-full"
-            disabled={isAddingToCart}
+            disabled={isPending}
           >
-            {isAddingToCart && (
+            {isPending && (
               <Icons.spinner
                 className="mr-2 size-4 animate-spin"
                 aria-hidden="true"

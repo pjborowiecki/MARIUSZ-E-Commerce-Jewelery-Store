@@ -1,12 +1,20 @@
+// TODO: Add filters, sorting, and pagination
+// TODO: Improve styling
+
+import { type Metadata } from "next"
 import { getAllActiveProducts } from "@/actions/product"
 
-import { products } from "@/db/schema"
-import type { Product } from "@/db/schema"
+import { env } from "@/env.mjs"
+import { type Product } from "@/db/schema"
 
 import { ProductCard } from "@/components/store-front/product-card"
 
-// TODO: Add Metadata, style
-// TODO: Add filters, add pagination
+export const metadata: Metadata = {
+  metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
+  title: "Nasze produkty",
+  description: "Eksploruj pośród wszystkich produktów w naszym asortymencie",
+}
+
 export default async function ProductsPage(): Promise<JSX.Element> {
   const products = await getAllActiveProducts()
 

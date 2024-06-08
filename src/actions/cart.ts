@@ -113,7 +113,7 @@ export async function deleteCartItem(
 // TODO: Check return types, especially for errors
 export async function addToCart(
   rawInput: AddToCartInput
-): Promise<"invalid-input" | "out-of-stock" | "error" | CartItem[]> {
+): Promise<"invalid-input" | "out-of-stock" | "error" | "success"> {
   try {
     const validatedInput = addToCartSchema.safeParse(rawInput)
     if (!validatedInput.success) return "invalid-input"

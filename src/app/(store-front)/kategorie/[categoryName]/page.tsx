@@ -25,7 +25,7 @@ export function generateMetadata({
 }: Readonly<CategoryPageProps>): Metadata {
   return {
     metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
-    title: toTitleCase(params.categoryName),
+    title: params.categoryName,
     description: `Wszystkie produkty z kategorii ${unslugify(params.categoryName)}`,
   }
 }

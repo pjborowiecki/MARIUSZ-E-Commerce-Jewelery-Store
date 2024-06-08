@@ -84,7 +84,7 @@ export function NewsletterSignUpForm(): JSX.Element {
           render={({ field }) => (
             <FormItem className="relative h-8 w-full space-y-0 md:h-10">
               <FormLabel className="sr-only">Email</FormLabel>
-              <FormControl className="rounded-r-none">
+              <FormControl className="rounded-full rounded-r-none">
                 <Input
                   type="email"
                   placeholder="jan.kowalski@gmail.com"
@@ -98,7 +98,7 @@ export function NewsletterSignUpForm(): JSX.Element {
         />
 
         <Button
-          className="size-8 rounded-l-none md:size-10"
+          className="size-8 rounded-full rounded-l-none md:size-10"
           disabled={isPending}
         >
           {isPending ? (

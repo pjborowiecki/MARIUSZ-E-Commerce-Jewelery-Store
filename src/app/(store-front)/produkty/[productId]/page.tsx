@@ -1,10 +1,10 @@
-import Link from "next/link"
+import { type Metadata } from "next"
 import { notFound } from "next/navigation"
 import { getProductById } from "@/actions/product"
 
 import { env } from "@/env.mjs"
 
-import { formatPrice, toTitleCase } from "@/lib/utils"
+import { formatPrice } from "@/lib/utils"
 
 import {
   Accordion,
@@ -12,16 +12,24 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { AddToCartForm } from "@/components/forms/cart/add-to-cart-form"
 import { ProductImageCarousel } from "@/components/store-front/product-image-carousel"
 
-// TODO: Add Metadata
-
+// TODO: Replace productId with productName in the meta description
 interface ProductPageProps {
   params: {
     productId: string
+  }
+}
+
+export function generateMetadata({
+  params,
+}: Readonly<ProductPageProps>): Metadata {
+  return {
+    metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
+    title: params.productId,
+    description: `Szczeółowy opis i zdjęcia produktu ${params.productId}`,
   }
 }
 
@@ -55,9 +63,9 @@ export default async function ProductPage({
           </div>
 
           <Separator className="my-1.5" />
-
-          <AddToCartForm productId={productId} showBuyNow={true} />
+          <AddToCartForm productId={productId} />
           <Separator className="mt-5" />
+
           <Accordion
             type="single"
             collapsible
@@ -67,31 +75,20 @@ export default async function ProductPage({
             <AccordionItem value="description" className="border-none">
               <AccordionTrigger>Opis przedmiotu</AccordionTrigger>
               <AccordionContent>
-                {product.description ??
-                  "No description is available for this product."}
+                <p>{product.description}</p>
+                {/* TODO: Break description into parts: 
+                  - Material
+                  - Length
+                  - Weight 
+                  - Wait time
+                  - Etc
+                */}
               </AccordionContent>
             </AccordionItem>
           </Accordion>
           <Separator className="md:hidden" />
         </div>
       </div>
-
-      {/* <div className="space-y-6 overflow-hidden">
-          <h2 className="line-clamp-1 flex-1 text-2xl font-bold">
-            More products from {store.name}
-          </h2>
-          <ScrollArea orientation="horizontal" className="pb-3.5">
-            <div className="flex gap-4">
-              {otherProducts.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  className="min-w-[260px]"
-                />
-              ))}
-            </div>
-          </ScrollArea>
-        </div> */}
     </div>
   )
 }
