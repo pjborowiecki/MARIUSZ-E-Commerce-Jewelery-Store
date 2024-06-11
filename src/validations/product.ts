@@ -36,14 +36,20 @@ export const productSchema = z.object({
     .optional(),
   color: z
     .string({
-      required_error: "Kolor jest wymagany",
-      invalid_type_error: "Kolor musi być tekstem",
+      required_error: "Informacja o kolorze jest wymagana",
+      invalid_type_error: "Informacja o kolorze musi być tekstem",
     })
     .optional(),
   material: z
     .string({
-      required_error: "Materiał jest wymagany",
-      invalid_type_error: "Materiał musi być tekstem",
+      required_error: "Informacja o surowcu jest wymagana",
+      invalid_type_error: "Informacja o surowcu musi być tekstem",
+    })
+    .optional(),
+  purity: z
+    .string({
+      required_error: "Informacja o próbie jest wymagana",
+      invalid_type_error: "Informacja o próbie musi być tekstem",
     })
     .optional(),
   stone: z
@@ -68,6 +74,12 @@ export const productSchema = z.object({
     .number({
       required_error: "Waga (w g) jest wymagana",
       invalid_type_error: "Waga (w g) musi być liczbą",
+    })
+    .optional(),
+  extensionLength: z
+    .number({
+      required_error: "Długość przedłużki (w cm) jest wymagana",
+      invalid_type_error: "Długość przedłużki (w cm) musi być liczbą",
     })
     .optional(),
   processingTime: z
