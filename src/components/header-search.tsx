@@ -2,11 +2,9 @@
 
 import * as React from "react"
 import { useRouter } from "next/navigation"
-
-import type { Product } from "@/db/schema"
+import { filterProducts } from "@/actions/product"
 
 import { useDebounce } from "@/hooks/use-debounce"
-import { cn } from "@/lib/utils"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -17,21 +15,46 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command"
+import { Skeleton } from "@/components/ui/skeleton"
 import { CustomTooltip } from "@/components/custom-tooltip"
 import { Icons } from "@/components/icons"
 
-interface ProductGroup {
-  category: Product["category"]
-  products: Pick<Product, "id" | "name" | "category">
-}
+type ProductGroup = NonNullable<
+  Exclude<Awaited<ReturnType<typeof filterProducts>>, "invalid-input">["data"]
+>[number]
 
 export function HeaderSearch(): JSX.Element {
   const router = useRouter()
-  const [data, setData] = React.useState<ProductGroup[] | null>(null)
   const [open, setOpen] = React.useState<boolean>(false)
-  const [isPending, startTransition] = React.useTransition()
+  const [loading, setLoading] = React.useState<boolean>(false)
   const [query, setQuery] = React.useState<string>("")
+  const [data, setData] = React.useState<ProductGroup[] | null>(null)
   const debouncedQuery = useDebounce(query, 300)
+
+  React.useEffect(() => {
+    if (debouncedQuery.length <= 0) {
+      setData(null)
+      return
+    }
+
+    async function fetchData() {
+      const result = await filterProducts({ query: debouncedQuery })
+
+      if (result === "invalid-input" || result.error) {
+        setLoading(false)
+        return
+      }
+      setData(data)
+      setLoading(false)
+    }
+
+    void fetchData()
+  }, [debouncedQuery, data])
+
+  const onSelect = React.useCallback((callback: () => unknown) => {
+    setOpen(false)
+    callback()
+  }, [])
 
   return (
     <>
@@ -61,7 +84,8 @@ export function HeaderSearch(): JSX.Element {
         />
         <CommandList>
           <CommandEmpty>Brak wyników wyszukiwania</CommandEmpty>
-          {/* {isPending ? (
+
+          {loading ? (
             <div className="space-y-1 overflow-hidden px-1 py-2">
               <Skeleton className="h-4 w-10 rounded" />
               <Skeleton className="h-8 rounded-sm" />
@@ -70,26 +94,21 @@ export function HeaderSearch(): JSX.Element {
           ) : (
             data?.map((group) => (
               <CommandGroup
-                key={group.category}
+                key={group.name}
                 className="capitalize"
-                heading={group.category}
+                heading={group.name}
               >
                 {group.products.map((item) => {
-                  const CategoryIcon =
-                    productCategories.find(
-                      (category) => category.title === group.category
-                    )?.icon ?? CircleIcon
-
                   return (
                     <CommandItem
                       key={item.id}
                       className="h-9"
                       value={item.name}
                       onSelect={() =>
-                        handleSelect(() => router.push(`/product/${item.id}`))
+                        onSelect(() => router.push(`/product/${item.id}`))
                       }
                     >
-                      <CategoryIcon
+                      <Icons.product
                         className="mr-2.5 size-3 text-muted-foreground"
                         aria-hidden="true"
                       />
@@ -99,7 +118,7 @@ export function HeaderSearch(): JSX.Element {
                 })}
               </CommandGroup>
             ))
-          )} */}
+          )}
         </CommandList>
       </CommandDialog>
     </>

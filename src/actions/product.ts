@@ -367,7 +367,20 @@ export async function updateProduct(
   }
 }
 
-export async function filterProducts(rawInput: FilterProductsInput) {
+// TODO: CHANGE THIS TO RETURN PRODUCTS ONLY
+export async function filterProducts(rawInput: FilterProductsInput): Promise<
+  | { data: null; error: null }
+  | {
+      data: {
+        id: string
+        name: string
+        products: { id: string; name: string }[]
+      }[]
+      error: null
+    }
+  | { data: null; error: string }
+  | "invalid-input"
+> {
   try {
     const validatedInput = filterProductsSchema.safeParse(rawInput)
     if (!validatedInput.success) return "invalid-input"
