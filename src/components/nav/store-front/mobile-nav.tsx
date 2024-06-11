@@ -8,7 +8,6 @@ import type { NavItem } from "@/types"
 import { siteConfig } from "@/config/site"
 
 import { useMediaQuery } from "@/hooks/use-media-query"
-import { cn } from "@/lib/utils"
 
 import {
   Accordion,
@@ -16,7 +15,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Icons } from "@/components/icons"

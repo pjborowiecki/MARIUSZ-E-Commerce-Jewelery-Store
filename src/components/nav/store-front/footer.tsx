@@ -4,7 +4,6 @@ import Balancer from "react-wrap-balancer"
 import { footerNavItems } from "@/data/nav-items"
 
 import { NewsletterSignUpForm } from "@/components/forms/newsletter-signup-form"
-import { ThemeToggle } from "@/components/theme-toggle"
 
 export function Footer(): JSX.Element {
   return (

@@ -142,6 +142,13 @@ export const products = pgTable(
     id: text("id").notNull().primaryKey(),
     name: varchar("name", { length: 128 }).notNull(),
     description: text("description"),
+    color: varchar("color", { length: 64 }),
+    material: varchar("material", { length: 64 }),
+    stone: varchar("stone", { length: 64 }),
+    stoneSize: decimal("stone_size", { precision: 10, scale: 2 }).default("0"),
+    length: decimal("length", { precision: 10, scale: 2 }).default("0"),
+    weight: decimal("weight", { precision: 10, scale: 2 }).default("0"),
+    processingTime: integer("processing_time").default(1),
     images: json("images").$type<StoredFile[] | null>().default(null),
     state: productStateEnum("state").notNull().default("roboczy"),
     importance: productImportanceEnum("importance")

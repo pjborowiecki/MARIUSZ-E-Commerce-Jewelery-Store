@@ -34,6 +34,48 @@ export const productSchema = z.object({
       invalid_type_error: "Opis musi być tekstem",
     })
     .optional(),
+  color: z
+    .string({
+      required_error: "Kolor jest wymagany",
+      invalid_type_error: "Kolor musi być tekstem",
+    })
+    .optional(),
+  material: z
+    .string({
+      required_error: "Materiał jest wymagany",
+      invalid_type_error: "Materiał musi być tekstem",
+    })
+    .optional(),
+  stone: z
+    .string({
+      required_error: "Informacja o kamieniu jest wymagana",
+      invalid_type_error: "Informacja o kamieniu musi być tekstem",
+    })
+    .optional(),
+  stoneSize: z
+    .number({
+      required_error: "Rozmiar kamienia (w mm) jest wymagany",
+      invalid_type_error: "Rozmiar kamienia (w mm) musi być liczbą",
+    })
+    .optional(),
+  length: z
+    .number({
+      required_error: "Długość (w cm) jest wymagana",
+      invalid_type_error: "Długość (w cm) musi być liczbą",
+    })
+    .optional(),
+  weight: z
+    .number({
+      required_error: "Waga (w g) jest wymagana",
+      invalid_type_error: "Waga (w g) musi być liczbą",
+    })
+    .optional(),
+  processingTime: z
+    .number({
+      required_error: "Czas reazlizacji zamówienia (w dniach) jest wymagany",
+      invalid_type_error: "Czas realizacji zamówienia musi być liczbą dni",
+    })
+    .optional(),
   state: z.enum(products.state.enumValues, {
     required_error: "Status produktu jest wymagany",
     invalid_type_error:
@@ -109,6 +151,9 @@ export const getProductCountByCategoryNameSchema = z.object({
 export const getProductCountByCategoryIdSchema = z.object({
   id: categoryIdSchema,
 })
+
+// TODO: Check
+export const getProductsSchema = productSchema
 
 export const updateProductSchema = productSchema
   .omit({
