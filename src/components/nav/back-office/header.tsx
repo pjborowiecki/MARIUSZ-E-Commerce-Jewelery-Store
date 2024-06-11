@@ -2,30 +2,16 @@
 
 import Link from "next/link"
 import type { NavItem } from "@/types"
-import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar"
 import type { User } from "next-auth"
 
-import { adminNavItems } from "@/data/nav-items"
-
-import { cn } from "@/lib/utils"
-
-import { Button, buttonVariants } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { SignOutButton } from "@/components/auth/signout-button"
+import { UserDropdown } from "@/components/auth/user-dropdown"
 import { Icons } from "@/components/icons"
 
 interface HeaderProps {
-  user: User | undefined
+  user: User | null
   navItems: NavItem[]
 }
 
@@ -71,69 +57,7 @@ export function Header({ user, navItems }: Readonly<HeaderProps>): JSX.Element {
         />
       </div>
 
-      {user ? (
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            asChild
-            className={cn(
-              buttonVariants({ variant: "user", size: "icon" }),
-              "transition-all duration-300 ease-in-out"
-            )}
-          >
-            <Avatar className="cursor-pointer">
-              {user.image ? (
-                <AvatarImage
-                  src={user.image}
-                  alt={user.name ?? "user's profile picture"}
-                  className={cn(
-                    buttonVariants({ variant: "outline", size: "icon" }),
-                    "rounded-md"
-                  )}
-                />
-              ) : (
-                <AvatarFallback
-                  className={cn(
-                    buttonVariants({ variant: "outline", size: "icon" }),
-                    "rounded-md"
-                  )}
-                >
-                  <Icons.user className="size-4 rounded-full" />
-                </AvatarFallback>
-              )}
-            </Avatar>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56" align="end" forceMount>
-            <DropdownMenuLabel className="font-normal">
-              <p className="text-xs leading-none text-muted-foreground">
-                {user.email}
-              </p>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              {adminNavItems.map((item) => {
-                const Icon = Icons[item.icon as keyof typeof Icons]
-                return (
-                  <DropdownMenuItem key={item.title}>
-                    <Icon className="mr-2 size-4 text-foreground/90" />
-                    <Link href={item.href}>{item.title}</Link>
-                  </DropdownMenuItem>
-                )
-              })}
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <SignOutButton
-                buttonStyles="border-none px-0 py-[1px] shadow-none tracking-tight h-auto font-medium text-foreground/90 text-[14px]"
-                iconStyles="text-foreground/80"
-              />
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ) : (
-        <Link href="/logowanie" className={buttonVariants({ size: "sm" })}>
-          Zaloguj się
-        </Link>
-      )}
+      <UserDropdown user={user} />
     </header>
   )
 }
